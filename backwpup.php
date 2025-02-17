@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: FORK (in progress) from BackWPup 4.1.7 
- * Plugin URI: https://backwpup.com/
+ * Plugin URI: https://github.com/lagenceoueb/forkbwpup.git
  * Description: WordPress Backup Plugin
  * Author: BackWPup – WordPress Backup & Restore Plugin
  * Author URI: https://lagenceoueb.tech
