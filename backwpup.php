@@ -408,6 +408,21 @@ if (!class_exists(\BackWPup::class, false)) {
                     'classes' => [],
                 ],
             ];
+            // backup to Infomaniak kDrive
+            self::$registered_destinations['KDRIVE'] = [
+                'class' => \BackWPup_Destination_KDrive::class,
+                'info' => [
+                    'ID' => 'KDRIVE',
+                    'name' => __('Infomaniak kDrive', 'backwpup'),
+                    'description' => __('Backup to Infomaniak kDrive via WebDAV', 'backwpup'),
+                ],
+                'can_sync' => false,
+                'needed' => [
+                    'php_version' => '',
+                    'functions' => ['curl_exec'],
+                    'classes' => [\DOMDocument::class, \DOMXPath::class],
+                ],
+            ];
             // backup to dropbox
             self::$registered_destinations['DROPBOX'] = [
                 'class' => \BackWPup_Destination_Dropbox::class,
