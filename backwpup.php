@@ -1,10 +1,10 @@
 <?php
 /*
- * Plugin Name: FORK (in progress) from BackWPup 4.1.7 
- * Plugin URI: https://github.com/lagenceoueb/forkbwpup.git
- * Description: WordPress Backup Plugin
- * Author: BackWPup – WordPress Backup & Restore Plugin
- * Author URI: https://lagenceoueb.tech
+ * Plugin Name: Agence Oueb Backup
+ * Plugin URI: https://wpservices.fr
+ * Description: Solution de sauvegarde WordPress par l'Agence Oueb.
+ * Author: Jm Silone - Agence Oueb
+ * Author URI: https://wpservices.fr
  * Version: 0.0.1
  * Requires at least: 4.9
  * Requires PHP: 7.4

@@ -205,40 +205,24 @@ class BackWPup_Page_Restore {
 	}
 
 	/**
-	 * Page Title.
-	 */
-	public function title() {
-		echo esc_html(
-			sanitize_text_field(
-				sprintf(
-				// Translators: $1 is the name of the plugin
-					esc_html__( '%s &rsaquo; Restore', 'backwpup' ),
-					BackWPup::get_plugin_data( 'name' )
-				)
-			)
-		);
-	}
-
-	/**
 	 * Load.
 	 *
 	 * Load the basic for the page and also, perform stuffs before render the content.
 	 */
 	public static function load() {
-		do_action( 'backwpup_page_restore' );
+		// TEMPORARILY DISABLED: Missing Pimple\Container dependency
+		// Uncomment after restoring vendor dependencies
+		// do_action( 'backwpup_page_restore_pre_render' );
 	}
 
 	/**
 	 * Entry method to display WordPress page.
 	 */
 	public static function page() {
-		$restore_page = new self(); ?>
+		?>
 		<div class="wrap" id="backwpup-page">
-			<h1>
-				<?php $restore_page->title(); ?>
-			</h1>
-
-			<?php $restore_page->content(); ?>
+			<h1><?php esc_html_e( 'Restore Feature Temporarily Disabled', 'backwpup' ); ?></h1>
+			<p><?php esc_html_e( 'The restore functionality is currently disabled due to missing dependencies. Please run composer install to restore full functionality.', 'backwpup' ); ?></p>
 		</div>
 		<?php
 	}

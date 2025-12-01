@@ -60,47 +60,43 @@ class BackWPup_Page_BackWPup
         // get wizards
         $wizards = BackWPup::get_wizards(); ?>
         <div class="wrap" id="backwpup-page">
-            <h1><?php echo sprintf(__('%s &rsaquo; Dashboard', 'backwpup'), BackWPup::get_plugin_data('name')); ?></h1>
+            <h1><?php echo sprintf(__('%s &rsaquo; Tableau de bord', 'backwpup'), BackWPup::get_plugin_data('name')); ?></h1>
 			<?php
 
             BackWPup_Admin::display_messages();
 
         if (BackWPup::is_pro()) { ?>
 				<div class="backwpup-welcome backwpup-max-width">
-					<h3><?php _ex('Planning backups', 'Dashboard heading', 'backwpup'); ?></h3>
-					<p><?php _e('BackWPup’s job wizards make planning and scheduling your backup jobs a breeze.', 'backwpup'); echo ' '; _e('Use your backup archives to save your entire WordPress installation including <code>/wp-content/</code>. Push them to an external storage service if you don’t want to save the backups on the same server.', 'backwpup'); ?></p>
-					<h3><?php _ex('Restoring backups', 'Dashboard heading', 'backwpup'); ?></h3>
-					<p><?php _e('With a single backup archive you are able to restore an installation. Use our restore feature, which is integrated in BackWPup Pro to restore your website directly from your WordPress backend. We also provide a restore standalone app with the Pro version to restore your site in case it is destroyed completely.', 'backwpup'); ?></p>
-					<h3><?php _ex('Ready to set up a backup job?', 'Dashboard heading', 'backwpup'); ?></h3>
-					<p><?php printf(__('Use one of the wizards to plan a backup, or use <a href="%s">expert mode</a> for full control over all options.', 'backwpup'), network_admin_url('admin.php') . '?page=backwpupeditjob'); echo ' '; _e('<strong>Please note: You are solely responsible for the security of your data; the authors of this plugin are not.</strong>', 'backwpup'); ?></p>
+					<h3><?php _ex('Planification des sauvegardes', 'Dashboard heading', 'backwpup'); ?></h3>
+					<p><?php _e('Les assistants de Agence Oueb Backup facilitent la planification de vos tâches de sauvegarde.', 'backwpup'); ?></p>
 				</div>
 			<?php } else {?>
 				<div class="backwpup-welcome backwpup-max-width">
-					<h3><?php _ex('Planning backups', 'Dashboard heading', 'backwpup'); ?></h3>
-					<p><?php _e('Use the short links in the <strong>First steps</strong> box to plan and schedule backup jobs.', 'backwpup'); echo ' '; _e('Use your backup archives to save your entire WordPress installation including <code>/wp-content/</code>. Push them to an external storage service if you don’t want to save the backups on the same server.', 'backwpup'); ?></p>
-					<h3><?php _ex('Restoring backups', 'Dashboard heading', 'backwpup'); ?></h3>
-					<p><?php _e('With a single backup archive you are able to restore an installation. Use our restore feature, which is integrated in BackWPup Pro to restore your website directly from your WordPress backend. We also provide a restore standalone app with the Pro version to restore your site in case it is destroyed completely.', 'backwpup'); ?></p>
-					<h3><?php _ex('Ready to set up a backup job?', 'Dashboard heading', 'backwpup'); ?></h3>
-					<p><?php printf(__('<a href="%s">Add a new backup job</a> and plan what you want to save.', 'backwpup'), network_admin_url('admin.php') . '?page=backwpupeditjob'); ?>
-					<br /><?php _e('<strong>Please note: You are solely responsible for the security of your data; the authors of this plugin are not.</strong>', 'backwpup'); ?></p>
+					<h3><?php _ex('Planification des sauvegardes', 'Dashboard heading', 'backwpup'); ?></h3>
+					<p><?php _e('Utilisez les liens rapides dans la boîte <strong>Premières étapes</strong> pour planifier et programmer vos sauvegardes.', 'backwpup'); echo ' '; _e('Utilisez vos archives de sauvegarde pour enregistrer toute votre installation WordPress, y compris <code>/wp-content/</code>.', 'backwpup'); ?></p>
+					<h3><?php _ex('Restauration des sauvegardes', 'Dashboard heading', 'backwpup'); ?></h3>
+					<p><?php _e('Avec une seule archive de sauvegarde, vous pouvez restaurer une installation. Contactez l\'Agence Oueb pour toute assistance.', 'backwpup'); ?></p>
+					<h3><?php _ex('Prêt à configurer une sauvegarde ?', 'Dashboard heading', 'backwpup'); ?></h3>
+					<p><?php printf(__('<a href="%s">Ajouter une nouvelle tâche</a> et planifiez ce que vous voulez sauvegarder.', 'backwpup'), network_admin_url('admin.php') . '?page=backwpupeditjob'); ?>
+					<br /><?php _e('<strong>Note : Vous êtes responsable de la sécurité de vos données.</strong>', 'backwpup'); ?></p>
 				</div>
 			<?php }
 
         if (current_user_can('backwpup_jobs_edit') && current_user_can('backwpup_logs') && current_user_can('backwpup_jobs_start')) {
             ?>
 				<div  id="backwpup-first-steps" class="metabox-holder postbox backwpup-floated-postbox">
-					<h3 class="hndle"><span><?php _e('First Steps', 'backwpup'); ?></span></h3>
+					<h3 class="hndle"><span><?php _e('Premières étapes', 'backwpup'); ?></span></h3>
 					<div class="inside">
 						<ul>
 							<?php if (BackWPup::is_pro()) { ?>
-								<li type="1"><a href="<?php echo wp_nonce_url(network_admin_url('admin.php') . '?page=backwpupwizard&wizard_start=SYSTEMTEST', 'wizard'); ?>"><?php _e('Test the installation', 'backwpup'); ?></a></li>
-								<li type="1"><a href="<?php echo wp_nonce_url(network_admin_url('admin.php') . '?page=backwpupwizard&wizard_start=JOB', 'wizard'); ?>"><?php _e('Create a Job', 'backwpup'); ?></a></li>
+								<li type="1"><a href="<?php echo wp_nonce_url(network_admin_url('admin.php') . '?page=backwpupwizard&wizard_start=SYSTEMTEST', 'wizard'); ?>"><?php _e('Tester l\'installation', 'backwpup'); ?></a></li>
+								<li type="1"><a href="<?php echo wp_nonce_url(network_admin_url('admin.php') . '?page=backwpupwizard&wizard_start=JOB', 'wizard'); ?>"><?php _e('Créer une tâche', 'backwpup'); ?></a></li>
 							<?php } else { ?>
-                           		<li type="1"><a href="<?php echo network_admin_url('admin.php') . '?page=backwpupsettings#backwpup-tab-information'; ?>"><?php _e('Check the installation', 'backwpup'); ?></a></li>
-                            	<li type="1"><a href="<?php echo network_admin_url('admin.php') . '?page=backwpupeditjob'; ?>"><?php _e('Create a Job', 'backwpup'); ?></a></li>
+                           		<li type="1"><a href="<?php echo network_admin_url('admin.php') . '?page=backwpupsettings#backwpup-tab-information'; ?>"><?php _e('Vérifier l\'installation', 'backwpup'); ?></a></li>
+                            	<li type="1"><a href="<?php echo network_admin_url('admin.php') . '?page=backwpupeditjob'; ?>"><?php _e('Créer une tâche', 'backwpup'); ?></a></li>
 							<?php } ?>
-							<li type="1"><a href="<?php echo network_admin_url('admin.php') . '?page=backwpupjobs'; ?>"><?php _e('Run the created job', 'backwpup'); ?></a></li>
-							<li type="1"><a href="<?php echo network_admin_url('admin.php') . '?page=backwpuplogs'; ?>"><?php _e('Check the job log', 'backwpup'); ?></a></li>
+							<li type="1"><a href="<?php echo network_admin_url('admin.php') . '?page=backwpupjobs'; ?>"><?php _e('Lancer la tâche créée', 'backwpup'); ?></a></li>
+							<li type="1"><a href="<?php echo network_admin_url('admin.php') . '?page=backwpuplogs'; ?>"><?php _e('Vérifier les journaux', 'backwpup'); ?></a></li>
 						</ul>
 					</div>
 				</div>
@@ -109,78 +105,12 @@ class BackWPup_Page_BackWPup
 
         if (current_user_can('backwpup_jobs_start')) {?>
 				<div id="backwpup-one-click-backup" class="metabox-holder postbox backwpup-floated-postbox">
-					<h3 class="hndle"><span><?php esc_html_e('One click backup', 'backwpup'); ?></span></h3>
+					<h3 class="hndle"><span><?php esc_html_e('Sauvegarde en un clic', 'backwpup'); ?></span></h3>
 					<div class="inside">
-						<a href="<?php echo wp_nonce_url(network_admin_url('admin.php?page=backwpup&action=dbdumpdl'), 'backwpupdbdumpdl'); ?>" class="button button-primary button-primary-bwp" title="<?php esc_attr_e('Generate a database backup of WordPress tables and download it right away!', 'backwpup'); ?>"><?php esc_html_e('Download database backup', 'backwpup'); ?></a><br />
+						<a href="<?php echo wp_nonce_url(network_admin_url('admin.php?page=backwpup&action=dbdumpdl'), 'backwpupdbdumpdl'); ?>" class="button button-primary button-primary-bwp" title="<?php esc_attr_e('Générer une sauvegarde de la base de données et la télécharger immédiatement !', 'backwpup'); ?>"><?php esc_html_e('Télécharger la sauvegarde BDD', 'backwpup'); ?></a><br />
 					</div>
 				</div>
 			<?php } ?>
-
-			<div id="backwpup-rss-feed" class="metabox-holder postbox backwpup-cleared-postbox backwpup-max-width">
-				<h3 class="hndle"><span><?php esc_attr_e('BackWPup News', 'backwpup'); ?></span></h3>
-				<div class="inside">
-					<?php
-
-                        $rss = fetch_feed(_x('https://backwpup.com/feed/', 'BackWPup News RSS Feed URL', 'backwpup'));
-
-        if (is_wp_error($rss)) {
-            echo '<p>' . sprintf(__('<strong>RSS Error</strong>: %s', 'backwpup'), $rss->get_error_message()) . '</p>';
-        } elseif (!$rss->get_item_quantity()) {
-            echo '<ul><li>' . esc_html__('An error has occurred, which probably means the feed is down. Try again later.', 'backwpup') . '</li></ul>';
-            $rss->__destruct();
-            unset($rss);
-        } else {
-            echo '<ul>';
-            $first = true;
-
-            foreach ($rss->get_items(0, 4) as $item) {
-                $link = $item->get_link();
-
-                while (stristr((string) $link, 'http') != $link) {
-                    $link = substr((string) $link, 1);
-                }
-                $link = esc_url(strip_tags((string) $link));
-                $title = esc_attr(strip_tags((string) $item->get_title()));
-                if (empty($title)) {
-                    $title = __('Untitled', 'backwpup');
-                }
-
-                $desc = str_replace(["\n", "\r"], ' ', esc_attr(strip_tags(@html_entity_decode((string) $item->get_description(), ENT_QUOTES, get_option('blog_charset')))));
-                $excerpt = wp_html_excerpt($desc, 360);
-
-                // Append ellipsis. Change existing [...] to [&hellip;].
-                if ('[...]' == substr($excerpt, -5)) {
-                    $excerpt = substr($excerpt, 0, -5) . '[&hellip;]';
-                } elseif ('[&hellip;]' != substr($excerpt, -10) && $desc != $excerpt) {
-                    $excerpt .= ' [&hellip;]';
-                }
-
-                $excerpt = esc_html($excerpt);
-
-                if ($first) {
-                    $summary = "<div class='rssSummary'>{$excerpt}</div>";
-                } else {
-                    $summary = '';
-                }
-
-                $date = '';
-                if ($first) {
-                    $date = $item->get_date('U');
-
-                    if ($date) {
-                        $date = ' <span class="rss-date">' . date_i18n(get_option('date_format'), $date) . '</span>';
-                    }
-                }
-
-                echo "<li><a href=\"{$link}\" title=\"{$desc}\">{$title}</a>{$date}{$summary}</li>";
-                $first = false;
-            }
-            echo '</ul>';
-            $rss->__destruct();
-            unset($rss);
-        } ?>
-				</div>
-			</div>
 
 			<?php
             if (BackWPup::is_pro()) {
@@ -213,31 +143,6 @@ class BackWPup_Page_BackWPup
                 }
             } ?>
 
-	        <div class="metabox-holder postbox backwpup-cleared-postbox backwpup-floated-postbox">
-		        <h3 class="hndle"><span><a href="https://www.ostraining.com/">OSTraining</a> <?php esc_html_e('Video: Introduction', 'backwpup'); ?></span></h3>
-		        <iframe class="inside" width="340" height="190" src="https://www.youtube.com/embed/pECMkLE27QQ?rel=0&amp;showinfo=0" frameborder="0" allowfullscreen></iframe>
-	        </div>
-
-	        <div class="metabox-holder postbox backwpup-floated-postbox">
-		        <h3 class="hndle"><span><a href="https://www.ostraining.com/">OSTraining</a> <?php esc_html_e('Video: Settings', 'backwpup'); ?></span></h3>
-		        <iframe class="inside" width="340" height="190" src="https://www.youtube.com/embed/F55xEoDnS0U?rel=0&amp;showinfo=0" frameborder="0" allowfullscreen></iframe>
-	        </div>
-
-	        <div class="metabox-holder postbox backwpup-cleared-postbox backwpup-floated-postbox">
-		        <h3 class="hndle"><span><a href="https://www.ostraining.com/">OSTraining</a> <?php esc_html_e('Video: Daily Backups', 'backwpup'); ?></span></h3>
-		        <iframe class="inside" width="340" height="190" src="https://www.youtube.com/embed/staZo0DS5m4?rel=0&amp;showinfo=0" frameborder="0" allowfullscreen></iframe>
-	        </div>
-
-	        <div class="metabox-holder postbox backwpup-floated-postbox">
-		        <h3 class="hndle"><span><a href="https://www.ostraining.com/">OSTraining</a> <?php esc_html_e('Video: Creating Full Backups', 'backwpup'); ?></span></h3>
-		        <iframe class="inside" width="340" height="190" src="https://www.youtube.com/embed/3N9FbmBuaac?rel=0&amp;showinfo=0" frameborder="0" allowfullscreen></iframe>
-	        </div>
-
-	        <div class="metabox-holder postbox backwpup-cleared-postbox backwpup-floated-postbox">
-		        <h3 class="hndle"><span><a href="https://www.ostraining.com/">OSTraining</a> <?php esc_html_e('Video: Restoring Backups', 'backwpup'); ?></span></h3>
-		        <iframe class="inside" width="340" height="190" src="https://www.youtube.com/embed/VIwDp87vYZY?rel=0&amp;showinfo=0" frameborder="0" allowfullscreen></iframe>
-	        </div>
-
 			<div id="backwpup-stats" class="metabox-holder postbox backwpup-cleared-postbox backwpup-max-width">
 				<div class="backwpup-table-wrap">
 				<?php
@@ -245,23 +150,6 @@ class BackWPup_Page_BackWPup
         self::mb_last_logs(); ?>
 				</div>
 			</div>
-
-			<?php if (!BackWPup::is_pro()) { ?>
-			<div id="backwpup-thank-you" class="metabox-holder postbox backwpup-cleared-postbox backwpup-max-width">
-				<h3 class="hndle"><span><?php _ex('Thank you for using BackWPup!', 'Pro teaser box', 'backwpup'); ?></span></h3>
-				<div class="inside">
-                    <p><a href="<?php esc_html_e('http://backwpup.com', 'backwpup'); ?>"><img class="backwpup-banner-img" src="<?php echo BackWPup::get_plugin_data('URL'); ?>/assets/images/banner.png" alt="<?php esc_html_e('BackWPup banner', 'backwpup'); ?>" /></a></p>
-					<h3 class="backwpup-text-center"><?php _ex('Get access to:', 'Pro teaser box', 'backwpup'); ?></h3>
-					<ul class="backwpup-text-center">
-						<li><?php _ex('First-class <strong>dedicated support</strong> at backwpup.com.', 'Pro teaser box', 'backwpup'); ?></li>
-						<li><?php echo esc_html_x('Differential backups to Google Drive and other cloud storage service.', 'Pro teaser box', 'backwpup'); ?></li>
-						<li><?php echo esc_html_x('Easy-peasy wizards to create and schedule backup jobs.', 'Pro teaser box', 'backwpup'); ?></li>
-						<li><?php printf('<a href="' . esc_html__('http://backwpup.com', 'backwpup') . '">%s</a>', _x('And more…', 'Pro teaser box, link text', 'backwpup')); ?></li>
-					</ul>
-					<p class="backwpup-text-center"><a href="<?php esc_html_e('http://backwpup.com', 'backwpup'); ?>" class="button button-primary button-primary-bwp" title="<?php _ex('Get BackWPup Pro now', 'Pro teaser box, link title', 'backwpup'); ?>"><?php _ex('Get BackWPup Pro now', 'Pro teaser box, link text', 'backwpup'); ?></a></p>
-				</div>
-			</div>
-			<?php } ?>
 
         </div>
 	<?php

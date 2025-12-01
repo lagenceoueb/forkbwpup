@@ -29,18 +29,19 @@ abstract class EnvironmentNotice extends Notice
      */
     protected function shouldDisplay(): bool
     {
-        if (parent::shouldDisplay()) {
-            $checker = new EnvironmentChecker($this->getConstraints());
-
-            try {
-                $checker->check();
-
-                // Passed constraints, so do not display
-                return false;
-            } catch (ConstraintFailedExceptionInterface|\RuntimeException $e) {
-                return true;
-            }
-        }
+        // TEMPORARILY DISABLED: Missing EnvironmentChecker dependency
+        // if (parent::shouldDisplay()) {
+        //     $checker = new EnvironmentChecker($this->getConstraints());
+        //
+        //     try {
+        //         $checker->check();
+        //
+        //         // Passed constraints, so do not display
+        //         return false;
+        //     } catch (ConstraintFailedExceptionInterface|\RuntimeException $e) {
+        //         return true;
+        //     }
+        // }
 
         return false;
     }
