@@ -1,0 +1,432 @@
+# Traduction française d'Oueb WP Backup.
+# Ce fichier est distribué sous la même licence que l'extension (GPL v2 ou ultérieure).
+msgid ""
+msgstr ""
+"Project-Id-Version: Oueb WP Backup 0.0.1\n"
+"Language: fr_FR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Domain: oueb-wp-backup\n"
+
+#: inc/class-s3-destination.php:139
+msgid "The S3 service saved in this job is no longer offered. Choose a European provider in the job settings."
+msgstr "Le service S3 enregistré dans cette opération n'est plus proposé. Choisissez un fournisseur européen dans les réglages de l'opération."
+
+#: inc/class-destination-downloader.php:112
+msgid "The storage did not give the size of this backup. Refresh the list of backups, then try again."
+msgstr "Le stockage n'a pas indiqué la taille de cette sauvegarde. Actualisez la liste des sauvegardes, puis réessayez."
+
+#: inc/oueb-providers.php:174
+msgid "Location"
+msgstr "Localisation"
+
+#: inc/oueb-providers.php:175
+msgid "Parent company"
+msgstr "Maison mère"
+
+#: inc/oueb-providers.php:176
+msgid "Renewable electricity"
+msgstr "Électricité renouvelable"
+
+#: inc/oueb-providers.php:177
+msgid "PUE (energy efficiency)"
+msgstr "PUE (efficacité énergétique)"
+
+#: inc/oueb-providers.php:178
+msgid "Cooling and heat reuse"
+msgstr "Refroidissement et réutilisation de la chaleur"
+
+#: inc/oueb-providers.php:179
+msgid "Environmental labels"
+msgstr "Labels environnementaux"
+
+#: inc/oueb-providers.php:180
+msgid "Security certifications"
+msgstr "Certifications de sécurité"
+
+#: inc/oueb-providers.php:184
+msgid "How were these providers chosen?"
+msgstr "Comment ces fournisseurs ont-ils été choisis ?"
+
+#: inc/oueb-providers.php:186
+msgid "Each provider has its headquarters and data centers in the European Union or Switzerland, has no parent company outside Europe, and proves that its electricity is renewable. The other information is given for reference, with its source."
+msgstr "Chaque fournisseur a son siège et ses centres de données dans l'Union européenne ou en Suisse, n'a pas de maison mère hors d'Europe et prouve que son électricité est renouvelable. Les autres informations sont données à titre indicatif, avec leur source."
+
+#. translators: %s: date of the last check.
+#: inc/oueb-providers.php:189
+#, php-format
+msgid "Last checked on %s."
+msgstr "Dernière vérification le %s."
+
+#. translators: %s: provider name.
+#: inc/oueb-providers.php:198
+#, php-format
+msgid "Criteria for %s"
+msgstr "Critères pour %s"
+
+#: inc/oueb-providers.php:209
+msgid "Not published."
+msgstr "Non publié."
+
+#. translators: %s: criterion name.
+#: inc/oueb-providers.php:213
+msgid "Source"
+msgstr "Source"
+
+#. translators: %s: criterion name.
+#: inc/oueb-providers.php:213
+#, php-format
+msgid "for: %s"
+msgstr "pour : %s"
+
+#: inc/class-backwpup-destination-kdrive.php:55
+msgid "Infomaniak kDrive"
+msgstr "Infomaniak kDrive"
+
+#: inc/class-backwpup-destination-kdrive.php:58
+msgid "kDrive ID"
+msgstr "Identifiant kDrive"
+
+#: inc/class-backwpup-destination-kdrive.php:61
+msgid "The number in the address of your kDrive: ksuite.infomaniak.com/kdrive/app/drive/NUMBER."
+msgstr "Le nombre dans l'adresse de votre kDrive : ksuite.infomaniak.com/kdrive/app/drive/NOMBRE."
+
+#: inc/class-backwpup-destination-kdrive.php:65
+msgid "Infomaniak email address"
+msgstr "Adresse e-mail Infomaniak"
+
+#: inc/class-backwpup-destination-kdrive.php:69
+msgid "Application password"
+msgstr "Mot de passe d'application"
+
+#: inc/class-backwpup-destination-kdrive.php:73
+msgid "Create an application password in your Infomaniak account, under Security. Never use your main password: an application password can be revoked without touching your account."
+msgstr "Créez un mot de passe d'application dans votre compte Infomaniak, rubrique Sécurité. N'utilisez jamais votre mot de passe principal : un mot de passe d'application se révoque sans toucher à votre compte."
+
+#: inc/class-backwpup-destination-kdrive.php:76 inc/class-backwpup-destination-sftp.php:57
+msgid "Leave empty to keep the saved value."
+msgstr "Laissez vide pour garder la valeur enregistrée."
+
+#: inc/class-backwpup-destination-kdrive.php:84 inc/class-backwpup-destination-sftp.php:120
+msgid "Backup settings"
+msgstr "Réglages de sauvegarde"
+
+#: inc/class-backwpup-destination-kdrive.php:87
+msgid "Folder in kDrive"
+msgstr "Dossier dans kDrive"
+
+#: inc/class-backwpup-destination-kdrive.php:90
+msgid "Created if missing."
+msgstr "Créé s'il n'existe pas."
+
+#: inc/class-backwpup-destination-kdrive.php:94 inc/class-backwpup-destination-sftp.php:130
+msgid "Backups to keep"
+msgstr "Sauvegardes à conserver"
+
+#: inc/class-backwpup-destination-kdrive.php:97 inc/class-backwpup-destination-sftp.php:133
+msgid "The oldest backups of this job are deleted beyond this number. 0 keeps them all."
+msgstr "Au-delà de ce nombre, les plus anciennes sauvegardes de cette opération sont supprimées. 0 les conserve toutes."
+
+#. translators: %d: attempt number.
+#: inc/class-backwpup-destination-kdrive.php:167
+#, php-format
+msgid "%d. Trying to send backup file to kDrive&#160;&hellip;"
+msgstr "%d. Envoi de la sauvegarde vers kDrive&#160;&hellip;"
+
+#: inc/class-backwpup-destination-kdrive.php:194
+msgid "The file size on kDrive does not match the local file."
+msgstr "La taille du fichier sur kDrive ne correspond pas à celle du fichier local."
+
+#. translators: %s: file path in kDrive.
+#: inc/class-backwpup-destination-kdrive.php:202
+#, php-format
+msgid "Backup transferred to kDrive: %s."
+msgstr "Sauvegarde envoyée vers kDrive : %s."
+
+#. translators: %s: error message.
+#: inc/class-backwpup-destination-kdrive.php:209
+#, php-format
+msgid "kDrive: %s"
+msgstr "kDrive : %s"
+
+#: inc/class-backwpup-destination-kdrive.php:272 inc/class-backwpup-destination-sftp.php:354
+msgid "This file is not a backup of this job."
+msgstr "Ce fichier n'est pas une sauvegarde de cette opération."
+
+#: inc/class-backwpup-destination-kdrive.php:319
+msgid "The kDrive ID must contain digits only."
+msgstr "L'identifiant kDrive ne contient que des chiffres."
+
+#. translators: %s: file path in kDrive.
+#: inc/class-backwpup-destination-kdrive.php:388
+#, php-format
+msgid "Cannot delete %s on kDrive."
+msgstr "Impossible de supprimer %s sur kDrive."
+
+#. translators: %d: number of deleted files.
+#: inc/class-backwpup-destination-kdrive.php:394
+#, php-format
+msgid "%d file deleted on kDrive."
+msgid_plural "%d files deleted on kDrive."
+msgstr[0] "%d fichier supprimé sur kDrive."
+msgstr[1] "%d fichiers supprimés sur kDrive."
+
+#. translators: %d: minimum number of characters.
+#: inc/class-page-settings.php:414
+#, php-format
+msgid "The key to start jobs externally was not changed: it needs at least %d letters and digits."
+msgstr "La clé de démarrage externe n'a pas changé : il lui faut au moins %d lettres et chiffres."
+
+#. translators: %d: minimum number of characters.
+#: inc/class-page-settings.php:657
+#, php-format
+msgid "This key is too short to resist guessing. Replace it with at least %d letters and digits, then update the trigger links you use outside cron-job.org."
+msgstr "Cette clé est trop courte pour résister à une recherche par essais. Remplacez-la par au moins %d lettres et chiffres, puis mettez à jour les liens de déclenchement que vous utilisez hors de cron-job.org."
+
+#: inc/class-oueb-s3-client.php:288 inc/class-oueb-s3-client.php:620 inc/class-oueb-webdav-client.php:116
+msgid "Can not open source file for transfer."
+msgstr "Impossible d'ouvrir le fichier à envoyer."
+
+#: inc/class-destination-s3.php:55
+msgid "Choose a service"
+msgstr "Choisir un service"
+
+#: inc/class-destination-s3.php:67
+msgid "The service saved in this job is no longer offered. Backups to it stopped. Choose a European provider, then check the bucket."
+msgstr "Le service enregistré dans cette opération n'est plus proposé et les sauvegardes vers lui sont arrêtées. Choisissez un fournisseur européen, puis vérifiez le bucket."
+
+#: inc/class-backwpup-destination-sftp.php:59
+msgid "SFTP server"
+msgstr "Serveur SFTP"
+
+#: inc/class-backwpup-destination-sftp.php:62
+msgid "Server"
+msgstr "Serveur"
+
+#: inc/class-backwpup-destination-sftp.php:65
+msgid "Domain name or IP address, without sftp://."
+msgstr "Nom de domaine ou adresse IP, sans sftp://."
+
+#: inc/class-backwpup-destination-sftp.php:69
+msgid "Port"
+msgstr "Port"
+
+#: inc/class-backwpup-destination-sftp.php:73
+msgid "Username"
+msgstr "Identifiant"
+
+#: inc/class-backwpup-destination-sftp.php:77 inc/class-backwpup-destination-sftp.php:80
+msgid "Authentication"
+msgstr "Authentification"
+
+#: inc/class-backwpup-destination-sftp.php:81 inc/class-backwpup-destination-sftp.php:87
+msgid "Password"
+msgstr "Mot de passe"
+
+#: inc/class-backwpup-destination-sftp.php:82
+msgid "Private key (recommended)"
+msgstr "Clé privée (recommandé)"
+
+#: inc/class-backwpup-destination-sftp.php:94
+msgid "Private key"
+msgstr "Clé privée"
+
+#: inc/class-backwpup-destination-sftp.php:97
+msgid "Paste the whole key, including the BEGIN and END lines."
+msgstr "Collez la clé entière, lignes BEGIN et END comprises."
+
+#: inc/class-backwpup-destination-sftp.php:101
+msgid "Key passphrase"
+msgstr "Phrase de passe de la clé"
+
+#: inc/class-backwpup-destination-sftp.php:104
+msgid "Only if the key is protected by a passphrase."
+msgstr "Seulement si une phrase de passe protège la clé."
+
+#: inc/class-backwpup-destination-sftp.php:108
+msgid "Server fingerprint"
+msgstr "Empreinte du serveur"
+
+#: inc/class-backwpup-destination-sftp.php:111
+msgid "Saved at the first successful connection. The plugin then refuses any server whose key differs."
+msgstr "Enregistrée à la première connexion réussie. L'extension refuse ensuite tout serveur dont la clé est différente."
+
+#: inc/class-backwpup-destination-sftp.php:114
+msgid "Forget this fingerprint (only after a server reinstallation)"
+msgstr "Oublier cette empreinte (seulement après une réinstallation du serveur)"
+
+#: inc/class-backwpup-destination-sftp.php:123
+msgid "Folder on the server"
+msgstr "Dossier sur le serveur"
+
+#: inc/class-backwpup-destination-sftp.php:126
+msgid "Relative to the home folder of the user, or absolute if it starts with /. Created if missing."
+msgstr "Relatif au dossier personnel de l'utilisateur, ou absolu s'il commence par /. Créé s'il n'existe pas."
+
+#. translators: %d: attempt number.
+#: inc/class-backwpup-destination-sftp.php:225
+#, php-format
+msgid "%d. Trying to send backup file to the SFTP server&#160;&hellip;"
+msgstr "%d. Envoi de la sauvegarde vers le serveur SFTP&#160;&hellip;"
+
+#. translators: 1: server name, 2: key fingerprint.
+#: inc/class-backwpup-destination-sftp.php:236
+#, php-format
+msgid "Connected to the SFTP server %1$s (key %2$s)."
+msgstr "Connexion au serveur SFTP %1$s établie (clé %2$s)."
+
+#: inc/class-backwpup-destination-sftp.php:251
+msgid "Resuming the interrupted upload."
+msgstr "Reprise de l'envoi interrompu."
+
+#: inc/class-backwpup-destination-sftp.php:273
+msgid "The file size on the SFTP server does not match the local file."
+msgstr "La taille du fichier sur le serveur SFTP ne correspond pas à celle du fichier local."
+
+#. translators: %s: file path on the server.
+#: inc/class-backwpup-destination-sftp.php:281
+#, php-format
+msgid "Backup transferred to %s."
+msgstr "Sauvegarde envoyée vers %s."
+
+#. translators: %s: file path on the server.
+#: inc/class-backwpup-destination-sftp.php:472
+#, php-format
+msgid "Cannot delete %s on the SFTP server."
+msgstr "Impossible de supprimer %s sur le serveur SFTP."
+
+#. translators: %d: number of deleted files.
+#: inc/class-backwpup-destination-sftp.php:478
+#, php-format
+msgid "%d file deleted on the SFTP server."
+msgid_plural "%d files deleted on the SFTP server."
+msgstr[0] "%d fichier supprimé sur le serveur SFTP."
+msgstr[1] "%d fichiers supprimés sur le serveur SFTP."
+
+#: inc/class-oueb-sftp-client.php:77
+msgid "Enter the SFTP server and the username."
+msgstr "Indiquez le serveur SFTP et l'identifiant."
+
+#: inc/class-oueb-sftp-client.php:88
+msgid "The SFTP server does not answer."
+msgstr "Le serveur SFTP ne répond pas. Vérifiez son adresse et son port."
+
+#. translators: 1: expected fingerprint, 2: received fingerprint.
+#: inc/class-oueb-sftp-client.php:98
+#, php-format
+msgid "The SFTP server key has changed. Expected %1$s, received %2$s. If the server was reinstalled, clear the saved fingerprint in the job settings."
+msgstr "La clé du serveur SFTP a changé : %1$s attendue, %2$s reçue. Si le serveur a été réinstallé, effacez l'empreinte enregistrée dans les réglages de l'opération."
+
+#: inc/class-oueb-sftp-client.php:117
+msgid "The SFTP server refused the username, password or key."
+msgstr "Le serveur SFTP a refusé l'identifiant, le mot de passe ou la clé."
+
+#. translators: %s: folder path on the server.
+#: inc/class-oueb-sftp-client.php:163
+#, php-format
+msgid "Cannot create the folder %s on the SFTP server."
+msgstr "Impossible de créer le dossier %s sur le serveur SFTP."
+
+#. translators: %s: file path on the server.
+#: inc/class-oueb-sftp-client.php:184
+#, php-format
+msgid "The upload of %s to the SFTP server failed."
+msgstr "L'envoi de %s vers le serveur SFTP a échoué."
+
+#. translators: %s: file path on the server.
+#: inc/class-oueb-sftp-client.php:205
+#, php-format
+msgid "Cannot read %s on the SFTP server."
+msgstr "Impossible de lire %s sur le serveur SFTP."
+
+#. translators: %s: technical error message.
+#: inc/class-oueb-sftp-client.php:290
+#, php-format
+msgid "The SFTP connection failed: %s"
+msgstr "La connexion SFTP a échoué : %s"
+
+#: inc/class-oueb-webdav-client.php:356
+msgid "The server refused the username or password. With kDrive, use an application password."
+msgstr "Le serveur a refusé l'identifiant ou le mot de passe. Avec kDrive, utilisez un mot de passe d'application."
+
+#: inc/class-oueb-webdav-client.php:357
+msgid "The server refused access to this folder."
+msgstr "Le serveur a refusé l'accès à ce dossier."
+
+#: inc/class-oueb-webdav-client.php:358
+msgid "The folder does not exist on the server."
+msgstr "Ce dossier n'existe pas sur le serveur."
+
+#: inc/class-oueb-webdav-client.php:359
+msgid "The storage space is full."
+msgstr "L'espace de stockage est plein."
+
+#. translators: %d: HTTP status code.
+#: inc/class-oueb-webdav-client.php:362
+#, php-format
+msgid "The WebDAV server answered with error %d."
+msgstr "Le serveur WebDAV a répondu par l'erreur %d."
+
+#: inc/class-backwpup-destination-sftp-downloader.php:81 inc/class-backwpup-destination-kdrive-downloader.php:60
+msgid "Could not write data to file."
+msgstr "Impossible d'écrire dans le fichier."
+
+#: inc/class-oueb-cronjob-org.php:99
+msgid "cron-job.org did not return a job ID."
+msgstr "cron-job.org n'a pas renvoyé d'identifiant de tâche."
+
+#. translators: %s: technical error message.
+#: inc/class-oueb-cronjob-org.php:225
+#, php-format
+msgid "The site cannot reach cron-job.org (%s). Check that your host allows outgoing connections."
+msgstr "Le site n'arrive pas à joindre cron-job.org (%s). Vérifiez que votre hébergeur autorise les connexions sortantes."
+
+#: inc/class-oueb-cronjob-org.php:233 inc/class-oueb-cronjob-org.php:234
+msgid "cron-job.org refused the API key."
+msgstr "cron-job.org a refusé la clé d'API."
+
+#: inc/class-oueb-cronjob-org.php:235
+msgid "The job no longer exists on cron-job.org."
+msgstr "La tâche n'existe plus sur cron-job.org."
+
+#: inc/class-oueb-cronjob-org.php:236
+msgid "Too many requests to cron-job.org. Try again in a few minutes."
+msgstr "Trop de requêtes vers cron-job.org. Réessayez dans quelques minutes."
+
+#. translators: %d: HTTP status code.
+#: inc/class-oueb-cronjob-org.php:239
+#, php-format
+msgid "cron-job.org answered with error %d."
+msgstr "cron-job.org a répondu par l'erreur %d."
+
+#: inc/cronjob-org.php:159
+msgid "Enter your cron-job.org API key to schedule this job."
+msgstr "Saisissez votre clé d'API cron-job.org pour planifier cette opération."
+
+#. translators: %s: error message.
+#: inc/cronjob-org.php:179 inc/cronjob-org.php:203
+#, php-format
+msgid "cron-job.org: %s"
+msgstr "cron-job.org : %s"
+
+#: inc/cronjob-org.php:219
+msgid "with cron-job.org, a free and open source service"
+msgstr "avec cron-job.org, service gratuit et au code ouvert"
+
+#: inc/cronjob-org.php:222
+msgid "The job starts at the exact time, even when nobody visits the site. The plugin sends cron-job.org the trigger link and the schedule of this job, nothing else."
+msgstr "L'opération démarre à l'heure exacte, même quand personne ne visite le site. L'extension envoie à cron-job.org le lien de déclenchement et la planification de cette opération, rien d'autre."
+
+#: inc/cronjob-org.php:225
+msgid "cron-job.org API key"
+msgstr "Clé d'API cron-job.org"
+
+#: inc/cronjob-org.php:231
+msgid "A key is saved for all jobs. Leave empty to keep it."
+msgstr "Une clé est enregistrée pour toutes les opérations. Laissez vide pour la garder."
+
+#: inc/cronjob-org.php:233
+msgid "Create a free account on cron-job.org, then generate a key in Settings, API."
+msgstr "Créez un compte gratuit sur cron-job.org, puis générez une clé dans Settings, API."

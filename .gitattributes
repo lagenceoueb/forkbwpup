@@ -9,3 +9,4 @@
 /readme.md export-ignore
 /composer.json export-ignore
 /languages/*.po export-ignore
+/languages/*.pot export-ignore

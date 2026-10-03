@@ -266,6 +266,68 @@ class Oueb_S3_Client {
 	}
 
 	/**
+	 * Envoie un fichier local en une seule requête, sans le charger en mémoire.
+	 *
+	 * Sert quand le service n'accepte pas l'envoi en plusieurs parties. Le
+	 * fichier est lu deux fois par blocs : une fois pour son empreinte, exigée
+	 * par la signature, une fois pendant l'envoi.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param string $bucket     Nom du bucket.
+	 * @param string $key        Clé de l'objet.
+	 * @param string $local_file Chemin du fichier local.
+	 * @param array  $headers    En-têtes supplémentaires, par exemple « x-amz-storage-class ».
+	 *
+	 * @throws Oueb_S3_Exception Si le fichier est illisible ou si l'envoi échoue.
+	 */
+	public function put_object_file( $bucket, $key, $local_file, $headers = array() ) {
+		$size         = filesize( $local_file );
+		$payload_hash = hash_file( 'sha256', $local_file );
+		if ( false === $size || false === $payload_hash ) {
+			throw new Oueb_S3_Exception( esc_html__( 'Can not open source file for transfer.', 'oueb-wp-backup' ) );
+		}
+
+		$target  = $this->target( $bucket, $key );
+		$url     = $this->scheme . '://' . $target['host'] . $target['path'];
+		$headers = array_change_key_case( $headers, CASE_LOWER );
+		if ( empty( $headers['content-type'] ) ) {
+			$headers['content-type'] = 'application/octet-stream';
+		}
+		$headers = $this->sign( 'PUT', $target['host'], $target['path'], '', $headers, '', $payload_hash );
+
+		$header_lines = array( 'Expect:' );
+		foreach ( $headers as $name => $value ) {
+			$header_lines[] = $name . ': ' . $value;
+		}
+
+		$attempt = 1;
+		while ( true ) {
+			$result = $this->send_file( $url, $local_file, (int) $size, $header_lines );
+
+			$transient = '' !== $result['error'] || in_array( $result['status'], self::TRANSIENT_STATUSES, true );
+			if ( $attempt >= self::MAX_ATTEMPTS || ! $transient ) {
+				break;
+			}
+
+			/** This filter is documented in inc/class-oueb-s3-client.php */
+			$delay = (int) apply_filters( 'oueb_s3_retry_delay', 2 ** ( $attempt - 1 ), $attempt );
+			if ( $delay > 0 ) {
+				sleep( $delay );
+			}
+			++$attempt;
+		}
+
+		if ( '' !== $result['error'] ) {
+			throw new Oueb_S3_Exception( esc_html( $result['error'] ) );
+		}
+
+		if ( $result['status'] < 200 || $result['status'] > 299 ) {
+			$this->throw_from_response( $result );
+		}
+	}
+
+	/**
 	 * Supprime un objet.
 	 *
 	 * @since 0.1.0
@@ -537,6 +599,60 @@ class Oueb_S3_Client {
 	}
 
 	/**
+	 * Envoie un fichier en flux avec cURL.
+	 *
+	 * L'API HTTP de WordPress n'envoie qu'un corps déjà chargé en mémoire.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param string   $url          URL de l'objet.
+	 * @param string   $local_file   Chemin du fichier local.
+	 * @param int      $size         Taille du fichier en octets.
+	 * @param string[] $header_lines En-têtes signés, au format « nom: valeur ».
+	 * @return array Résultat avec les clés « status », « body » et « error ».
+	 */
+	private function send_file( $url, $local_file, $size, $header_lines ) {
+		$handle = fopen( $local_file, 'rb' );
+		if ( false === $handle ) {
+			return array(
+				'status' => 0,
+				'body'   => '',
+				'error'  => __( 'Can not open source file for transfer.', 'oueb-wp-backup' ),
+			);
+		}
+
+		$curl = curl_init( $url );
+		curl_setopt_array(
+			$curl,
+			array(
+				CURLOPT_UPLOAD          => true,
+				CURLOPT_INFILE          => $handle,
+				CURLOPT_INFILESIZE      => $size,
+				CURLOPT_HTTPHEADER      => $header_lines,
+				CURLOPT_RETURNTRANSFER  => true,
+				CURLOPT_FOLLOWLOCATION  => false,
+				CURLOPT_CONNECTTIMEOUT  => 30,
+				// Pas de durée maximale pour une grosse archive, mais un envoi
+				// figé sous 1 Ko/s pendant 120 s s'arrête.
+				CURLOPT_TIMEOUT         => 0,
+				CURLOPT_LOW_SPEED_LIMIT => 1024,
+				CURLOPT_LOW_SPEED_TIME  => 120,
+			)
+		);
+
+		$body   = curl_exec( $curl );
+		$result = array(
+			'status' => (int) curl_getinfo( $curl, CURLINFO_RESPONSE_CODE ),
+			'body'   => is_string( $body ) ? $body : '',
+			'error'  => curl_error( $curl ),
+		);
+		curl_close( $curl );
+		fclose( $handle );
+
+		return $result;
+	}
+
+	/**
 	 * Indique si une réponse est une erreur passagère.
 	 *
 	 * @since 0.1.0
@@ -616,22 +732,27 @@ class Oueb_S3_Client {
 	 *
 	 * @since 0.1.0
 	 *
-	 * @param string $method       Méthode HTTP.
-	 * @param string $host         Hôte de la requête.
-	 * @param string $path         Chemin encodé.
-	 * @param string $query_string Chaîne de requête canonique.
-	 * @param array  $headers      En-têtes, noms en minuscules.
-	 * @param string $body         Corps de la requête.
+	 * @param string      $method       Méthode HTTP.
+	 * @param string      $host         Hôte de la requête.
+	 * @param string      $path         Chemin encodé.
+	 * @param string      $query_string Chaîne de requête canonique.
+	 * @param array       $headers      En-têtes, noms en minuscules.
+	 * @param string      $body         Corps de la requête.
+	 * @param string|null $payload_hash Empreinte SHA-256 du corps, déjà calculée pour un envoi de fichier.
 	 * @return array En-têtes complétés.
 	 */
-	private function sign( $method, $host, $path, $query_string, $headers, $body ) {
+	private function sign( $method, $host, $path, $query_string, $headers, $body, $payload_hash = null ) {
 		$amz_date = gmdate( 'Ymd\THis\Z' );
 		$day      = substr( $amz_date, 0, 8 );
 		$scope    = $day . '/' . $this->region . '/s3/aws4_request';
 
+		if ( null === $payload_hash ) {
+			$payload_hash = '' === $body ? self::EMPTY_PAYLOAD_HASH : hash( 'sha256', $body );
+		}
+
 		$headers['host']                 = $host;
 		$headers['x-amz-date']           = $amz_date;
-		$headers['x-amz-content-sha256'] = '' === $body ? self::EMPTY_PAYLOAD_HASH : hash( 'sha256', $body );
+		$headers['x-amz-content-sha256'] = $payload_hash;
 		ksort( $headers, SORT_STRING );
 
 		$canonical_headers = '';

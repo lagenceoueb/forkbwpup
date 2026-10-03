@@ -243,7 +243,10 @@ class BackWPup_Destination_Sftp extends BackWPup_Destinations {
 			$remote_file = ( '' === $dir ? '' : $dir . '/' ) . $job_object->backup_file;
 			$client->ensure_dir( $dir );
 
-			$resume = $job_object->substeps_done > 0 && $client->size( $remote_file ) > 0;
+			// En reprise, phpseclib compte les octets envoyés depuis la taille
+			// distante, pas depuis le début du fichier.
+			$offset = $job_object->substeps_done > 0 ? $client->size( $remote_file ) : 0;
+			$resume = $offset > 0;
 			if ( $resume ) {
 				$job_object->log( __( 'Resuming the interrupted upload.', 'oueb-wp-backup' ) );
 			}
@@ -253,12 +256,16 @@ class BackWPup_Destination_Sftp extends BackWPup_Destinations {
 				$remote_file,
 				$local_file,
 				$resume,
-				static function ( $sent ) use ( $job_object, &$last_save ) {
-					$job_object->substeps_done = (int) $sent;
+				static function ( $sent ) use ( $job_object, $offset, &$last_save ) {
+					$job_object->substeps_done = $offset + (int) $sent;
 					if ( time() - $last_save >= self::PROGRESS_INTERVAL ) {
 						$job_object->update_working_data();
 						$last_save = time();
 					}
+					// Redémarre la tâche avant la limite d'exécution de PHP, comme
+					// le fait FTP : l'envoi reprendra là où il s'est arrêté. Prend
+					// aussi en compte un arrêt demandé depuis l'administration.
+					$job_object->do_restart_time();
 				}
 			);
 
