@@ -24,6 +24,7 @@ L'extension est un fork de BackWPup 4.1.7 (Inpsyde puis WP Media), distribué so
 | Slug et text domain | `oueb-wp-backup` |
 | Préfixe du code | `oueb_` (fonctions, options, hooks), `Oueb_` (classes) |
 | Auteur | L'agence Oueb, https://lagenceoueb.tech |
+| Site affiché | lagenceoueb.tech uniquement : en-tête, encart, liens d'aide. wpservices.fr n'apparaît pas dans l'extension. |
 | Signature des commits | `L'agence Oueb <jm@lagenceoueb.tech>` |
 
 Palette, reprise de la console Oueb Monitor :
