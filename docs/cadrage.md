@@ -120,7 +120,7 @@ Maquettes validées : https://claude.ai/artifact/2vzez61heo6EDwMKyERgSU
 
 Pas d'échéance. Ordre de travail :
 
-1. **Sobriété.** Outillage qualité et CI, retrait du code mort et des supports écartés, nettoyage des dépendances et des assets, client S3 léger à la place du SDK AWS.
+1. **Sobriété.** Outillage qualité et CI, retrait du code mort et des supports écartés, nettoyage des dépendances et des assets, client S3 léger à la place du SDK AWS. Terminé le 3 octobre 2026 : archive de 1 906 Ko pour un budget de 2 048 Ko. Le contrôle de poids de la CI est bloquant.
 2. **Supports.** Vérification des fournisseurs, fiches et sources, SFTP, kDrive, écran de choix, cron-job.org.
 3. **RGAA.** Nouvelle interface d'après les maquettes, audit, corrections, grille de conformité.
 
