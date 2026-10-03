@@ -6,7 +6,7 @@
  * Author: L'agence Oueb
  * Author URI: https://lagenceoueb.tech
  * Version: 0.0.1
- * Requires at least: 6.4
+ * Requires at least: 6.6
  * Requires PHP: 8.1
  * Text Domain: backwpup
  * Domain Path: /languages/
@@ -15,6 +15,8 @@
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  */
 
+// Nouveau noyau, écrit pendant la refonte (voir docs/refonte.md).
+require_once __DIR__ . '/includes/bootstrap.php';
 
 if (!class_exists(\BackWPup::class, false)) {
     /**

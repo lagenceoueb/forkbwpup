@@ -1,0 +1,19 @@
+{
+	"name": "oueb-wp-backup",
+	"version": "0.0.1",
+	"private": true,
+	"description": "Interface d'administration d'Oueb WP Backup.",
+	"license": "GPL-2.0-or-later",
+	"author": "L'agence Oueb",
+	"scripts": {
+		"build": "wp-scripts build client/index.js --output-path=dist",
+		"start": "wp-scripts start client/index.js --output-path=dist",
+		"lint:js": "wp-scripts lint-js client",
+		"test": "wp-scripts test-unit-js client",
+		"lint:css": "wp-scripts lint-style \"client/**/*.scss\""
+	},
+	"devDependencies": {
+		"@wordpress/scripts": "30.26.2",
+		"typescript": "5.9.3"
+	}
+}

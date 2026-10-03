@@ -1,3 +1,5 @@
 /build/
 /tools/vendor/
 /node_modules/
+/dist/
+/.phpunit.cache/

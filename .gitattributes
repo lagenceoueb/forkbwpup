@@ -10,3 +10,8 @@
 /composer.json export-ignore
 /languages/*.po export-ignore
 /languages/*.pot export-ignore
+/client export-ignore
+/tests export-ignore
+/package.json export-ignore
+/package-lock.json export-ignore
+/phpunit.xml.dist export-ignore
