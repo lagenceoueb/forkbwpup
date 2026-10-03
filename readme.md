@@ -58,7 +58,7 @@ Trois modes au choix, tâche par tâche :
 
 ## Prérequis
 
-- WordPress 6.4 ou plus récent
+- WordPress 6.6 ou plus récent
 - PHP 8.1 ou plus récent
 - L'extension PHP cURL pour kDrive
 
@@ -80,14 +80,31 @@ N'activez pas Oueb WP Backup sur un site où BackWPup est actif (voir les limite
 
 ## Développement
 
-Les outils de développement ont leur propre `composer.json` dans `tools/`. Les dépendances embarquées dans `vendor/` ne bougent pas quand vous les installez.
+L'extension est en cours de réécriture, lot par lot : le plan est dans [`docs/refonte.md`](docs/refonte.md). Le nouveau code vit dans `includes/` (PHP) et `client/` (React). L'ancien code, dans `inc/`, `src/` et `views/`, fonctionne jusqu'à la bascule du lot 6.
+
+La nouvelle interface ne s'affiche que si `wp-config.php` contient :
+
+```php
+define( 'OUEB_WP_BACKUP_NEXT', true );
+```
+
+Les outils PHP ont leur propre `composer.json` dans `tools/`, séparé des dépendances embarquées dans `vendor/`. Ceux de l'interface sont dans `package.json`.
 
 ```sh
 composer --working-dir=tools install
+npm ci
+
 bin/lint.sh                  # syntaxe de chaque fichier PHP
 tools/vendor/bin/phpcs       # WordPress Coding Standards
+tools/vendor/bin/phpunit     # tests PHP
+npm run lint:js              # style du JavaScript
+npm run lint:css             # style des feuilles de style
+npm test                     # tests JavaScript
+npm run build                # interface construite dans dist/
 bin/build.sh                 # archive build/oueb-wp-backup.zip et contrôle du poids
 ```
+
+Les tests PHP tournent avec PHPUnit 9.6, comme ceux de WordPress : PHPUnit 10 exige des noms de fichiers incompatibles avec les WordPress Coding Standards.
 
 Le budget de l'archive est de 2 048 Ko. La variable `OUEB_BUDGET_KB` permet de le changer pour un essai local.
 
@@ -96,8 +113,11 @@ La CI ([`.github/workflows/qualite.yml`](.github/workflows/qualite.yml)) tourne 
 | Contrôle | Bloquant |
 |---|---|
 | Syntaxe PHP 8.1, 8.3 et 8.4 | oui |
+| Tests PHP 8.1 et 8.4 | oui |
+| WordPress Coding Standards, nouveau code (`includes/`, `tests/php/`) | oui |
+| WordPress Coding Standards, ancien code | non, jusqu'à la bascule |
+| Interface React : style, tests, construction | oui |
 | Poids de l'archive | oui |
-| WordPress Coding Standards | non, jusqu'à la version 1.0 |
 
 Le fichier [`.gitattributes`](.gitattributes) liste ce qui reste hors de l'archive distribuée : outils, documentation, CI, fichiers `.po`.
 

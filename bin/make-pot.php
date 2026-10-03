@@ -51,7 +51,7 @@ function oueb_pot_literal( $tokens ) {
 		return strtr(
 			substr( $raw, 1, -1 ),
 			array(
-				"\\'"   => "'",
+				"\\'"  => "'",
 				'\\\\' => '\\',
 			)
 		);

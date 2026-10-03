@@ -109,7 +109,7 @@ Quand l'extension détecte une installation de BackWPup, une notice propose « I
 
 ## Distribution et mises à jour
 
-- Prérequis : WordPress 6.4 et PHP 8.1, déclarés dans l'en-tête du plugin. WordPress refuse l'activation sur un serveur qui ne les remplit pas.
+- Prérequis : WordPress 6.6 et PHP 8.1, déclarés dans l'en-tête du plugin. WordPress refuse l'activation sur un serveur qui ne les remplit pas.
 - Utilisateurs : les clients de l'agence, dans leur administration.
 - Distribution : releases GitHub, puis wordpress.org.
 - Mises à jour : en-tête `Update URI` et filtre `update_plugins_github.com`. Le plugin lit la dernière release, télécharge le zip construit par la CI (dossier `oueb-wp-backup/`), garde la réponse en cache 12 heures. La classe vit dans son propre fichier pour être retirée de la version wordpress.org.
