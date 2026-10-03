@@ -281,6 +281,8 @@ class BackWPup_Page_Jobs extends WP_List_Table
             } else {
                 $r .= __('Not scheduled!', 'backwpup') . '<br />';
             }
+        } elseif (BackWPup_Option::get($item, 'activetype') == 'cronjoborg') {
+            $r .= '<span title="' . esc_attr(sprintf(__('Cron: %s', 'backwpup'), BackWPup_Option::get($item, 'cron'))) . '">' . esc_html__('By cron-job.org', 'backwpup') . '</span><br />';
         } elseif (BackWPup_Option::get($item, 'activetype') == 'link') {
             $r .= __('External link', 'backwpup') . '<br />';
         } else {
@@ -384,6 +386,7 @@ class BackWPup_Page_Jobs extends WP_List_Table
 
                     foreach ($_GET['jobs'] as $jobid) {
                         wp_clear_scheduled_hook('backwpup_cron', ['arg' => absint($jobid)]);
+                        oueb_cronjob_org_remove(absint($jobid));
                         BackWPup_Option::delete_job(absint($jobid));
                     }
                 }

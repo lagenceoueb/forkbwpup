@@ -323,6 +323,8 @@ return array(
     'Monolog\\Test\\TestCase' => $vendorDir . '/monolog/monolog/src/Monolog/Test/TestCase.php',
     'Monolog\\Utils' => $vendorDir . '/monolog/monolog/src/Monolog/Utils.php',
     'OS_Guess' => $vendorDir . '/pear/pear-core-minimal/src/OS/Guess.php',
+    'Oueb_Cronjob_Org' => $baseDir . '/inc/class-oueb-cronjob-org.php',
+    'Oueb_Cronjob_Org_Exception' => $baseDir . '/inc/class-oueb-cronjob-org-exception.php',
     'Oueb_S3_Client' => $baseDir . '/inc/class-oueb-s3-client.php',
     'Oueb_S3_Exception' => $baseDir . '/inc/class-oueb-s3-exception.php',
     'Oueb_Sftp_Client' => $baseDir . '/inc/class-oueb-sftp-client.php',

@@ -466,6 +466,8 @@ class ComposerStaticInit9864c52e8e2e64db56e675f7a3b14542
         'Monolog\\Test\\TestCase' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Test/TestCase.php',
         'Monolog\\Utils' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Utils.php',
         'OS_Guess' => __DIR__ . '/..' . '/pear/pear-core-minimal/src/OS/Guess.php',
+        'Oueb_Cronjob_Org' => __DIR__ . '/../..' . '/inc/class-oueb-cronjob-org.php',
+        'Oueb_Cronjob_Org_Exception' => __DIR__ . '/../..' . '/inc/class-oueb-cronjob-org-exception.php',
         'Oueb_S3_Client' => __DIR__ . '/../..' . '/inc/class-oueb-s3-client.php',
         'Oueb_S3_Exception' => __DIR__ . '/../..' . '/inc/class-oueb-s3-exception.php',
         'Oueb_Sftp_Client' => __DIR__ . '/../..' . '/inc/class-oueb-sftp-client.php',

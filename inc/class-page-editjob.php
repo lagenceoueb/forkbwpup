@@ -120,6 +120,7 @@ class BackWPup_Page_Editjob
                     '',
                     'wpcron',
                     'link',
+                    'cronjoborg',
                 ], true) ? $_POST['activetype'] : '';
                 BackWPup_Option::update($jobid, 'activetype', $activetype);
 
@@ -187,6 +188,10 @@ class BackWPup_Page_Editjob
                     $cron_next = BackWPup_Cron::cron_next(BackWPup_Option::get($jobid, 'cron'));
                     wp_schedule_single_event($cron_next, 'backwpup_cron', ['arg' => $jobid]);
                 }
+                if (!empty($_POST['cronjoborgkey'])) {
+                    update_site_option('oueb_cronjob_org_key', BackWPup_Encryption::encrypt(oueb_sanitize_secret(wp_unslash($_POST['cronjoborgkey']))));
+                }
+                oueb_cronjob_org_sync((int) $jobid);
                 break;
 
             default:
@@ -527,6 +532,8 @@ class BackWPup_Page_Editjob
 		                                &nbsp;<?php esc_html_e('with a link', 'backwpup'); ?> <code><a href="<?php echo $url['url']; ?>" target="_blank"><?php echo esc_html($url['url']); ?></a></code><br>
 		                                <span class="description"><?php esc_attr_e('Copy the link for an external start. This option has to be activated to make the link work.', 'backwpup'); ?></span>
 	                                </label>
+	                                <br/>
+	                                <?php oueb_cronjob_org_fields((int) $jobid); ?>
 
 	                            </fieldset>
 	                        </td>
