@@ -271,6 +271,10 @@ class BackWPup_Destination_Sftp extends BackWPup_Destinations {
 
 			if ( $client->size( $remote_file ) !== (int) filesize( $local_file ) ) {
 				$job_object->log( __( 'The file size on the SFTP server does not match the local file.', 'oueb-wp-backup' ), E_USER_ERROR );
+				// Une archive tronquée porte le nom d'une sauvegarde de la tâche :
+				// laissée en place, elle compterait dans la rotation et ferait
+				// supprimer une ancienne sauvegarde saine.
+				$client->delete( $remote_file );
 				$job_object->substeps_done = 0;
 
 				return false;

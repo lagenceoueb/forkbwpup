@@ -10,7 +10,10 @@
  * Renvoie le fuseau horaire du site au format attendu par cron-job.org.
  *
  * Un décalage fixe en heures entières devient un fuseau « Etc/GMT », dont le
- * signe est inversé par convention. Un décalage en demi-heure retombe sur UTC.
+ * signe est inversé par convention. Les zones « Etc/GMT » n'existent pas pour
+ * les décalages en demi-heure ou en quart d'heure : ils prennent une zone
+ * IANA de même décalage, sans heure d'été. Un décalage sans équivalent
+ * retombe sur UTC.
  *
  * @since 0.1.0
  *
@@ -25,7 +28,19 @@ function oueb_cronjob_org_timezone() {
 
 	$offset = (float) get_option( 'gmt_offset' );
 	if ( floor( $offset ) !== $offset ) {
-		return 'UTC';
+		$fractional = array(
+			'-9.5' => 'Pacific/Marquesas',
+			'3.5'  => 'Asia/Tehran',
+			'4.5'  => 'Asia/Kabul',
+			'5.5'  => 'Asia/Kolkata',
+			'5.75' => 'Asia/Kathmandu',
+			'6.5'  => 'Asia/Yangon',
+			'8.75' => 'Australia/Eucla',
+			'9.5'  => 'Australia/Darwin',
+		);
+		$key        = (string) $offset;
+
+		return isset( $fractional[ $key ] ) ? $fractional[ $key ] : 'UTC';
 	}
 
 	return 0.0 === $offset ? 'UTC' : sprintf( 'Etc/GMT%+d', -1 * (int) $offset );

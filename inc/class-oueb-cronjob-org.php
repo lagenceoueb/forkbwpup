@@ -124,13 +124,18 @@ class Oueb_Cronjob_Org {
 	/**
 	 * Convertit une expression cron en planning cron-job.org.
 	 *
-	 * Chaque champ devient une liste de valeurs, -1 signifiant « toutes ».
-	 * Les formes « * », « 5 », « 1,15 » et « *\/10 » sont reconnues.
+	 * Chaque champ devient une liste de valeurs, -1 signifiant « toutes ». La
+	 * conversion suit les règles de BackWPup_Cron::cron_next(), pour que
+	 * cron-job.org appelle le site aux mêmes heures que WP-Cron : « * » en
+	 * minutes vaut toutes les 10 minutes, et le pas d'une plage de minutes
+	 * vaut au moins 5.
 	 *
 	 * @since 0.1.0
 	 *
 	 * @param string $cron Expression cron à cinq champs : minute, heure, jour, mois, jour de semaine.
 	 * @return array Planning avec les clés « minutes », « hours », « mdays », « months » et « wdays ».
+	 *
+	 * @throws Oueb_Cronjob_Org_Exception Si un champ ne donne aucune valeur valide.
 	 */
 	public static function cron_to_schedule( $cron ) {
 		$fields = preg_split( '/\s+/', trim( (string) $cron ) );
@@ -146,7 +151,7 @@ class Oueb_Cronjob_Org {
 		$schedule = array();
 		$index    = 0;
 		foreach ( $ranges as $name => $range ) {
-			$schedule[ $name ] = self::expand_field( $fields[ $index ], $range[0], $range[1] );
+			$schedule[ $name ] = self::expand_field( $fields[ $index ], $name, $range[0], $range[1] );
 			++$index;
 		}
 
@@ -156,41 +161,76 @@ class Oueb_Cronjob_Org {
 	/**
 	 * Développe un champ cron en liste de valeurs.
 	 *
+	 * Reconnaît « * », « *\/n », « a », « a-b », « a-b/n » et leurs listes
+	 * séparées par des virgules.
+	 *
 	 * @since 0.1.0
 	 *
 	 * @param string $field Champ cron.
+	 * @param string $name  Nom du champ : « minutes », « hours », « mdays », « months » ou « wdays ».
 	 * @param int    $min   Valeur minimale du champ.
 	 * @param int    $max   Valeur maximale du champ.
 	 * @return int[] Valeurs, ou array( -1 ) pour « toutes ».
+	 *
+	 * @throws Oueb_Cronjob_Org_Exception Si le champ ne donne aucune valeur valide.
 	 */
-	private static function expand_field( $field, $min, $max ) {
-		if ( '*' === $field || '' === $field ) {
-			return array( -1 );
-		}
-
+	private static function expand_field( $field, $name, $min, $max ) {
 		$values = array();
-		foreach ( explode( ',', $field ) as $part ) {
-			if ( preg_match( '#^\*/(\d+)$#', $part, $matches ) ) {
-				$step = max( 1, (int) $matches[1] );
-				for ( $value = $min; $value <= $max; $value += $step ) {
-					$values[] = $value;
+
+		foreach ( explode( ',', (string) $field ) as $part ) {
+			$step = 1;
+			if ( false !== strpos( $part, '/' ) ) {
+				list( $part, $step ) = explode( '/', $part, 2 );
+				$step                = max( 1, (int) $step );
+			}
+
+			if ( '*' === $part ) {
+				$start = $min;
+				if ( 'minutes' === $name ) {
+					$step = max( 10, $step );
+				} elseif ( 'mdays' === $name || 'months' === $name ) {
+					// BackWPup part du pas pour les jours et les mois : « */2 » donne 2, 4, 6, etc.
+					$start = $step;
 				}
-			} elseif ( is_numeric( $part ) ) {
-				$value = (int) $part;
-				// Le dimanche s'écrit aussi 7 en cron.
-				$values[] = ( 6 === $max && 7 === $value ) ? 0 : $value;
+				$values = array_merge( $values, range( $start, $max, $step ) );
+			} elseif ( preg_match( '/^(\d+)-(\d+)$/', $part, $matches ) ) {
+				if ( 'minutes' === $name ) {
+					$step = max( 5, $step );
+				}
+				if ( (int) $matches[1] <= (int) $matches[2] ) {
+					$values = array_merge( $values, range( (int) $matches[1], (int) $matches[2], $step ) );
+				}
+			} elseif ( ctype_digit( $part ) ) {
+				$values[] = (int) $part;
 			}
 		}
 
 		$kept = array();
 		foreach ( array_unique( $values ) as $value ) {
+			// Le dimanche s'écrit aussi 7 en cron.
+			if ( 'wdays' === $name && 7 === $value ) {
+				$value = 0;
+			}
 			if ( $value >= $min && $value <= $max ) {
 				$kept[] = $value;
 			}
 		}
+		$kept = array_values( array_unique( $kept ) );
 		sort( $kept );
 
-		return empty( $kept ) ? array( -1 ) : $kept;
+		if ( empty( $kept ) ) {
+			throw new Oueb_Cronjob_Org_Exception(
+				esc_html(
+					sprintf(
+						/* translators: %s: cron field, such as "*\/5". */
+						__( 'The schedule field %s cannot be sent to cron-job.org. Check the schedule of this job.', 'oueb-wp-backup' ),
+						$field
+					)
+				)
+			);
+		}
+
+		return count( $kept ) === $max - $min + 1 ? array( -1 ) : $kept;
 	}
 
 	/**

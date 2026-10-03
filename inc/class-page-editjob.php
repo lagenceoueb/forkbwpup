@@ -13,11 +13,22 @@ class BackWPup_Page_Editjob
             $_GET['tab'] = 'job';
         }
 
+        // A bookmarked tab of a storage or job type removed from the plugin
+        // (Dropbox, XML export…) falls back to the job tab instead of a fatal error.
         if (substr($_GET['tab'], 0, 5) == 'dest-') {
             $jobid = (int) $_GET['jobid'];
             $id = strtoupper(str_replace('dest-', '', $_GET['tab']));
             $dest_class = BackWPup::get_destination($id);
-            $dest_class->edit_auth($jobid);
+            if ($dest_class) {
+                $dest_class->edit_auth($jobid);
+            } else {
+                $_GET['tab'] = 'job';
+            }
+        } elseif (substr($_GET['tab'], 0, 8) == 'jobtype-') {
+            $job_types = BackWPup::get_job_types();
+            if (!isset($job_types[strtoupper(str_replace('jobtype-', '', $_GET['tab']))])) {
+                $_GET['tab'] = 'job';
+            }
         }
     }
 
@@ -110,7 +121,8 @@ class BackWPup_Page_Editjob
                     '.tar.gz',
                 ], true) ? $_POST['archiveformat'] : '.zip';
                 BackWPup_Option::update($jobid, 'archiveformat', $archiveformat);
-                BackWPup_Option::update($jobid, 'archiveencryption', !empty($_POST['archiveencryption']));
+                // The encryption checkbox left with the Pro code: keep the value
+                // imported from BackWPup instead of turning encryption off on save.
 
                 BackWPup_Option::update($jobid, 'archivename', BackWPup_Job::sanitize_file_name(BackWPup_Option::normalize_archive_name($_POST['archivename'], $jobid, false)));
                 break;
@@ -197,11 +209,15 @@ class BackWPup_Page_Editjob
             default:
                 if (strstr((string) $tab, 'dest-')) {
                     $dest_class = BackWPup::get_destination(str_replace('dest-', '', (string) $tab));
-                    $dest_class->edit_form_post_save($jobid);
+                    if ($dest_class) {
+                        $dest_class->edit_form_post_save($jobid);
+                    }
                 }
                 if (strstr((string) $tab, 'jobtype-')) {
                     $id = strtoupper(str_replace('jobtype-', '', (string) $tab));
-                    $job_types[$id]->edit_form_post_save($jobid);
+                    if (isset($job_types[$id])) {
+                        $job_types[$id]->edit_form_post_save($jobid);
+                    }
                 }
         }
 

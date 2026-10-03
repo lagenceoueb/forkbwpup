@@ -868,6 +868,8 @@ class BackWPup_Destination_S3 extends BackWPup_Destinations
                     }
 
                     $s3->complete_multipart_upload($bucket, $key, $step['UploadId'], $step['Parts']);
+                    // The upload is closed: a retry must start a new one, not complete this one again.
+                    unset($step['UploadId'], $step['Parts'], $step['Part']);
                 } catch (Oueb_S3_Exception $e) {
                     $job_object->log(
                         E_USER_ERROR,
@@ -921,6 +923,17 @@ class BackWPup_Destination_S3 extends BackWPup_Destinations
                     ),
                     E_USER_ERROR
                 );
+
+                // A truncated archive must not count as a backup: the rotation
+                // below would delete a sound old backup to make room for it.
+                try {
+                    $s3->delete_object($bucket, $key);
+                } catch (Oueb_S3_Exception $e) {
+                    $job_object->log(sprintf(__('S3 Service API: %s', 'backwpup'), $e->getMessage()), E_USER_WARNING);
+                }
+                $job_object->substeps_done = 0;
+
+                return false;
             }
         } catch (Oueb_S3_Exception $e) {
             $job_object->log(

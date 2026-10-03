@@ -1335,6 +1335,30 @@ class BackWPup_Job
     }
 
     /**
+     * Skip a step whose storage or job type was removed from the plugin.
+     *
+     * A job started before the update keeps its planned steps, such as
+     * DEST_DROPBOX: running them would end in a fatal error at the restart.
+     *
+     * @param string $id Storage or job type id.
+     *
+     * @return bool Always true: the step is done.
+     */
+    private function skip_removed_step($id)
+    {
+        $this->log(
+            sprintf(
+                /* translators: %s: storage or job type id, such as DROPBOX. */
+                __('%s is no longer available in this plugin. This step is skipped.', 'oueb-wp-backup'),
+                $id
+            ),
+            E_USER_WARNING
+        );
+
+        return true;
+    }
+
+    /**
      * Do a job restart.
      *
      * @param bool $must Restart must done
@@ -1690,15 +1714,20 @@ class BackWPup_Job
                     $this->end();
                     break 2;
                 } elseif (strstr((string) $this->step_working, 'JOB_')) {
-                    $done = $job_types[str_replace('JOB_', '', (string) $this->step_working)]->job_run($this);
+                    $job_type_id = str_replace('JOB_', '', (string) $this->step_working);
+                    if (isset($job_types[$job_type_id])) {
+                        $done = $job_types[$job_type_id]->job_run($this);
+                    } else {
+                        $done = $this->skip_removed_step($job_type_id);
+                    }
                 } elseif (strstr((string) $this->step_working, 'DEST_SYNC_')) {
-                    $done = BackWPup::get_destination(str_replace('DEST_SYNC_', '', (string) $this->step_working))
-                        ->job_run_sync($this)
-                    ;
+                    $dest_id = str_replace('DEST_SYNC_', '', (string) $this->step_working);
+                    $dest_class = BackWPup::get_destination($dest_id);
+                    $done = $dest_class ? $dest_class->job_run_sync($this) : $this->skip_removed_step($dest_id);
                 } elseif (strstr((string) $this->step_working, 'DEST_')) {
-                    $done = BackWPup::get_destination(str_replace('DEST_', '', (string) $this->step_working))
-                        ->job_run_archive($this)
-                    ;
+                    $dest_id = str_replace('DEST_', '', (string) $this->step_working);
+                    $dest_class = BackWPup::get_destination($dest_id);
+                    $done = $dest_class ? $dest_class->job_run_archive($this) : $this->skip_removed_step($dest_id);
                 } elseif (!empty($this->steps_data[$this->step_working]['CALLBACK'])) {
                     $done = $this->steps_data[$this->step_working]['CALLBACK']($this);
                 }
