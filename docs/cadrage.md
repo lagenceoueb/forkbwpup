@@ -126,7 +126,6 @@ Le rebranding (nom, text domain, préfixes, migration des réglages) accompagne 
 
 ## Points ouverts
 
-- Archive complète de BackWPup 4.1.7 : le dépôt n'en contient qu'une partie (dépendances `vendor/` et fichiers de `src/` manquants).
 - Coordonnées de l'agence et phrase de présentation pour l'encart.
 - Logo en SVG pour l'icône du menu d'administration.
 - Renommage du dépôt GitHub en `oueb-wp-backup`, avant la première release.

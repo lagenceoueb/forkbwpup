@@ -37,5 +37,6 @@ bin/build.sh                 # archive build/oueb-wp-backup.zip et contrôle du 
 
 ## Limites connues
 
-- Le dépôt ne contient qu'une partie de BackWPup 4.1.7 : des dépendances de `vendor/` et des fichiers de `src/` manquent, et l'extension ne démarre pas en l'état.
+- Le code hérité ne respecte pas encore les WordPress Coding Standards (49 078 erreurs PHPCS au 3 octobre 2026).
+- Les options gardent les noms de BackWPup (`backwpup_*`). Ne pas installer à côté d'un BackWPup actif ni désinstaller sur un site qui l'utilise.
 - Les supports Dropbox, Azure, Rackspace, SugarSync et l'envoi par e-mail ont été retirés. Les tâches BackWPup qui les utilisent ne fonctionneront pas après import.
