@@ -1,109 +1,41 @@
-![Continuous Integration](https://github.com/wp-media/backwpup-pro/workflows/Continuous%20Integration/badge.svg)
+# Oueb WP Backup
 
-# FORKED BackWPup 4.1.7 - WordPress Backup Plugin 
-Schedule complete automatic backups of your WordPress installation. Decide which content will be stored (Dropbox, S3…). This is the free version
+Extension WordPress de sauvegarde et de restauration pour les administrateurs de site qui veulent gérer leurs sauvegardes seuls. Les sauvegardes partent uniquement chez des hébergeurs européens ou suisses, sélectionnés sur des critères éthiques et environnementaux.
 
-## Description
-The **backup plugin** **[BackWPup Pro](http://backwpup.com/)** can be used to save your complete installation including /wp-content/ and push them to an external Backup Service, like **Dropbox**, **S3**, **FTP** and many more, see list below. With a single backup .zip file you are able to easily restore an installation.
+Projet en cours de développement par [L'agence Oueb](https://lagenceoueb.tech). Ne pas installer sur un site en production pour l'instant.
 
-BackWPup Free is the number 1 backup-plugin for WordPress with nearly 1.000.000 downloads and in the top 20 of all WordPress Plugins (checked on rankwp.com)
+## Origine
 
-* Database Backup  *(needs mysqli)*
-* WordPress XML Export
-* Generate a file with installed plugins
-* Optimize Database
-* Check and repair Database
-* File backup
-* Backups in zip, tar, tar.gz format *(needs gz, ZipArchive)*
-* Store backup to directory
-* Store backup to FTP server *(needs ftp)*
-* Store backup to Dropbox *(needs curl)*
-* Store backup to S3 services *(needs curl)*
-* Store backup to Microsoft Azure (Blob) *(needs curl)*
-* Store backup to RackSpaceCloud *(needs PHP curl)*
-* Store backup to SugarSync *(needs curl)*
-* Store backup to Amazon Glacier *(needs PHP curl)*
-* Store backup to Google Drive *(needs curl)*
-* Store backup to OneDrive *(needs curl)*
-* Store backup to HiDrive *(needs curl)*
-* Send logs and backups by email
-* Multi-site support only as network admin
+Oueb WP Backup est un fork de [BackWPup](https://wordpress.org/plugins/backwpup/) 4.1.7, développé par Inpsyde puis WP Media, et distribué comme lui sous licence GPL v2 ou ultérieure (voir `LICENSE`). Le code d'origine reste la propriété de ses auteurs ; les modifications apportées depuis le fork sont signées L'agence Oueb.
 
-**Remember: The most expensive backup is the one you never did! And please test your backups!**
+BackWPup est une marque de ses détenteurs. Oueb WP Backup n'est ni affilié à BackWPup ni soutenu par ses éditeurs.
 
-**Made by [WP Media](https://wp-media.me) &middot; We love WordPress**
+## Ce qui change par rapport à BackWPup
 
-## Requirements
-* PHP >= 7.4
-* WordPress >=3.9
-* To use the Plugin with full functionality PHP 7.4 with mysqli, FTP,gz, ZipArchive and curl is needed.
-* Plugin functions that don't work because of your server settings, will not be displayed in admin area.
+- Stockage limité à des fournisseurs européens ou suisses, compatibles S3, plus SFTP et dossier local.
+- Archive d'installation visée : moins de 2 Mo.
+- Interface refaite pour l'autonomie des administrateurs, conforme RGAA 4.1 et WCAG 2.2 AA.
+- Code aux WordPress Coding Standards.
 
-## Screenshots
+Le détail des décisions est dans [`docs/cadrage.md`](docs/cadrage.md).
 
-1. [Working job and jobs overview](https://raw.github.com/inpsyde/backwpup/master/screenshot-1.png)
-2. [Job creation/edit](https://raw.github.com/inpsyde/backwpup/master/screenshot-2.png)
-3. [Displaying logs](https://raw.github.com/inpsyde/backwpup/master/screenshot-3.png)
-4. [Manage backup archives](https://raw.github.com/inpsyde/backwpup/master/screenshot-4.png)
-5. [Dashboard](https://raw.github.com/inpsyde/backwpup/master/screenshot-5.png)
+## Prérequis
 
-## Development
+- WordPress 6.4 ou plus récent
+- PHP 8.1 ou plus récent
 
-### Install dependencies & build
+## Développement
 
-- `$ composer install`
-- `$ npm install`
-- `$ sudo npm install --global gulp-cli`
-- `$ gulp buildAssets`
+Les outils de développement ont leur propre `composer.json` dans `tools/`, pour ne pas toucher aux dépendances embarquées dans `vendor/`.
 
-### Unit tests and code style
-
-1. `$ composer install`
-2. `$ ./vendor/bin/phpunit`
-
-### Building a release package
-
-If you want to build a release package
-(that can be used for deploying a new version on wordpress.org or manual installation on a WP website via ZIP uploading),
-follow these steps:
-
-1. Run the commands from "Install dependencies & build"
-2. The following command should get you a Free version ZIP file ready to be used on a WordPress site:
-
-```
-$ gulp free --packageVersion=?.?.? --compressPath=.
-```
-or for crate the PRO Version Zip for the german shop:
-
-```
-$ gulp pro --packageVersion=?.?.? --compressPath=. --language=de
-```
-or for crate the PRO Version Zip for the english shop:
-
-```
-$ gulp pro --packageVersion=?.?.? --compressPath=. --language=en
+```sh
+composer --working-dir=tools install
+bin/lint.sh                  # syntaxe de chaque fichier PHP
+tools/vendor/bin/phpcs       # WordPress Coding Standards
+bin/build.sh                 # archive build/oueb-wp-backup.zip et contrôle du poids
 ```
 
-## Setup
+## Limites connues
 
-You can install BackWPup locally using the dev environment of your preference, or you can use the DDEV setup provided in this repository which includes WP and all developments tools.
-
-To set up the DDEV environment, follow these steps:
-
-0. Install Docker and [DDEV](https://ddev.readthedocs.io/en/stable/).
-1. Edit the configuration in the [`.ddev/config.yml`](.ddev/config.yaml) file if needed.
-2. `$ ddev start`
-3. `$ ddev orchestrate` to install WP.
-4. Open https://backwpup-pro.ddev.site
-
-Use `$ ddev orchestrate -f` for reinstalattion (will destroy all site data).
-You may also need `$ ddev restart` to apply the config changes.
-
-### Running tests and other tasks in the DDEV environment
-
-For debugging, see [the DDEV docs](https://ddev.readthedocs.io/en/stable/users/step-debugging/).
-Enable xdebug via `$ ddev xdebug`, and press `Start Listening for PHP Debug Connections` in PHPStorm.
-After creating the server in the PHPStorm dialog, you need to set the local project path for the server plugin path.
-It should look [like this](https://i.imgur.com/ofsF1Mc.png).
-
-
+- Le dépôt ne contient qu'une partie de BackWPup 4.1.7 : des dépendances de `vendor/` et des fichiers de `src/` manquent, et l'extension ne démarre pas en l'état.
+- Les supports Dropbox, Azure, Rackspace, SugarSync et l'envoi par e-mail ont été retirés. Les tâches BackWPup qui les utilisent ne fonctionneront pas après import.

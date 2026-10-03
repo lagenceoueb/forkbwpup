@@ -1,0 +1,70 @@
+name: Qualité
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+permissions: {}
+
+jobs:
+  lint:
+    name: Syntaxe PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    strategy:
+      matrix:
+        php: [ '8.1', '8.3', '8.4' ]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: shivammathur/setup-php@b2f833f7d1c070621af195c088d275c4cd60ef8f # 2.9.0
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+      - name: Vérifier la syntaxe de chaque fichier PHP de l'extension
+        run: bin/lint.sh
+
+  phpcs:
+    name: WordPress Coding Standards
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    # Rapport seulement tant que le code hérité de BackWPup n'est pas migré.
+    # Le job devient bloquant à la version 1.0 (voir docs/cadrage.md).
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: shivammathur/setup-php@b2f833f7d1c070621af195c088d275c4cd60ef8f # 2.9.0
+        with:
+          php-version: '8.3'
+          coverage: none
+          tools: composer
+      - name: Installer PHPCS et WPCS
+        run: composer --working-dir=tools install --no-progress --no-interaction
+      - name: Lancer PHPCS
+        run: tools/vendor/bin/phpcs --report-full --report-summary
+
+  poids:
+    name: Poids de l'archive
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    # Rapport seulement jusqu'à la fin du lot Sobriété (budget : 2 Mo).
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Construire l'archive et vérifier son poids
+        run: bin/build.sh
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: ${{ !cancelled() }}
+        with:
+          name: oueb-wp-backup
+          path: build/oueb-wp-backup.zip
+          if-no-files-found: error

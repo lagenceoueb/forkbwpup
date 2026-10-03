@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<ruleset name="Oueb WP Backup">
+	<description>WordPress Coding Standards pour Oueb WP Backup.</description>
+
+	<file>.</file>
+
+	<!-- Bibliothèques tierces embarquées : elles gardent leur propre style. -->
+	<exclude-pattern>/vendor/*</exclude-pattern>
+	<!-- Outils de développement, hors de l'extension distribuée. -->
+	<exclude-pattern>/tools/*</exclude-pattern>
+	<exclude-pattern>/node_modules/*</exclude-pattern>
+	<exclude-pattern>/build/*</exclude-pattern>
+	<exclude-pattern>*.min.js</exclude-pattern>
+
+	<arg value="ps"/>
+	<arg name="colors"/>
+	<arg name="extensions" value="php"/>
+	<arg name="parallel" value="8"/>
+
+	<!-- Jeu de règles complet, sans exclusion. -->
+	<rule ref="WordPress"/>
+
+	<rule ref="PHPCompatibilityWP"/>
+
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array">
+				<element value="oueb"/>
+			</property>
+		</properties>
+	</rule>
+
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="oueb-wp-backup"/>
+			</property>
+		</properties>
+	</rule>
+
+	<config name="testVersion" value="8.1-"/>
+	<config name="minimum_wp_version" value="6.4"/>
+</ruleset>
