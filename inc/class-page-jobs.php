@@ -417,7 +417,9 @@ class BackWPup_Page_Jobs extends WP_List_Table
                     if ($key === 'archivename') {
                         $option = str_replace($old_job_id, $newjobid, (string) $option);
                     }
-                    if ($key === 'logfile' || $key === 'lastbackupdownloadurl' || $key === 'lastruntime' || $key === 'lastrun') {
+                    // The cron-job.org job belongs to the original: sharing it would let
+                    // the copy delete or redirect it.
+                    if ($key === 'logfile' || $key === 'lastbackupdownloadurl' || $key === 'lastruntime' || $key === 'lastrun' || $key === 'cronjoborgid') {
                         continue;
                     }
                     BackWPup_Option::update($newjobid, $key, $option);

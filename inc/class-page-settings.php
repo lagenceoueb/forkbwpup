@@ -11,6 +11,11 @@ class BackWPup_Page_Settings
     public const LICENSE_STATUS = 'license_status';
 
     /**
+     * Minimum length of the key to start jobs externally.
+     */
+    public const JOBRUNAUTHKEY_MIN_LENGTH = 32;
+
+    /**
      * @var Settings\SettingTab
      */
     private $settings_views;
@@ -353,8 +358,14 @@ class BackWPup_Page_Settings
             BackWPup_Option::default_site_options();
             BackWPup_Admin::message(__('Settings reset to default', 'backwpup'));
 
+            // The reset generated a new key: cron-job.org must call the new URL.
+            oueb_cronjob_org_sync_all();
+
             return;
         }
+
+        $previous_jobrunauthkey = (string) get_site_option('backwpup_cfg_jobrunauthkey');
+        $previous_cronjob_org = oueb_cronjob_org_settings_fingerprint();
 
         foreach ($this->settings_updaters as $setting) {
             $setting->update();
@@ -390,9 +401,23 @@ class BackWPup_Page_Settings
         update_site_option('backwpup_cfg_gzlogs', !empty($_POST['gzlogs']));
         update_site_option('backwpup_cfg_protectfolders', !empty($_POST['protectfolders']));
 
-        $_POST['jobrunauthkey'] = preg_replace('/[^a-zA-Z0-9]/', '', trim((string) $_POST['jobrunauthkey']));
+        $jobrunauthkey = preg_replace('/[^a-zA-Z0-9]/', '', trim((string) wp_unslash($_POST['jobrunauthkey'] ?? '')));
 
-        update_site_option('backwpup_cfg_jobrunauthkey', $_POST['jobrunauthkey']);
+        // The key travels in the trigger URL and can be replayed: keep it long.
+        if (strlen($jobrunauthkey) >= self::JOBRUNAUTHKEY_MIN_LENGTH) {
+            update_site_option('backwpup_cfg_jobrunauthkey', $jobrunauthkey);
+        } elseif ($jobrunauthkey !== $previous_jobrunauthkey) {
+            BackWPup_Admin::message(
+                esc_html(
+                    sprintf(
+                        /* translators: %d: minimum number of characters. */
+                        __('The key to start jobs externally was not changed: it needs at least %d letters and digits.', 'oueb-wp-backup'),
+                        self::JOBRUNAUTHKEY_MIN_LENGTH
+                    )
+                ),
+                true
+            );
+        }
 
         try {
             $_POST['logfolder'] = trailingslashit(
@@ -428,6 +453,11 @@ class BackWPup_Page_Settings
         $authentication['user_id'] = absint($_POST['authentication_user_id']);
         update_site_option('backwpup_cfg_authentication', $authentication);
         delete_site_transient('backwpup_cookies');
+
+        // cron-job.org keeps the URL and credentials it was given: update them.
+        if (oueb_cronjob_org_settings_fingerprint() !== $previous_cronjob_org) {
+            oueb_cronjob_org_sync_all();
+        }
 
         update_site_option('backwpup_cfg_keepplugindata', !empty($_POST['keepplugindata']));
 
@@ -618,6 +648,19 @@ class BackWPup_Page_Settings
             'backwpup'
         ); ?>
 								</p>
+								<?php if (strlen((string) get_site_option('backwpup_cfg_jobrunauthkey')) < self::JOBRUNAUTHKEY_MIN_LENGTH) { ?>
+									<p class="description">
+										<strong>
+											<?php
+											printf(
+												/* translators: %d: minimum number of characters. */
+												esc_html__('This key is too short to resist guessing. Replace it with at least %d letters and digits, then update the trigger links you use outside cron-job.org.', 'oueb-wp-backup'),
+												(int) self::JOBRUNAUTHKEY_MIN_LENGTH
+											);
+											?>
+										</strong>
+									</p>
+								<?php } ?>
 							</td>
 						</tr>
 						<tr>

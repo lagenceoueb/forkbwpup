@@ -18,6 +18,10 @@ if ( ! class_exists( \BackWPup::class ) ) {
         $wpdb->query('DELETE FROM ' . $wpdb->options . " WHERE option_name LIKE '%backwpup_%' ");
     }
 
+    // The cron-job.org jobs were removed on deactivation; the API key stays
+    // outside the backwpup_ prefix.
+    delete_site_option('oueb_cronjob_org_key');
+
     //delete Backwpup user roles
     // Special handling for multisite when network-activated.
     if (is_multisite()) {

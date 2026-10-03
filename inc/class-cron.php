@@ -156,8 +156,9 @@ class BackWPup_Cron
             $args = [];
         }
 
-        if (isset($_GET['backwpup_run'])) {
-            $args['run'] = sanitize_text_field($_GET['backwpup_run']);
+        $from_request = isset($_GET['backwpup_run']);
+        if ($from_request) {
+            $args['run'] = sanitize_text_field(wp_unslash($_GET['backwpup_run']));
         }
 
         if (isset($_GET['_nonce'])) {
@@ -219,14 +220,15 @@ class BackWPup_Cron
         if ($args['run'] === 'runext') {
             $nonce = get_site_option('backwpup_cfg_jobrunauthkey');
         }
-        if ($args['run'] === 'cronrun') {
-            $nonce = '';
-        }
         // check nonce
-        // cronrun comes from WordPress itself and carries no token.
-        $valid = $args['run'] === 'cronrun'
-            ? (string) $args['nonce'] === ''
-            : is_string($nonce) && $nonce !== '' && hash_equals($nonce, (string) $args['nonce']);
+        // cronrun carries no token: only BackWPup_Cron::run() may start it,
+        // after checking the job is scheduled with WP-Cron. A cronrun asked
+        // for in the URL would let any visitor start any job.
+        if ($args['run'] === 'cronrun') {
+            $valid = !$from_request;
+        } else {
+            $valid = is_string($nonce) && $nonce !== '' && hash_equals($nonce, (string) $args['nonce']);
+        }
         if (!$valid) {
             return;
         }
