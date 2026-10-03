@@ -55,15 +55,6 @@ final class BackWPup_Admin
             false
         );
 
-        // Register clipboard.js script
-        wp_register_script(
-            'backwpup_clipboard',
-            BackWPup::get_plugin_data('URL') . '/assets/js/vendor/clipboard.min.js',
-            ['jquery'],
-            '1.7.1',
-            true
-        );
-
         // Add Help.
         BackWPup_Help::help();
     }

@@ -308,7 +308,7 @@ class BackWPup_Page_Settings
             [
                 'jquery',
                 'backwpupgeneral',
-                'backwpup_clipboard',
+                'clipboard',
             ],
             filemtime(untrailingslashit(BackWPup::get_plugin_data('plugindir')) . "/assets/js/page_settings{$suffix}.js"),
             true
@@ -950,7 +950,7 @@ class BackWPup_Page_Settings
 					<script type="text/javascript">
                         jQuery( document ).ready( function ( $ )
                         {
-                            clipboard = new Clipboard( '#backwpup-copy-debug-info' );
+                            clipboard = new ClipboardJS( '#backwpup-copy-debug-info' );
 
                             clipboard.on( 'success', function ( e )
                             {
