@@ -16,7 +16,7 @@ class BackWPup_Destination_S3 extends BackWPup_Destinations
             's3accesskey' => '',
             's3secretkey' => '',
             's3bucket' => '',
-            's3region' => 'scaleway-par',
+            's3region' => 'scaleway-fr-par',
             's3ssencrypt' => '',
             's3storageclass' => '',
             's3dir' => trailingslashit(sanitize_file_name(get_bloginfo('name'))),
@@ -50,6 +50,7 @@ class BackWPup_Destination_S3 extends BackWPup_Destinations
                             </option>
                         <?php } ?>
                     </select>
+                    <?php oueb_storage_providers_cards(); ?>
                 </td>
             </tr>
             <tr>

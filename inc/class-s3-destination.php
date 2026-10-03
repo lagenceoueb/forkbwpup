@@ -35,21 +35,21 @@ final class BackWPup_S3_Destination
      */
     public static function options(): array
     {
-        return apply_filters(
-            'backwpup_s3_destination',
-            [
-                'scaleway-par' => [
-                    'label' => __('Scaleway: PAR', 'backwpup'),
-                    'region' => 'fr-par',
-                    'endpoint' => 'https://s3.fr-par.scw.cloud',
-                ],
-                'scaleway-ams' => [
-                    'label' => __('Scaleway: AMS', 'backwpup'),
-                    'region' => 'nl-ams',
-                    'endpoint' => 'https://s3.nl-ams.scw.cloud',
-                ],
-            ]
-        );
+        $options = [];
+
+        foreach (oueb_storage_providers() as $provider_id => $provider) {
+            foreach ($provider['regions'] as $region_id => $region) {
+                [$city, $country, $endpoint, $path_style] = $region;
+                $options[$provider_id . '-' . $region_id] = [
+                    'label' => sprintf('%1$s, %2$s (%3$s)', $provider['name'], $city, $country),
+                    'region' => $region_id,
+                    'endpoint' => $endpoint,
+                    'only_path_style_bucket' => $path_style,
+                ];
+            }
+        }
+
+        return apply_filters('backwpup_s3_destination', $options);
     }
 
     /**

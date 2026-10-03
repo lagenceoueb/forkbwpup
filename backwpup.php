@@ -44,6 +44,7 @@ if (!class_exists(\BackWPup::class, false)) {
 
             require_once __DIR__ . '/inc/functions.php';
             require_once __DIR__ . '/inc/cronjob-org.php';
+            require_once __DIR__ . '/inc/oueb-providers.php';
             if (file_exists(__DIR__ . '/vendor/autoload.php')) {
                 require_once __DIR__ . '/vendor/autoload.php';
             }

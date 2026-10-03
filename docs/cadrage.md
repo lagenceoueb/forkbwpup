@@ -55,9 +55,25 @@ Chaque fiche fournisseur indique, avec sa source :
 - les certifications et labels environnementaux (ISO 14001, Code de conduite européen sur les centres de données) ;
 - les qualifications de sécurité (SecNumCloud, ISO 27001).
 
-### Candidats à vérifier
+### Fournisseurs retenus
 
-Tous proposent un stockage compatible S3 : Scaleway, OVHcloud, Clever Cloud (Cellar), Outscale (France) ; Hetzner, IONOS (Allemagne) ; Infomaniak, Exoscale (Suisse). Un candidat qui ne prouve pas son électricité renouvelable sort de la liste.
+Vérification du 3 octobre 2026, détaillée avec ses sources dans `inc/oueb-providers.php`.
+
+| Fournisseur | Pays | Régions proposées |
+|---|---|---|
+| Scaleway | France | Paris, Amsterdam, Varsovie, Milan |
+| OVHcloud | France | Gravelines, Roubaix, Strasbourg, Paris, Milan, Francfort, Varsovie |
+| 3DS Outscale | France | Paris (la région SecNumCloud reste en endpoint personnalisé) |
+| Hetzner | Allemagne | Falkenstein, Nuremberg, Helsinki |
+| IONOS | Allemagne | Francfort, Berlin, Logroño |
+| Infomaniak | Suisse | Public Cloud 1 et 2 (Swiss Backup en endpoint personnalisé) |
+
+Écartés :
+
+- **Exoscale** : maison mère finale América Movil (Mexique), via A1 Group ; zone de Sofia à environ 75 % d'électricité renouvelable.
+- **Clever Cloud** : énergie « bas carbone » revendiquée, sans preuve d'électricité renouvelable. À réexaminer si une preuve est publiée.
+
+Plusieurs sites de fournisseurs étaient inaccessibles depuis l'environnement de vérification : une partie des faits vient d'extraits de recherche, avec l'adresse de la page officielle. L'agence relit chaque source avant la première version publique.
 
 ### Autres supports
 
