@@ -23,6 +23,7 @@ final class BackWPup_S3_Destination
             'region' => '',
             'multipart' => true,
             'only_path_style_bucket' => false,
+            'removed' => false,
         ];
 
         $this->options = array_merge($defaults, $options);
@@ -60,9 +61,40 @@ final class BackWPup_S3_Destination
     public static function fromOption(string $idOrUrl): self
     {
         $destinations = self::options();
+        $id = self::normalizeId($idOrUrl);
+
+        if (isset($destinations[$id])) {
+            return new self($destinations[$id]);
+        }
 
         // An unknown id comes from a job saved with a removed service, such as Amazon S3.
-        return new self($destinations[$idOrUrl] ?? []);
+        return new self(['removed' => $id !== '']);
+    }
+
+    /**
+     * Translate a service id saved by BackWPup into the id of the same service here.
+     *
+     * Only Scaleway is offered under another id. The other BackWPup services
+     * (Amazon S3, Google Cloud Storage, DigitalOcean, DreamHost) are removed.
+     *
+     * @param string $id Service id saved in the job.
+     */
+    public static function normalizeId(string $id): string
+    {
+        $legacy = [
+            'scaleway-par' => 'scaleway-fr-par',
+            'scaleway-ams' => 'scaleway-nl-ams',
+        ];
+
+        return $legacy[$id] ?? $id;
+    }
+
+    /**
+     * Whether the job was saved with a service this plugin no longer offers.
+     */
+    public function isRemoved(): bool
+    {
+        return !empty($this->options['removed']);
     }
 
     /**
@@ -103,6 +135,10 @@ final class BackWPup_S3_Destination
      */
     public function client($accessKey, $secretKey): Oueb_S3_Client
     {
+        if ($this->isRemoved()) {
+            throw new Oueb_S3_Exception(esc_html__('The S3 service saved in this job is no longer offered. Choose a European provider in the job settings.', 'oueb-wp-backup'));
+        }
+
         if ($this->endpoint() === '') {
             throw new Oueb_S3_Exception(esc_html__('Choose an S3 service or enter its endpoint.', 'backwpup'));
         }

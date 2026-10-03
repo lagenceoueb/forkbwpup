@@ -18,6 +18,26 @@
 class Oueb_Webdav_Client {
 
 	/**
+	 * Débit, en octets par seconde, sous lequel un envoi est considéré bloqué.
+	 *
+	 * @since 0.1.0
+	 * @var int
+	 */
+	const LOW_SPEED_LIMIT = 1024;
+
+	/**
+	 * Durée, en secondes, sous LOW_SPEED_LIMIT au bout de laquelle l'envoi s'arrête.
+	 *
+	 * L'envoi n'a pas de durée maximale, pour les gros sites. Sans ce seuil, une
+	 * connexion figée bloquerait la tâche sans fin : le suivi de progression
+	 * relance le délai d'exécution de PHP toutes les deux secondes.
+	 *
+	 * @since 0.1.0
+	 * @var int
+	 */
+	const LOW_SPEED_TIME = 120;
+
+	/**
 	 * Adresse de base, sans barre oblique finale.
 	 *
 	 * @since 0.1.0
@@ -107,6 +127,8 @@ class Oueb_Webdav_Client {
 				CURLOPT_HTTPAUTH         => CURLAUTH_BASIC,
 				CURLOPT_RETURNTRANSFER   => true,
 				CURLOPT_TIMEOUT          => 0,
+				CURLOPT_LOW_SPEED_LIMIT  => self::LOW_SPEED_LIMIT,
+				CURLOPT_LOW_SPEED_TIME   => self::LOW_SPEED_TIME,
 				CURLOPT_CONNECTTIMEOUT   => 30,
 				CURLOPT_HTTPHEADER       => array( 'Content-Type: application/octet-stream' ),
 				CURLOPT_NOPROGRESS       => null === $progress,

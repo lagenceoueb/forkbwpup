@@ -36,6 +36,24 @@ class Oueb_S3_Client {
 	const EMPTY_PAYLOAD_HASH = 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855';
 
 	/**
+	 * Nombre maximal d'envois d'une même requête, premier essai compris.
+	 *
+	 * @since 0.1.0
+	 * @var int
+	 */
+	const MAX_ATTEMPTS = 3;
+
+	/**
+	 * Statuts HTTP d'une erreur passagère, qui justifient un nouvel essai.
+	 *
+	 * 429 et 503 couvrent « SlowDown », que les services renvoient sous charge.
+	 *
+	 * @since 0.1.0
+	 * @var int[]
+	 */
+	const TRANSIENT_STATUSES = array( 429, 500, 502, 503, 504 );
+
+	/**
 	 * Schéma de l'endpoint, « https » ou « http ».
 	 *
 	 * @since 0.1.0
@@ -472,7 +490,30 @@ class Oueb_S3_Client {
 			$url
 		);
 
-		$response = wp_remote_request( $url, $args );
+		// Un seul 503 sur la partie 900 d'un envoi multipart ne doit pas tout
+		// faire recommencer : la requête repart, avec un délai qui double.
+		$attempt = 1;
+		while ( true ) {
+			$response = wp_remote_request( $url, $args );
+
+			if ( $attempt >= self::MAX_ATTEMPTS || ! self::is_transient( $response ) ) {
+				break;
+			}
+
+			/**
+			 * Filtre le délai, en secondes, avant un nouvel essai de requête S3.
+			 *
+			 * @since 0.1.0
+			 *
+			 * @param int $delay   Délai en secondes : 1 avant le deuxième essai, 2 avant le troisième.
+			 * @param int $attempt Numéro de l'essai qui vient d'échouer.
+			 */
+			$delay = (int) apply_filters( 'oueb_s3_retry_delay', 2 ** ( $attempt - 1 ), $attempt );
+			if ( $delay > 0 ) {
+				sleep( $delay );
+			}
+			++$attempt;
+		}
 
 		if ( is_wp_error( $response ) ) {
 			throw new Oueb_S3_Exception( esc_html( $response->get_error_message() ) );
@@ -493,6 +534,22 @@ class Oueb_S3_Client {
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Indique si une réponse est une erreur passagère.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param array|WP_Error $response Réponse de wp_remote_request().
+	 * @return bool Vrai pour une erreur de transport ou un statut de TRANSIENT_STATUSES.
+	 */
+	private static function is_transient( $response ) {
+		if ( is_wp_error( $response ) ) {
+			return true;
+		}
+
+		return in_array( (int) wp_remote_retrieve_response_code( $response ), self::TRANSIENT_STATUSES, true );
 	}
 
 	/**

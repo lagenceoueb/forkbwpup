@@ -39,17 +39,34 @@ class BackWPup_Destination_S3 extends BackWPup_Destinations
                     </label>
                 </th>
                 <td>
+                    <?php
+                    $s3_services = BackWPup_S3_Destination::options();
+                    $s3_saved = BackWPup_S3_Destination::normalizeId((string) BackWPup_Option::get($jobid, 's3region'));
+                    // A service removed from the plugin must not silently become the first one of the list.
+                    $s3_removed = $s3_saved !== ''
+                        && !isset($s3_services[$s3_saved])
+                        && empty(BackWPup_Option::get($jobid, 's3base_url'));
+                    ?>
                     <select name="s3region"
                             id="s3region"
-                            title="<?php esc_attr_e('S3 Region', 'backwpup'); ?>">
-                        <?php foreach (BackWPup_S3_Destination::options() as $id => $option) { ?>
+                            title="<?php esc_attr_e('S3 Region', 'backwpup'); ?>"
+                            <?php echo $s3_removed ? 'aria-describedby="s3region-removed"' : ''; ?>>
+                        <?php if ($s3_removed) { ?>
+                            <option value="" selected><?php esc_html_e('Choose a service', 'oueb-wp-backup'); ?></option>
+                        <?php } ?>
+                        <?php foreach ($s3_services as $id => $option) { ?>
                             <option value="<?php echo esc_attr($id); ?>"
-                                <?php selected($id, BackWPup_Option::get($jobid, 's3region')); ?>
+                                <?php selected($id, $s3_saved); ?>
                             >
                                 <?php echo esc_html($option['label']); ?>
                             </option>
                         <?php } ?>
                     </select>
+                    <?php if ($s3_removed) { ?>
+                        <p class="description" id="s3region-removed">
+                            <?php esc_html_e('The service saved in this job is no longer offered. Backups to it stopped. Choose a European provider, then check the bucket.', 'oueb-wp-backup'); ?>
+                        </p>
+                    <?php } ?>
                     <?php oueb_storage_providers_cards(); ?>
                 </td>
             </tr>

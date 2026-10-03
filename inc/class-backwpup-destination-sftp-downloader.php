@@ -22,24 +22,43 @@ final class BackWPup_Destination_Sftp_Downloader implements BackWPup_Destination
 	private $data;
 
 	/**
-	 * Connexion SFTP.
+	 * Connexion SFTP, ouverte au premier usage.
 	 *
 	 * @since 0.1.0
-	 * @var Oueb_Sftp_Client
+	 * @var Oueb_Sftp_Client|null
 	 */
-	private $client;
+	private $client = null;
 
 	/**
-	 * Construit le téléchargement et ouvre la connexion.
+	 * Construit le téléchargement.
 	 *
 	 * @since 0.1.0
 	 *
 	 * @param BackWpUp_Destination_Downloader_Data $data Données du téléchargement.
 	 */
 	public function __construct( BackWpUp_Destination_Downloader_Data $data ) {
-		$this->data   = $data;
-		$destination  = new BackWPup_Destination_Sftp();
-		$this->client = $destination->connect( $data->job_id() );
+		$this->data = $data;
+	}
+
+	/**
+	 * Renvoie la connexion SFTP, ouverte au premier appel.
+	 *
+	 * Ouvrir la connexion dans le constructeur plaçait ses erreurs (serveur
+	 * hors ligne, clé du serveur changée) hors du try/catch du téléchargement :
+	 * l'administrateur voyait une fenêtre bloquée au lieu du message.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return Oueb_Sftp_Client Connexion ouverte.
+	 *
+	 * @throws Oueb_Sftp_Exception Si la connexion échoue.
+	 */
+	private function client() {
+		if ( null === $this->client ) {
+			$this->client = ( new BackWPup_Destination_Sftp() )->connect( $this->data->job_id() );
+		}
+
+		return $this->client;
 	}
 
 	/**
@@ -53,7 +72,7 @@ final class BackWPup_Destination_Sftp_Downloader implements BackWPup_Destination
 	 * @throws RuntimeException Si l'écriture locale échoue.
 	 */
 	public function download_chunk( $start_byte, $end_byte ) {
-		$data = $this->client->read( $this->data->source_file_path(), (int) $start_byte, (int) $end_byte - (int) $start_byte + 1 );
+		$data = $this->client()->read( $this->data->source_file_path(), (int) $start_byte, (int) $end_byte - (int) $start_byte + 1 );
 
 		// Le premier morceau recrée le fichier, les suivants l'allongent.
 		$written = file_put_contents( $this->data->local_file_path(), $data, 0 === (int) $start_byte ? 0 : FILE_APPEND );
@@ -71,6 +90,6 @@ final class BackWPup_Destination_Sftp_Downloader implements BackWPup_Destination
 	 * @return int Taille en octets.
 	 */
 	public function calculate_size() {
-		return $this->client->size( $this->data->source_file_path() );
+		return $this->client()->size( $this->data->source_file_path() );
 	}
 }
