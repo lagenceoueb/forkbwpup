@@ -154,11 +154,11 @@ class Oueb_Sftp_Client {
 	 * @throws Oueb_Sftp_Exception Si le dossier ne peut pas être créé.
 	 */
 	public function ensure_dir( $dir ) {
-		if ( '' === $dir || $this->sftp->is_dir( $dir ) ) {
+		if ( '' === $dir || $this->guard( fn() => $this->sftp->is_dir( $dir ) ) ) {
 			return;
 		}
 
-		if ( ! $this->sftp->mkdir( $dir, -1, true ) ) {
+		if ( ! $this->guard( fn() => $this->sftp->mkdir( $dir, -1, true ) ) ) {
 			/* translators: %s: folder path on the server. */
 			throw new Oueb_Sftp_Exception( esc_html( sprintf( __( 'Cannot create the folder %s on the SFTP server.', 'oueb-wp-backup' ), $dir ) ) );
 		}
@@ -179,7 +179,7 @@ class Oueb_Sftp_Client {
 	public function upload( $remote_file, $local_file, $resume = false, $progress = null ) {
 		$mode = SFTP::SOURCE_LOCAL_FILE | ( $resume ? SFTP::RESUME : 0 );
 
-		if ( ! $this->sftp->put( $remote_file, $local_file, $mode, -1, -1, $progress ) ) {
+		if ( ! $this->guard( fn() => $this->sftp->put( $remote_file, $local_file, $mode, -1, -1, $progress ) ) ) {
 			/* translators: %s: file path on the server. */
 			throw new Oueb_Sftp_Exception( esc_html( sprintf( __( 'The upload of %s to the SFTP server failed.', 'oueb-wp-backup' ), $remote_file ) ) );
 		}
@@ -198,7 +198,7 @@ class Oueb_Sftp_Client {
 	 * @throws Oueb_Sftp_Exception Si la lecture échoue.
 	 */
 	public function read( $remote_file, $offset, $length ) {
-		$data = $this->sftp->get( $remote_file, false, (int) $offset, (int) $length );
+		$data = $this->guard( fn() => $this->sftp->get( $remote_file, false, (int) $offset, (int) $length ) );
 
 		if ( false === $data ) {
 			/* translators: %s: file path on the server. */
@@ -217,7 +217,7 @@ class Oueb_Sftp_Client {
 	 * @return int Taille en octets, 0 si le fichier n'existe pas.
 	 */
 	public function size( $remote_file ) {
-		$stat = $this->sftp->stat( $remote_file );
+		$stat = $this->guard( fn() => $this->sftp->stat( $remote_file ) );
 
 		return is_array( $stat ) && isset( $stat['size'] ) ? (int) $stat['size'] : 0;
 	}
@@ -231,7 +231,7 @@ class Oueb_Sftp_Client {
 	 * @return array[] Fichiers avec les clés « name », « size » et « mtime ».
 	 */
 	public function list_files( $dir ) {
-		$entries = $this->sftp->rawlist( '' === $dir ? '.' : $dir );
+		$entries = $this->guard( fn() => $this->sftp->rawlist( '' === $dir ? '.' : $dir ) );
 		$files   = array();
 
 		if ( ! is_array( $entries ) ) {
@@ -262,6 +262,32 @@ class Oueb_Sftp_Client {
 	 * @return bool Vrai si le fichier a été supprimé.
 	 */
 	public function delete( $remote_file ) {
-		return (bool) $this->sftp->delete( $remote_file, false );
+		return (bool) $this->guard( fn() => $this->sftp->delete( $remote_file, false ) );
+	}
+
+	/**
+	 * Exécute un appel à phpseclib en convertissant ses exceptions.
+	 *
+	 * La bibliothèque phpseclib lève ses propres exceptions, par exemple quand le serveur coupe
+	 * la connexion pendant un envoi. Les appelants n'attrapent que
+	 * Oueb_Sftp_Exception : sans conversion, la tâche s'arrêterait net, sans
+	 * passer aux destinations suivantes ni libérer son verrou.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param callable $call Appel à exécuter.
+	 * @return mixed Valeur renvoyée par l'appel.
+	 *
+	 * @throws Oueb_Sftp_Exception Si l'appel lève une exception.
+	 */
+	private function guard( $call ) {
+		try {
+			return $call();
+		} catch ( Oueb_Sftp_Exception $e ) {
+			throw $e;
+		} catch ( Exception $e ) {
+			/* translators: %s: technical error message. */
+			throw new Oueb_Sftp_Exception( esc_html( sprintf( __( 'The SFTP connection failed: %s', 'oueb-wp-backup' ), $e->getMessage() ) ) );
+		}
 	}
 }

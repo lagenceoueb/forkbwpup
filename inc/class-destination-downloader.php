@@ -101,16 +101,22 @@ class BackWPup_Destination_Downloader
 
         $source_file_path = $this->data->source_file_path();
         $local_file_path = $this->data->local_file_path();
-        $size = $this->destination->calculate_size();
         $start_byte = 0;
         $chunk_size = 2 * 1024 * 1024;
-        $end_byte = $start_byte + $chunk_size - 1;
-
-        if ($end_byte >= $size) {
-            $end_byte = $size - 1;
-        }
 
         try {
+            // Inside the try: a connection error must reach the browser as a message.
+            $size = (int) $this->destination->calculate_size();
+            // A size of 0 would request the range 0--1 and divide by zero below.
+            if ($size < 1) {
+                throw new RuntimeException(esc_html__('The storage did not give the size of this backup. Refresh the list of backups, then try again.', 'oueb-wp-backup'));
+            }
+
+            $end_byte = $start_byte + $chunk_size - 1;
+            if ($end_byte >= $size) {
+                $end_byte = $size - 1;
+            }
+
             while ($end_byte <= $size) {
                 $this->destination->download_chunk($start_byte, $end_byte);
                 self::send_message(
