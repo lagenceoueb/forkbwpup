@@ -77,7 +77,7 @@ Plusieurs sites de fournisseurs étaient inaccessibles depuis l'environnement de
 
 ### Autres supports
 
-- Infomaniak kDrive, repris de la branche `feature/kdrive-destination` avec ces corrections : identifiant kDrive limité aux chiffres, mot de passe d'application exigé, champ mot de passe jamais prérempli, liste, téléchargement et suppression des sauvegardes depuis l'administration, valeur 0 (illimité) enregistrable, noms de fichiers encodés dans l'URL, envoi adapté aux gros sites. Le commit de rebranding de cette branche n'est pas repris.
+- Infomaniak kDrive, par WebDAV (fait le 3 octobre 2026). L'API REST v3 d'Infomaniak, qui accepte des jetons et l'envoi par morceaux, reste une évolution possible une fois un compte de test disponible. Repris de la branche `feature/kdrive-destination` avec ces corrections : identifiant kDrive limité aux chiffres, mot de passe d'application exigé, champ mot de passe jamais prérempli, liste, téléchargement et suppression des sauvegardes depuis l'administration, valeur 0 (illimité) enregistrable, noms de fichiers encodés dans l'URL, envoi adapté aux gros sites. Le commit de rebranding de cette branche n'est pas repris.
 - Serveur SFTP administré par le client.
 - Dossier sur le serveur du site, présenté comme une copie complémentaire seulement.
 

@@ -334,6 +334,21 @@ if (!class_exists(\BackWPup::class, false)) {
                     'classes' => [\phpseclib3\Net\SFTP::class],
                 ],
             ];
+            // Backup to Infomaniak kDrive
+            self::$registered_destinations['KDRIVE'] = [
+                'class' => \BackWPup_Destination_KDrive::class,
+                'info' => [
+                    'ID' => 'KDRIVE',
+                    'name' => __('kDrive', 'backwpup'),
+                    'description' => __('Backup to Infomaniak kDrive', 'backwpup'),
+                ],
+                'can_sync' => false,
+                'needed' => [
+                    'php_version' => '',
+                    'functions' => ['curl_init'],
+                    'classes' => [\DOMDocument::class],
+                ],
+            ];
             // Backup to S3
             self::$registered_destinations['S3'] = [
                 'class' => \BackWPup_Destination_S3::class,
