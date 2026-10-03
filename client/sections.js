@@ -33,8 +33,26 @@ export function getSections() {
  * @return {string} Identifiant de la section.
  */
 export function sectionFromHash( hash ) {
-	const id = String( hash || '' ).replace( /^#\/?/, '' );
+	const id = String( hash || '' )
+		.replace( /^#\/?/, '' )
+		.split( '/' )[ 0 ];
 	return getSections().some( ( section ) => section.id === id )
 		? id
 		: 'dashboard';
+}
+
+/**
+ * Lit le paramètre qui suit la section dans l'ancre.
+ *
+ * L'ancre « #/log/12 » ouvre le journal de l'exécution 12.
+ *
+ * @param {string} hash Ancre de l'adresse.
+ * @return {string} Paramètre, vide s'il n'y en a pas.
+ */
+export function paramFromHash( hash ) {
+	return String( hash || '' )
+		.replace( /^#\/?/, '' )
+		.split( '/' )
+		.slice( 1 )
+		.join( '/' );
 }

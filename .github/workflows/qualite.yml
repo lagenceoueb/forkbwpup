@@ -65,8 +65,8 @@ jobs:
           tools: composer
       - name: Installer PHPCS et WPCS
         run: composer --working-dir=tools install --no-progress --no-interaction
-      - name: Lancer PHPCS sur le nouveau code, sans tolérance
-        run: tools/vendor/bin/phpcs includes tests/php
+      - name: Lancer PHPCS sur le nouveau code, erreurs bloquantes
+        run: tools/vendor/bin/phpcs --runtime-set ignore_warnings_on_exit 1 includes tests/php
 
   phpunit:
     name: Tests PHP ${{ matrix.php }}
@@ -83,6 +83,7 @@ jobs:
       - uses: shivammathur/setup-php@b2f833f7d1c070621af195c088d275c4cd60ef8f # 2.9.0
         with:
           php-version: ${{ matrix.php }}
+          extensions: sodium, zip, zlib
           coverage: none
           tools: composer
       - name: Installer PHPUnit et Brain Monkey

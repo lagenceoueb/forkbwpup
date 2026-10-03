@@ -1,13 +1,14 @@
 /**
  * Internal dependencies
  */
-import { getSections, sectionFromHash } from '../sections';
+import { getSections, paramFromHash, sectionFromHash } from '../sections';
 
 describe( 'sectionFromHash', () => {
 	it.each( [
 		[ '#/settings', 'settings' ],
 		[ '#settings', 'settings' ],
 		[ '#/log', 'log' ],
+		[ '#/log/12', 'log' ],
 		[ '', 'dashboard' ],
 		[ '#/unknown', 'dashboard' ],
 		[ undefined, 'dashboard' ],
@@ -24,5 +25,17 @@ describe( 'sectionFromHash', () => {
 			'log',
 			'settings',
 		] );
+	} );
+} );
+
+describe( 'paramFromHash', () => {
+	it.each( [
+		[ '#/log/12', '12' ],
+		[ '#log/12', '12' ],
+		[ '#/log', '' ],
+		[ '', '' ],
+		[ undefined, '' ],
+	] )( 'reads %p as %p', ( hash, expected ) => {
+		expect( paramFromHash( hash ) ).toBe( expected );
 	} );
 } );

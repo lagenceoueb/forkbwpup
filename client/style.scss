@@ -156,3 +156,178 @@ $oueb-error: #b32d2e;
 	gap: 8px;
 	align-items: center;
 }
+
+$oueb-success: #00703c;
+$oueb-warning: #8a5300;
+
+.oueb-card--status {
+	border-left-width: 6px;
+}
+
+.oueb-card--success {
+	border-left-color: $oueb-success;
+}
+
+.oueb-card--warning {
+	border-left-color: $oueb-warning;
+}
+
+.oueb-card--error {
+	border-left-color: $oueb-error;
+}
+
+.oueb-card p {
+	margin: 0;
+}
+
+.oueb-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+	gap: 24px;
+	margin-bottom: 24px;
+
+	.oueb-card {
+		margin: 0;
+	}
+}
+
+.oueb-button-large.components-button {
+	height: auto;
+	min-height: 48px;
+	padding: 12px 24px;
+	font-size: 16px;
+}
+
+.oueb-backup-now {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	align-items: flex-start;
+}
+
+.oueb-progress {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	align-self: stretch;
+	align-items: flex-start;
+}
+
+.oueb-progress__bar {
+	align-self: stretch;
+	height: 12px;
+	overflow: hidden;
+	border-radius: 6px;
+	background: #f0f0f1;
+}
+
+.oueb-progress__fill {
+	height: 100%;
+	background: $oueb-accent;
+	transition: width 0.4s ease;
+
+	@media (prefers-reduced-motion: reduce) {
+		transition: none;
+	}
+}
+
+.oueb-progress__help {
+	color: $oueb-muted;
+}
+
+.oueb-table-wrap {
+	overflow-x: auto;
+}
+
+.oueb-table {
+	width: 100%;
+	border-collapse: collapse;
+
+	th,
+	td {
+		padding: 12px 8px;
+		border-bottom: 1px solid $oueb-border;
+		text-align: start;
+		vertical-align: middle;
+	}
+
+	thead th {
+		color: $oueb-muted;
+		font-size: 13px;
+		font-weight: 600;
+	}
+
+	tbody th {
+		font-weight: 400;
+	}
+}
+
+.oueb-table__actions {
+	white-space: nowrap;
+
+	> * + * {
+		margin-inline-start: 16px;
+	}
+}
+
+.oueb-status {
+	display: inline-block;
+	padding: 2px 8px;
+	border-radius: 10px;
+	background: #f0f0f1;
+	font-size: 13px;
+}
+
+.oueb-status--success {
+	background: #e6f4ea;
+	color: $oueb-success;
+}
+
+.oueb-status--warning {
+	background: #fcf3e3;
+	color: $oueb-warning;
+}
+
+.oueb-status--failed {
+	background: #fcf0f1;
+	color: $oueb-error;
+}
+
+.oueb-empty {
+	color: $oueb-muted;
+}
+
+.oueb-pagination {
+	display: flex;
+	gap: 16px;
+	align-items: center;
+}
+
+.oueb-log {
+	margin: 0;
+	padding: 0;
+	font-family: ui-monospace, Menlo, Consolas, monospace;
+	font-size: 13px;
+	list-style: none;
+}
+
+.oueb-log__entry {
+	display: grid;
+	grid-template-columns: 8ch 12ch 1fr;
+	gap: 12px;
+	padding: 6px 0;
+	border-bottom: 1px solid #f0f0f1;
+}
+
+.oueb-log__entry--warning .oueb-log__level {
+	color: $oueb-warning;
+}
+
+.oueb-log__entry--error .oueb-log__level {
+	color: $oueb-error;
+	font-weight: 600;
+}
+
+.oueb-log__message {
+	overflow-wrap: anywhere;
+}
