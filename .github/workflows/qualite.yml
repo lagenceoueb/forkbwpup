@@ -83,7 +83,6 @@ jobs:
       - uses: shivammathur/setup-php@b2f833f7d1c070621af195c088d275c4cd60ef8f # 2.9.0
         with:
           php-version: ${{ matrix.php }}
-          extensions: sodium, zip, zlib
           coverage: none
           tools: composer
       - name: Installer PHPUnit et Brain Monkey
