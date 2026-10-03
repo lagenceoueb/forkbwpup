@@ -244,11 +244,18 @@ if (!class_exists(\BackWPup::class, false)) {
          */
         public static function load_text_domain()
         {
+            $languages_dir = dirname(plugin_basename(__FILE__)) . '/languages';
+
+            // Strings added by the fork use their own text domain.
+            if (!is_textdomain_loaded('oueb-wp-backup')) {
+                load_plugin_textdomain('oueb-wp-backup', false, $languages_dir);
+            }
+
             if (is_textdomain_loaded('backwpup')) {
                 return true;
             }
 
-            return load_plugin_textdomain('backwpup', false, dirname(plugin_basename(__FILE__)) . '/languages');
+            return load_plugin_textdomain('backwpup', false, $languages_dir);
         }
 
         /**

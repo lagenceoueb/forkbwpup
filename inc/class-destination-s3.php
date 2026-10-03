@@ -823,15 +823,8 @@ class BackWPup_Destination_S3 extends BackWPup_Destinations
             }
 
             if (!$aws_destination->supportsMultipart() || $job_object->backup_filesize <= $chunk_size) {
-                $body = file_get_contents($local_file);
-                if ($body === false) {
-                    $job_object->log(__('Can not open source file for transfer.', 'backwpup'), E_USER_ERROR);
-
-                    return false;
-                }
-
-                $s3->put_object($bucket, $key, $body, $headers);
-                unset($body);
+                // Streamed from the disk: a 2 GB archive must not go through memory_limit.
+                $s3->put_object_file($bucket, $key, $local_file, $headers);
             } else {
                 $file_handle = fopen($local_file, 'rb');
                 if (!$file_handle) {

@@ -1,0 +1,429 @@
+# Modèle de traduction d'Oueb WP Backup, généré par bin/make-pot.php.
+msgid ""
+msgstr ""
+"Project-Id-Version: Oueb WP Backup\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Domain: oueb-wp-backup\n"
+
+#: inc/class-backwpup-destination-kdrive-downloader.php:60 inc/class-backwpup-destination-sftp-downloader.php:81
+msgid "Could not write data to file."
+msgstr ""
+
+#: inc/class-backwpup-destination-kdrive.php:55
+msgid "Infomaniak kDrive"
+msgstr ""
+
+#: inc/class-backwpup-destination-kdrive.php:58
+msgid "kDrive ID"
+msgstr ""
+
+#: inc/class-backwpup-destination-kdrive.php:61
+msgid "The number in the address of your kDrive: ksuite.infomaniak.com/kdrive/app/drive/NUMBER."
+msgstr ""
+
+#: inc/class-backwpup-destination-kdrive.php:65
+msgid "Infomaniak email address"
+msgstr ""
+
+#: inc/class-backwpup-destination-kdrive.php:69
+msgid "Application password"
+msgstr ""
+
+#: inc/class-backwpup-destination-kdrive.php:73
+msgid "Create an application password in your Infomaniak account, under Security. Never use your main password: an application password can be revoked without touching your account."
+msgstr ""
+
+#: inc/class-backwpup-destination-kdrive.php:76 inc/class-backwpup-destination-sftp.php:57
+msgid "Leave empty to keep the saved value."
+msgstr ""
+
+#: inc/class-backwpup-destination-kdrive.php:84 inc/class-backwpup-destination-sftp.php:120
+msgid "Backup settings"
+msgstr ""
+
+#: inc/class-backwpup-destination-kdrive.php:87
+msgid "Folder in kDrive"
+msgstr ""
+
+#: inc/class-backwpup-destination-kdrive.php:90
+msgid "Created if missing."
+msgstr ""
+
+#: inc/class-backwpup-destination-kdrive.php:94 inc/class-backwpup-destination-sftp.php:130
+msgid "Backups to keep"
+msgstr ""
+
+#: inc/class-backwpup-destination-kdrive.php:97 inc/class-backwpup-destination-sftp.php:133
+msgid "The oldest backups of this job are deleted beyond this number. 0 keeps them all."
+msgstr ""
+
+#. translators: %d: attempt number.
+#: inc/class-backwpup-destination-kdrive.php:167
+#, php-format
+msgid "%d. Trying to send backup file to kDrive&#160;&hellip;"
+msgstr ""
+
+#: inc/class-backwpup-destination-kdrive.php:194
+msgid "The file size on kDrive does not match the local file."
+msgstr ""
+
+#. translators: %s: file path in kDrive.
+#: inc/class-backwpup-destination-kdrive.php:202
+#, php-format
+msgid "Backup transferred to kDrive: %s."
+msgstr ""
+
+#. translators: %s: error message.
+#: inc/class-backwpup-destination-kdrive.php:209
+#, php-format
+msgid "kDrive: %s"
+msgstr ""
+
+#: inc/class-backwpup-destination-kdrive.php:272 inc/class-backwpup-destination-sftp.php:354
+msgid "This file is not a backup of this job."
+msgstr ""
+
+#: inc/class-backwpup-destination-kdrive.php:319
+msgid "The kDrive ID must contain digits only."
+msgstr ""
+
+#. translators: %s: file path in kDrive.
+#: inc/class-backwpup-destination-kdrive.php:388
+#, php-format
+msgid "Cannot delete %s on kDrive."
+msgstr ""
+
+#. translators: %d: number of deleted files.
+#: inc/class-backwpup-destination-kdrive.php:394
+#, php-format
+msgid "%d file deleted on kDrive."
+msgid_plural "%d files deleted on kDrive."
+msgstr[0] ""
+msgstr[1] ""
+
+#: inc/class-backwpup-destination-sftp.php:59
+msgid "SFTP server"
+msgstr ""
+
+#: inc/class-backwpup-destination-sftp.php:62
+msgid "Server"
+msgstr ""
+
+#: inc/class-backwpup-destination-sftp.php:65
+msgid "Domain name or IP address, without sftp://."
+msgstr ""
+
+#: inc/class-backwpup-destination-sftp.php:69
+msgid "Port"
+msgstr ""
+
+#: inc/class-backwpup-destination-sftp.php:73
+msgid "Username"
+msgstr ""
+
+#: inc/class-backwpup-destination-sftp.php:77 inc/class-backwpup-destination-sftp.php:80
+msgid "Authentication"
+msgstr ""
+
+#: inc/class-backwpup-destination-sftp.php:81 inc/class-backwpup-destination-sftp.php:87
+msgid "Password"
+msgstr ""
+
+#: inc/class-backwpup-destination-sftp.php:82
+msgid "Private key (recommended)"
+msgstr ""
+
+#: inc/class-backwpup-destination-sftp.php:94
+msgid "Private key"
+msgstr ""
+
+#: inc/class-backwpup-destination-sftp.php:97
+msgid "Paste the whole key, including the BEGIN and END lines."
+msgstr ""
+
+#: inc/class-backwpup-destination-sftp.php:101
+msgid "Key passphrase"
+msgstr ""
+
+#: inc/class-backwpup-destination-sftp.php:104
+msgid "Only if the key is protected by a passphrase."
+msgstr ""
+
+#: inc/class-backwpup-destination-sftp.php:108
+msgid "Server fingerprint"
+msgstr ""
+
+#: inc/class-backwpup-destination-sftp.php:111
+msgid "Saved at the first successful connection. The plugin then refuses any server whose key differs."
+msgstr ""
+
+#: inc/class-backwpup-destination-sftp.php:114
+msgid "Forget this fingerprint (only after a server reinstallation)"
+msgstr ""
+
+#: inc/class-backwpup-destination-sftp.php:123
+msgid "Folder on the server"
+msgstr ""
+
+#: inc/class-backwpup-destination-sftp.php:126
+msgid "Relative to the home folder of the user, or absolute if it starts with /. Created if missing."
+msgstr ""
+
+#. translators: %d: attempt number.
+#: inc/class-backwpup-destination-sftp.php:225
+#, php-format
+msgid "%d. Trying to send backup file to the SFTP server&#160;&hellip;"
+msgstr ""
+
+#. translators: 1: server name, 2: key fingerprint.
+#: inc/class-backwpup-destination-sftp.php:236
+#, php-format
+msgid "Connected to the SFTP server %1$s (key %2$s)."
+msgstr ""
+
+#: inc/class-backwpup-destination-sftp.php:251
+msgid "Resuming the interrupted upload."
+msgstr ""
+
+#: inc/class-backwpup-destination-sftp.php:273
+msgid "The file size on the SFTP server does not match the local file."
+msgstr ""
+
+#. translators: %s: file path on the server.
+#: inc/class-backwpup-destination-sftp.php:281
+#, php-format
+msgid "Backup transferred to %s."
+msgstr ""
+
+#. translators: %s: file path on the server.
+#: inc/class-backwpup-destination-sftp.php:472
+#, php-format
+msgid "Cannot delete %s on the SFTP server."
+msgstr ""
+
+#. translators: %d: number of deleted files.
+#: inc/class-backwpup-destination-sftp.php:478
+#, php-format
+msgid "%d file deleted on the SFTP server."
+msgid_plural "%d files deleted on the SFTP server."
+msgstr[0] ""
+msgstr[1] ""
+
+#: inc/class-destination-downloader.php:112
+msgid "The storage did not give the size of this backup. Refresh the list of backups, then try again."
+msgstr ""
+
+#: inc/class-destination-s3.php:55
+msgid "Choose a service"
+msgstr ""
+
+#: inc/class-destination-s3.php:67
+msgid "The service saved in this job is no longer offered. Backups to it stopped. Choose a European provider, then check the bucket."
+msgstr ""
+
+#: inc/class-oueb-cronjob-org.php:99
+msgid "cron-job.org did not return a job ID."
+msgstr ""
+
+#. translators: %s: technical error message.
+#: inc/class-oueb-cronjob-org.php:225
+#, php-format
+msgid "The site cannot reach cron-job.org (%s). Check that your host allows outgoing connections."
+msgstr ""
+
+#: inc/class-oueb-cronjob-org.php:233 inc/class-oueb-cronjob-org.php:234
+msgid "cron-job.org refused the API key."
+msgstr ""
+
+#: inc/class-oueb-cronjob-org.php:235
+msgid "The job no longer exists on cron-job.org."
+msgstr ""
+
+#: inc/class-oueb-cronjob-org.php:236
+msgid "Too many requests to cron-job.org. Try again in a few minutes."
+msgstr ""
+
+#. translators: %d: HTTP status code.
+#: inc/class-oueb-cronjob-org.php:239
+#, php-format
+msgid "cron-job.org answered with error %d."
+msgstr ""
+
+#: inc/class-oueb-s3-client.php:288 inc/class-oueb-s3-client.php:620 inc/class-oueb-webdav-client.php:116
+msgid "Can not open source file for transfer."
+msgstr ""
+
+#: inc/class-oueb-sftp-client.php:77
+msgid "Enter the SFTP server and the username."
+msgstr ""
+
+#: inc/class-oueb-sftp-client.php:88
+msgid "The SFTP server does not answer."
+msgstr ""
+
+#. translators: 1: expected fingerprint, 2: received fingerprint.
+#: inc/class-oueb-sftp-client.php:98
+#, php-format
+msgid "The SFTP server key has changed. Expected %1$s, received %2$s. If the server was reinstalled, clear the saved fingerprint in the job settings."
+msgstr ""
+
+#: inc/class-oueb-sftp-client.php:117
+msgid "The SFTP server refused the username, password or key."
+msgstr ""
+
+#. translators: %s: folder path on the server.
+#: inc/class-oueb-sftp-client.php:163
+#, php-format
+msgid "Cannot create the folder %s on the SFTP server."
+msgstr ""
+
+#. translators: %s: file path on the server.
+#: inc/class-oueb-sftp-client.php:184
+#, php-format
+msgid "The upload of %s to the SFTP server failed."
+msgstr ""
+
+#. translators: %s: file path on the server.
+#: inc/class-oueb-sftp-client.php:205
+#, php-format
+msgid "Cannot read %s on the SFTP server."
+msgstr ""
+
+#. translators: %s: technical error message.
+#: inc/class-oueb-sftp-client.php:290
+#, php-format
+msgid "The SFTP connection failed: %s"
+msgstr ""
+
+#: inc/class-oueb-webdav-client.php:356
+msgid "The server refused the username or password. With kDrive, use an application password."
+msgstr ""
+
+#: inc/class-oueb-webdav-client.php:357
+msgid "The server refused access to this folder."
+msgstr ""
+
+#: inc/class-oueb-webdav-client.php:358
+msgid "The folder does not exist on the server."
+msgstr ""
+
+#: inc/class-oueb-webdav-client.php:359
+msgid "The storage space is full."
+msgstr ""
+
+#. translators: %d: HTTP status code.
+#: inc/class-oueb-webdav-client.php:362
+#, php-format
+msgid "The WebDAV server answered with error %d."
+msgstr ""
+
+#. translators: %d: minimum number of characters.
+#: inc/class-page-settings.php:414
+#, php-format
+msgid "The key to start jobs externally was not changed: it needs at least %d letters and digits."
+msgstr ""
+
+#. translators: %d: minimum number of characters.
+#: inc/class-page-settings.php:657
+#, php-format
+msgid "This key is too short to resist guessing. Replace it with at least %d letters and digits, then update the trigger links you use outside cron-job.org."
+msgstr ""
+
+#: inc/class-s3-destination.php:139
+msgid "The S3 service saved in this job is no longer offered. Choose a European provider in the job settings."
+msgstr ""
+
+#: inc/cronjob-org.php:159
+msgid "Enter your cron-job.org API key to schedule this job."
+msgstr ""
+
+#. translators: %s: error message.
+#: inc/cronjob-org.php:179 inc/cronjob-org.php:203
+#, php-format
+msgid "cron-job.org: %s"
+msgstr ""
+
+#: inc/cronjob-org.php:219
+msgid "with cron-job.org, a free and open source service"
+msgstr ""
+
+#: inc/cronjob-org.php:222
+msgid "The job starts at the exact time, even when nobody visits the site. The plugin sends cron-job.org the trigger link and the schedule of this job, nothing else."
+msgstr ""
+
+#: inc/cronjob-org.php:225
+msgid "cron-job.org API key"
+msgstr ""
+
+#: inc/cronjob-org.php:231
+msgid "A key is saved for all jobs. Leave empty to keep it."
+msgstr ""
+
+#: inc/cronjob-org.php:233
+msgid "Create a free account on cron-job.org, then generate a key in Settings, API."
+msgstr ""
+
+#: inc/oueb-providers.php:174
+msgid "Location"
+msgstr ""
+
+#: inc/oueb-providers.php:175
+msgid "Parent company"
+msgstr ""
+
+#: inc/oueb-providers.php:176
+msgid "Renewable electricity"
+msgstr ""
+
+#: inc/oueb-providers.php:177
+msgid "PUE (energy efficiency)"
+msgstr ""
+
+#: inc/oueb-providers.php:178
+msgid "Cooling and heat reuse"
+msgstr ""
+
+#: inc/oueb-providers.php:179
+msgid "Environmental labels"
+msgstr ""
+
+#: inc/oueb-providers.php:180
+msgid "Security certifications"
+msgstr ""
+
+#: inc/oueb-providers.php:184
+msgid "How were these providers chosen?"
+msgstr ""
+
+#: inc/oueb-providers.php:186
+msgid "Each provider has its headquarters and data centers in the European Union or Switzerland, has no parent company outside Europe, and proves that its electricity is renewable. The other information is given for reference, with its source."
+msgstr ""
+
+#. translators: %s: date of the last check.
+#: inc/oueb-providers.php:189
+#, php-format
+msgid "Last checked on %s."
+msgstr ""
+
+#. translators: %s: provider name.
+#: inc/oueb-providers.php:198
+#, php-format
+msgid "Criteria for %s"
+msgstr ""
+
+#: inc/oueb-providers.php:209
+msgid "Not published."
+msgstr ""
+
+#. translators: %s: criterion name.
+#: inc/oueb-providers.php:213
+msgid "Source"
+msgstr ""
+
+#. translators: %s: criterion name.
+#: inc/oueb-providers.php:213
+#, php-format
+msgid "for: %s"
+msgstr ""
