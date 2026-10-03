@@ -246,6 +246,36 @@ class BackWPup_Destination_KDrive extends BackWPup_Destinations {
 	}
 
 	/**
+	 * Télécharge une sauvegarde de la tâche.
+	 *
+	 * Le chemin vient de l'adresse de téléchargement : sans contrôle, un compte
+	 * autorisé à télécharger pourrait lire n'importe quel fichier accessible
+	 * avec les identifiants du kDrive. Seuls les fichiers de la liste des
+	 * sauvegardes de la tâche passent.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param int         $jobid           Identifiant de la tâche.
+	 * @param string      $file_path       Chemin du fichier sur le kDrive.
+	 * @param string|null $local_file_path Nom du fichier local.
+	 */
+	public function file_download( int $jobid, string $file_path, ?string $local_file_path = null ): void {
+		$listed = false;
+		foreach ( $this->file_get_list( $jobid . '_KDRIVE' ) as $file ) {
+			if ( is_array( $file ) && isset( $file['file'] ) && $file['file'] === $file_path ) {
+				$listed = true;
+				break;
+			}
+		}
+
+		if ( ! $listed ) {
+			wp_die( esc_html__( 'This file is not a backup of this job.', 'oueb-wp-backup' ), '', array( 'response' => 403 ) );
+		}
+
+		parent::file_download( $jobid, $file_path, $local_file_path );
+	}
+
+	/**
 	 * Supprime une sauvegarde sur le kDrive.
 	 *
 	 * @since 0.1.0

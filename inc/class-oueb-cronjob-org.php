@@ -54,17 +54,23 @@ class Oueb_Cronjob_Org {
 	 * @param string $url       Adresse à appeler.
 	 * @param string $cron      Expression cron à cinq champs.
 	 * @param string $timezone  Fuseau horaire IANA, par exemple « Europe/Paris ».
+	 * @param array  $auth      Authentification HTTP, clés « enable », « user » et « password ».
 	 * @return int Identifiant de la tâche distante.
 	 *
 	 * @throws Oueb_Cronjob_Org_Exception Si l'API refuse la demande.
 	 */
-	public function save_job( $remote_id, $title, $url, $cron, $timezone ) {
+	public function save_job( $remote_id, $title, $url, $cron, $timezone, $auth = array() ) {
 		$job = array(
 			'title'         => (string) $title,
 			'url'           => (string) $url,
 			'enabled'       => true,
 			'saveResponses' => false,
 			'requestMethod' => 0,
+			'auth'          => array(
+				'enable'   => ! empty( $auth['enable'] ),
+				'user'     => isset( $auth['user'] ) ? (string) $auth['user'] : '',
+				'password' => isset( $auth['password'] ) ? (string) $auth['password'] : '',
+			),
 			'schedule'      => array_merge(
 				array(
 					'timezone'  => (string) $timezone,
@@ -75,9 +81,16 @@ class Oueb_Cronjob_Org {
 		);
 
 		if ( $remote_id > 0 ) {
-			$this->request( 'PATCH', '/jobs/' . (int) $remote_id, array( 'job' => $job ) );
+			try {
+				$this->request( 'PATCH', '/jobs/' . (int) $remote_id, array( 'job' => $job ) );
 
-			return (int) $remote_id;
+				return (int) $remote_id;
+			} catch ( Oueb_Cronjob_Org_Exception $e ) {
+				// Tâche supprimée dans la console ou clé d'un autre compte : on la recrée.
+				if ( 404 !== $e->getCode() ) {
+					throw $e;
+				}
+			}
 		}
 
 		$response = $this->request( 'PUT', '/jobs', array( 'job' => $job ) );

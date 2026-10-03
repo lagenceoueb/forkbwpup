@@ -32,6 +32,108 @@ function oueb_cronjob_org_timezone() {
 }
 
 /**
+ * Retire l'identifiant et le mot de passe d'une adresse.
+ *
+ * Avec l'authentification HTTP « basic », l'adresse de déclenchement porte
+ * « utilisateur:motdepasse@ ». cron-job.org reçoit ces identifiants dans son
+ * champ dédié, jamais dans l'adresse, qui reste visible dans sa console.
+ *
+ * @since 0.1.0
+ *
+ * @param string $url Adresse de déclenchement.
+ * @return string Adresse sans identifiants.
+ */
+function oueb_cronjob_org_strip_credentials( $url ) {
+	return (string) preg_replace( '#^(https?://)[^/@]+@#i', '$1', (string) $url );
+}
+
+/**
+ * Renvoie l'authentification HTTP à transmettre à cron-job.org.
+ *
+ * @since 0.1.0
+ *
+ * @return array Clés « enable », « user » et « password » attendues par l'API.
+ */
+function oueb_cronjob_org_auth() {
+	$authentication = get_site_option( 'backwpup_cfg_authentication', array() );
+	$auth           = array(
+		'enable'   => false,
+		'user'     => '',
+		'password' => '',
+	);
+
+	if ( ! is_array( $authentication ) || empty( $authentication['method'] ) || 'basic' !== $authentication['method'] ) {
+		return $auth;
+	}
+
+	$user     = isset( $authentication['basic_user'] ) ? (string) $authentication['basic_user'] : '';
+	$password = isset( $authentication['basic_password'] ) ? (string) BackWPup_Encryption::decrypt( (string) $authentication['basic_password'] ) : '';
+	if ( '' === $user || '' === $password ) {
+		return $auth;
+	}
+
+	return array(
+		'enable'   => true,
+		'user'     => $user,
+		'password' => $password,
+	);
+}
+
+/**
+ * Résume les réglages du site que cron-job.org reçoit.
+ *
+ * Le mot de passe HTTP est rechiffré à chaque enregistrement, avec un vecteur
+ * aléatoire : comparer les options brutes signalerait un changement à tort.
+ *
+ * @since 0.1.0
+ *
+ * @return string Empreinte de la clé de démarrage et de l'authentification.
+ */
+function oueb_cronjob_org_settings_fingerprint() {
+	$authentication = get_site_option( 'backwpup_cfg_authentication', array() );
+
+	return md5(
+		(string) wp_json_encode(
+			array(
+				(string) get_site_option( 'backwpup_cfg_jobrunauthkey' ),
+				oueb_cronjob_org_auth(),
+				is_array( $authentication ) && isset( $authentication['method'] ) ? (string) $authentication['method'] : '',
+				is_array( $authentication ) && isset( $authentication['query_arg'] ) ? (string) $authentication['query_arg'] : '',
+			)
+		)
+	);
+}
+
+/**
+ * Aligne toutes les tâches cron-job.org sur les réglages du site.
+ *
+ * À appeler quand la clé de démarrage externe ou l'authentification HTTP
+ * change : sans cela, cron-job.org appelle une adresse que le site refuse,
+ * et les sauvegardes s'arrêtent sans erreur visible.
+ *
+ * @since 0.1.0
+ */
+function oueb_cronjob_org_sync_all() {
+	foreach ( BackWPup_Option::get_job_ids( 'activetype', 'cronjoborg' ) as $jobid ) {
+		oueb_cronjob_org_sync( $jobid );
+	}
+}
+
+/**
+ * Supprime toutes les tâches cron-job.org créées par l'extension.
+ *
+ * À la désactivation, les tâches distantes cesseraient sinon d'être gérées,
+ * tout en continuant d'appeler le site. La réactivation les recrée.
+ *
+ * @since 0.1.0
+ */
+function oueb_cronjob_org_remove_all() {
+	foreach ( BackWPup_Option::get_job_ids() as $jobid ) {
+		oueb_cronjob_org_remove( $jobid );
+	}
+}
+
+/**
  * Aligne la tâche cron-job.org sur le mode de déclenchement d'une tâche.
  *
  * Crée ou met à jour la tâche distante quand le mode « cron-job.org » est
@@ -66,9 +168,10 @@ function oueb_cronjob_org_sync( $jobid ) {
 		$remote_id = $client->save_job(
 			$remote_id,
 			sprintf( '%1$s, %2$s', get_bloginfo( 'name' ), BackWPup_Option::get( $jobid, 'name' ) ),
-			$url['url'],
+			oueb_cronjob_org_strip_credentials( $url['url'] ),
 			(string) BackWPup_Option::get( $jobid, 'cron' ),
-			oueb_cronjob_org_timezone()
+			oueb_cronjob_org_timezone(),
+			oueb_cronjob_org_auth()
 		);
 		BackWPup_Option::update( $jobid, 'cronjoborgid', $remote_id );
 	} catch ( Oueb_Cronjob_Org_Exception $e ) {

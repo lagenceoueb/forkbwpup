@@ -29,6 +29,9 @@ class BackWPup_Install
 			}
         }
 
+        // Recreate or update the cron-job.org jobs removed on deactivation.
+        oueb_cronjob_org_sync_all();
+
         //add Cleanup schedule
         if (!wp_next_scheduled('backwpup_check_cleanup')) {
             wp_schedule_event(time(), 'twicedaily', 'backwpup_check_cleanup');
@@ -123,5 +126,8 @@ class BackWPup_Install
             }
         }
         wp_clear_scheduled_hook('backwpup_check_cleanup');
+
+        // cron-job.org would otherwise keep calling the site.
+        oueb_cronjob_org_remove_all();
     }
 }
