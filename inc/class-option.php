@@ -23,7 +23,7 @@ final class BackWPup_Option
 		// job.
 		add_site_option( 'backwpup_cfg_jobmaxexecutiontime', 30 );
 		add_site_option( 'backwpup_cfg_jobstepretry', 3 );
-		add_site_option( 'backwpup_cfg_jobrunauthkey', BackWPup::get_generated_hash( 8 ) );
+		add_site_option( 'backwpup_cfg_jobrunauthkey', wp_generate_password( 32, false ) );
 		add_site_option( 'backwpup_cfg_loglevel', 'normal_translated' );
 		add_site_option( 'backwpup_cfg_jobwaittimems', 0 );
 		add_site_option( 'backwpup_cfg_jobdooutput', 0 );
@@ -171,12 +171,6 @@ final class BackWPup_Option
                 }
                 break;
 
-            case 'pluginlistfilecompression':
-            case 'wpexportfilecompression':
-                if ($option_value === '.bz2') {
-                    $option_value = '.gz';
-                }
-                break;
         }
 
         return $option_value;
@@ -197,7 +191,7 @@ final class BackWPup_Option
 
         //set defaults
         $default = [];
-        $default['type'] = ['DBDUMP', 'FILE', 'WPPLUGIN'];
+        $default['type'] = ['DBDUMP', 'FILE'];
         $default['destinations'] = [];
         $default['name'] = __('New Job', 'backwpup');
         $default['activetype'] = '';
@@ -264,12 +258,6 @@ final class BackWPup_Option
 
         if (isset($options['archiveformat']) && $options['archiveformat'] === '.tar.bz2') {
             $options['archiveformat'] = '.tar.gz';
-        }
-        if (isset($options['pluginlistfilecompression']) && $options['pluginlistfilecompression'] === '.bz2') {
-            $options['pluginlistfilecompression'] = '.gz';
-        }
-        if (isset($options['wpexportfilecompression']) && $options['wpexportfilecompression'] === '.bz2') {
-            $options['wpexportfilecompression'] = '.gz';
         }
 
         return $options;

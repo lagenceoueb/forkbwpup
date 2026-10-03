@@ -13,7 +13,6 @@
 class BackWPup_Destination_Downloader_Factory
 {
     public const CLASS_PREFIX = 'BackWPup_Destination_';
-    public const CLASS_PRO_PREFIX = 'BackWPup_Pro_Destination_';
     public const CLASS_SUFFIX = '_Downloader';
 
     /**
@@ -30,11 +29,6 @@ class BackWPup_Destination_Downloader_Factory
         $destination = null;
         $service_name = ucwords($service_name);
         $class = self::CLASS_PREFIX . $service_name . self::CLASS_SUFFIX;
-
-        // If class doesn't exist, try within the Pro directory.
-        if (BackWPup::is_pro() && !class_exists($class)) {
-            $class = str_replace(self::CLASS_PREFIX, self::CLASS_PRO_PREFIX, $class);
-        }
 
         if (!class_exists($class)) {
             throw new BackWPup_Factory_Exception(

@@ -1,7 +1,6 @@
 <?php
 
 use function Inpsyde\BackWPup\Infrastructure\Restore\restore_container;
-use Inpsyde\Restore\ViewLoader;
 
 final class BackWPup_Page_Backups extends WP_List_Table
 {
@@ -253,7 +252,8 @@ final class BackWPup_Page_Backups extends WP_List_Table
             $dests = BackWPup_Option::get($jobid, 'destinations');
 
             foreach ($dests as $dest) {
-                if (!$this->destinations[$dest]['class']) {
+                // Skip destinations removed from the plugin, such as Dropbox in imported jobs.
+                if (empty($this->destinations[$dest]['class'])) {
                     continue;
                 }
                 $dest_class = BackWPup::get_destination($dest);
@@ -284,23 +284,6 @@ final class BackWPup_Page_Backups extends WP_List_Table
             try {
                 $actions['download'] = $this->download_item_action($item);
 
-                if ($this->dest === 'HIDRIVE') {
-                    $downloadUrl = wp_nonce_url($item['downloadurl'], 'backwpup_action_nonce');
-
-                    if ($item['filesize'] > 10485760) { // 10 MB
-                        $request = new BackWPup_Pro_Destination_HiDrive_Request();
-                        $authorization = new BackWPup_Pro_Destination_HiDrive_Authorization($request);
-                        $api = new BackWPup_Pro_Destination_HiDrive_Api($request, $authorization);
-                        $response = $api->temporalDownloadUrl($this->jobid, $item['file']);
-                        $responsBody = json_decode((string) $response['body']);
-
-                        if (isset($responsBody->url)) {
-                            $downloadUrl = $responsBody->url;
-                        }
-                    }
-
-                    $actions['download'] = '<a href="' . $downloadUrl . '" class="backup-download-link">Download</a>';
-                }
             } catch (BackWPup_Factory_Exception $e) {
                 $actions['download'] = sprintf(
                     '<a href="%1$s">%2$s</a>',
@@ -386,6 +369,9 @@ final class BackWPup_Page_Backups extends WP_List_Table
                 [$jobid, $dest] = explode('_', $jobdest);
                 /** @var BackWPup_Destinations $dest_class */
                 $dest_class = BackWPup::get_destination($dest);
+                if (!$dest_class) {
+                    return;
+                }
                 $files = $dest_class->file_get_list($jobdest);
 
                 foreach ($_GET['backupfiles'] as $backupfile) {
@@ -435,6 +421,9 @@ final class BackWPup_Page_Backups extends WP_List_Table
                         if (!empty($dest) && strstr(self::$listtable->current_action(), 'download')) {
                             /** @var BackWPup_Destinations $dest_class */
                             $dest_class = BackWPup::get_destination($dest);
+                            if (!$dest_class) {
+                                wp_die(esc_html__('This storage is no longer available.', 'backwpup'));
+                            }
 
                             try {
                                 $dest_class->file_download($jobid, trim(sanitize_text_field($_GET['file'])));
@@ -537,9 +526,6 @@ final class BackWPup_Page_Backups extends WP_List_Table
             'backwpup_functions',
             'backwpup_states',
         ];
-        if (\BackWPup::is_pro()) {
-            $dependencies[] = 'decrypter';
-        }
         wp_enqueue_script(
             'backwpup-backup-downloader',
             "{$plugin_scripts_url}/backup-downloader{$suffix}.js",
@@ -547,10 +533,6 @@ final class BackWPup_Page_Backups extends WP_List_Table
             filemtime("{$plugin_scripts_dir}/backup-downloader{$suffix}.js"),
             true
         );
-
-        if (\BackWPup::is_pro()) {
-            self::admin_print_pro_scripts($suffix, $plugin_url, $plugin_dir);
-        }
     }
 
     public static function page()
@@ -583,33 +565,9 @@ final class BackWPup_Page_Backups extends WP_List_Table
 				<div class="progressbar" style="display: none;">
 					<div id="progresssteps" class="bwpu-progress" style="width:0%;">0%</div>
 				</div>
-				<?php
-				if ( \BackWPup::is_pro() ) {
-					$view = new ViewLoader();
-					$view->decrypt_key_input();
-                } ?>
 			</div>
 		</div>
 		<?php
-    }
-
-    private static function admin_print_pro_scripts($suffix, $plugin_url, $plugin_dir)
-    {
-        $restore_scripts_path = "{$plugin_url}/vendor/inpsyde/backwpup-restore-shared/resources/js";
-        $restore_scripts_dir = "{$plugin_dir}/vendor/inpsyde/backwpup-restore-shared/resources/js";
-
-        wp_register_script(
-            'decrypter',
-            "{$restore_scripts_path}/decrypter{$suffix}.js",
-            [
-                'underscore',
-                'jquery',
-                'backwpup_states',
-                'backwpup_functions',
-            ],
-            filemtime("{$restore_scripts_dir}/decrypter{$suffix}.js"),
-            true
-        );
     }
 
     private function delete_item_action($item)

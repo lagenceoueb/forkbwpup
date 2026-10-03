@@ -223,15 +223,20 @@ class BackWPup_Cron
             $nonce = '';
         }
         // check nonce
-        if ($nonce !== $args['nonce']) {
+        // cronrun comes from WordPress itself and carries no token.
+        $valid = $args['run'] === 'cronrun'
+            ? (string) $args['nonce'] === ''
+            : is_string($nonce) && $nonce !== '' && hash_equals($nonce, (string) $args['nonce']);
+        if (!$valid) {
             return;
         }
 
         //check runext is allowed for job
         if ($args['run'] === 'runext') {
-            $jobids_link = BackWPup_Option::get_job_ids('activetype', 'link');
-            $jobids_easycron = BackWPup_Option::get_job_ids('activetype', 'easycron');
-            $jobids_external = array_merge($jobids_link, $jobids_easycron);
+            $jobids_external = array_merge(
+                BackWPup_Option::get_job_ids('activetype', 'link'),
+                BackWPup_Option::get_job_ids('activetype', 'cronjoborg')
+            );
             if (!in_array($args['jobid'], $jobids_external, true)) {
                 return;
             }

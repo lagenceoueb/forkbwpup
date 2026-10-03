@@ -234,3 +234,19 @@ function backwpup_esc_url_default_secure($url, $protocols = null)
 
     return $escaped_url;
 }
+
+/**
+ * Nettoie un secret saisi (mot de passe, clé privée) sans altérer ses caractères.
+ *
+ * Les fonctions de nettoyage de WordPress retirent les balises et les séquences
+ * « %xx », ce qui corromprait un mot de passe. Celle-ci ne retire que l'UTF-8
+ * invalide et les octets nuls. Le secret est ensuite chiffré, jamais affiché.
+ *
+ * @since 0.1.0
+ *
+ * @param string $value Secret brut, déjà passé par wp_unslash().
+ * @return string Secret nettoyé.
+ */
+function oueb_sanitize_secret( $value ) {
+	return str_replace( "\0", '', wp_check_invalid_utf8( (string) $value ) );
+}

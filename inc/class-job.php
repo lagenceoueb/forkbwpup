@@ -508,18 +508,6 @@ class BackWPup_Job
             }
         } elseif ($this->job['activetype'] == 'link' && $this->is_debug()) {
             $info .= __('[INFO] BackWPup job start with link is active', 'backwpup') . '<br />' . PHP_EOL;
-        } elseif ($this->job['activetype'] == 'easycron' && $this->is_debug()) {
-            $info .= __('[INFO] BackWPup job start with EasyCron.com', 'backwpup') . '<br />' . PHP_EOL;
-            //output scheduling
-            if ($this->is_debug()) {
-                $cron_next = BackWPup_Cron::cron_next($this->job['cron']);
-                $cron_next = date_i18n('D, j M Y @ H:i', $cron_next + (get_option('gmt_offset') * 3600), true);
-                $info .= sprintf(
-                    __('[INFO] Cron: %s; Next: %s ', 'backwpup'),
-                    $this->job['cron'],
-                    $cron_next
-                ) . '<br />' . PHP_EOL;
-            }
         } elseif ($this->is_debug()) {
             $info .= __('[INFO] BackWPup no automatic job start configured', 'backwpup') . '<br />' . PHP_EOL;
         }

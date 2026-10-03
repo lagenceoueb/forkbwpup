@@ -1,7 +1,6 @@
 <?php
 
 use function Inpsyde\BackWPup\Infrastructure\Restore\restore_container;
-use Inpsyde\Restore\ViewLoader;
 
 /**
  * Class For BackWPup Jobs page.
@@ -282,14 +281,8 @@ class BackWPup_Page_Jobs extends WP_List_Table
             } else {
                 $r .= __('Not scheduled!', 'backwpup') . '<br />';
             }
-        } elseif (BackWPup_Option::get($item, 'activetype') == 'easycron') {
-            $easycron_status = BackWPup_EasyCron::status($item);
-            if (!empty($easycron_status)) {
-                $nextrun = BackWPup_Cron::cron_next($easycron_status['cron_expression']) + (get_option('gmt_offset') * 3600);
-                $r .= '<span title="' . sprintf(esc_html__('Cron: %s', 'backwpup'), $easycron_status['cron_expression']) . '">' . sprintf(__('%1$s at %2$s by EasyCron', 'backwpup'), date_i18n(get_option('date_format'), $nextrun, true), date_i18n(get_option('time_format'), $nextrun, true)) . '</span><br />';
-            } else {
-                $r .= __('Not scheduled!', 'backwpup') . '<br />';
-            }
+        } elseif (BackWPup_Option::get($item, 'activetype') == 'cronjoborg') {
+            $r .= '<span title="' . esc_attr(sprintf(__('Cron: %s', 'backwpup'), BackWPup_Option::get($item, 'cron'))) . '">' . esc_html__('By cron-job.org', 'backwpup') . '</span><br />';
         } elseif (BackWPup_Option::get($item, 'activetype') == 'link') {
             $r .= __('External link', 'backwpup') . '<br />';
         } else {
@@ -393,6 +386,7 @@ class BackWPup_Page_Jobs extends WP_List_Table
 
                     foreach ($_GET['jobs'] as $jobid) {
                         wp_clear_scheduled_hook('backwpup_cron', ['arg' => absint($jobid)]);
+                        oueb_cronjob_org_remove(absint($jobid));
                         BackWPup_Option::delete_job(absint($jobid));
                     }
                 }
@@ -647,37 +641,11 @@ class BackWPup_Page_Jobs extends WP_List_Table
             'backwpup_functions',
             'backwpup_states',
         ];
-        if (\BackWPup::is_pro()) {
-            $dependencies[] = 'decrypter';
-        }
         wp_enqueue_script(
             'backwpup-backup-downloader',
             "{$plugin_scripts_url}/backup-downloader{$suffix}.js",
             $dependencies,
             filemtime("{$plugin_scripts_dir}/backup-downloader{$suffix}.js"),
-            true
-        );
-
-        if (\BackWPup::is_pro()) {
-            self::admin_print_pro_scripts($suffix, $plugin_url, $plugin_dir);
-        }
-    }
-
-    private static function admin_print_pro_scripts($suffix, $plugin_url, $plugin_dir)
-    {
-        $restore_scripts_path = "{$plugin_url}/vendor/inpsyde/backwpup-restore-shared/resources/js";
-        $restore_scripts_dir = "{$plugin_dir}/vendor/inpsyde/backwpup-restore-shared/resources/js";
-
-        wp_register_script(
-            'decrypter',
-            "{$restore_scripts_path}/decrypter{$suffix}.js",
-            [
-                'underscore',
-                'jquery',
-                'backwpup_states',
-                'backwpup_functions',
-            ],
-            filemtime("{$restore_scripts_dir}/decrypter{$suffix}.js"),
             true
         );
     }
@@ -748,11 +716,6 @@ class BackWPup_Page_Jobs extends WP_List_Table
                 <div class="progressbar" style="display: none;">
                     <div id="progresssteps" class="bwpu-progress" style="width:0%;">0%</div>
                 </div>
-				<?php
-				if ( \BackWPup::is_pro() ) {
-					$view = new ViewLoader();
-					$view->decrypt_key_input();
-                } ?>
             </div>
         </div>
 

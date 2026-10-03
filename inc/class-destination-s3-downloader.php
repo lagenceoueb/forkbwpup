@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-use Aws\S3\S3Client;
-
 /**
  * S3 Downloader.
  *
@@ -23,7 +21,7 @@ final class BackWPup_Destination_S3_Downloader implements BackWPup_Destination_D
     private $data;
 
     /**
-     * @var S3Client
+     * @var Oueb_S3_Client
      */
     private $s3Client;
 
@@ -46,7 +44,9 @@ final class BackWPup_Destination_S3_Downloader implements BackWPup_Destination_D
      */
     public function __destruct()
     {
-        fclose($this->localHandle);
+        if (is_resource($this->localHandle)) {
+            fclose($this->localHandle);
+        }
     }
 
     /**
@@ -54,19 +54,20 @@ final class BackWPup_Destination_S3_Downloader implements BackWPup_Destination_D
      */
     public function download_chunk($start_byte, $end_byte): void
     {
-        $file = $this->s3Client->getObject([
-            'Bucket' => BackWPup_Option::get($this->data->job_id(), self::OPTION_BUCKET),
-            'Key' => $this->data->source_file_path(),
-            'Range' => 'bytes=' . $start_byte . '-' . $end_byte,
-        ]);
+        $body = $this->s3Client->get_object_range(
+            (string) BackWPup_Option::get($this->data->job_id(), self::OPTION_BUCKET),
+            $this->data->source_file_path(),
+            (int) $start_byte,
+            (int) $end_byte
+        );
 
-        if (empty($file['ContentType']) || $file['ContentLength'] === 0) {
+        if ($body === '') {
             throw new RuntimeException(__('Could not write data to file. Empty source file.', 'backwpup'));
         }
 
-        $this->openLocalHandle($start_byte);
+        $this->openLocalHandle((int) $start_byte);
 
-        $bytes = (int) fwrite($this->localHandle, (string) $file['Body']);
+        $bytes = (int) fwrite($this->localHandle, $body);
         if ($bytes === 0) {
             throw new RuntimeException(__('Could not write data to file.', 'backwpup'));
         }
@@ -77,12 +78,13 @@ final class BackWPup_Destination_S3_Downloader implements BackWPup_Destination_D
      */
     public function calculate_size(): int
     {
-        $file = $this->s3Client->getObject([
-            'Bucket' => BackWPup_Option::get($this->data->job_id(), self::OPTION_BUCKET),
-            'Key' => $this->data->source_file_path(),
-        ]);
+        // A HEAD request reads the size without downloading the archive.
+        $headers = $this->s3Client->head_object(
+            (string) BackWPup_Option::get($this->data->job_id(), self::OPTION_BUCKET),
+            $this->data->source_file_path()
+        );
 
-        return (int) (!empty($file['ContentType']) ? $file['ContentLength'] : 0);
+        return (int) ($headers['content-length'] ?? 0);
     }
 
     private function openLocalHandle(int $start_byte): void
@@ -109,7 +111,7 @@ final class BackWPup_Destination_S3_Downloader implements BackWPup_Destination_D
 
         if (empty(BackWPup_Option::get($this->data->job_id(), self::OPTION_BASE_URL))) {
             $aws_destination = BackWPup_S3_Destination::fromOption(
-                BackWPup_Option::get($this->data->job_id(), self::OPTION_REGION)
+                (string) BackWPup_Option::get($this->data->job_id(), self::OPTION_REGION)
             );
         } else {
             $aws_destination = BackWPup_S3_Destination::fromJobId($this->data->job_id());
