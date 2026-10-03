@@ -317,6 +317,21 @@ if (!class_exists(\BackWPup::class, false)) {
                     'classes' => [],
                 ],
             ];
+            // Backup to an SFTP server
+            self::$registered_destinations['SFTP'] = [
+                'class' => \BackWPup_Destination_Sftp::class,
+                'info' => [
+                    'ID' => 'SFTP',
+                    'name' => __('SFTP', 'backwpup'),
+                    'description' => __('Backup to an SFTP server', 'backwpup'),
+                ],
+                'can_sync' => false,
+                'needed' => [
+                    'php_version' => '',
+                    'functions' => [],
+                    'classes' => [\phpseclib3\Net\SFTP::class],
+                ],
+            ];
             // Backup to S3
             self::$registered_destinations['S3'] = [
                 'class' => \BackWPup_Destination_S3::class,
