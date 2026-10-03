@@ -1,29 +1,20 @@
 <?php
 /*
- * Plugin Name: FORK (in progress) from BackWPup 4.1.7 
- * Plugin URI: https://github.com/lagenceoueb/forkbwpup.git
- * Description: WordPress Backup Plugin
- * Author: BackWPup – WordPress Backup & Restore Plugin
+ * Plugin Name: Oueb WP Backup
+ * Plugin URI: https://github.com/lagenceoueb/oueb-wp-backup
+ * Description: Sauvegarde et restauration de WordPress vers des hébergeurs européens. Fork de BackWPup 4.1.7.
+ * Author: L'agence Oueb
  * Author URI: https://lagenceoueb.tech
  * Version: 0.0.1
- * Requires at least: 4.9
- * Requires PHP: 7.4
+ * Requires at least: 6.4
+ * Requires PHP: 8.1
  * Text Domain: backwpup
  * Domain Path: /languages/
  * Network: true
- * License: GPLv2+
+ * License: GPL-2.0-or-later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  */
 
-use Inpsyde\BackWPup\Pro\License\Api\LicenseActivation;
-use Inpsyde\BackWPup\Pro\License\Api\LicenseDeactivation;
-use Inpsyde\BackWPup\Pro\License\Api\LicenseStatusRequest;
-use Inpsyde\BackWPup\Pro\License\Api\PluginInformation;
-use Inpsyde\BackWPup\Pro\License\Api\PluginUpdate;
-use Inpsyde\BackWPup\Pro\License\License;
-use Inpsyde\BackWPup\Pro\License\LicenseSettingsView;
-use Inpsyde\BackWPup\Pro\License\LicenseSettingUpdater;
-use Inpsyde\BackWPup\Pro\Settings\EncryptionSettingsView;
-use Inpsyde\BackWPup\Pro\Settings\EncryptionSettingUpdater;
 
 if (!class_exists(\BackWPup::class, false)) {
     /**
@@ -41,10 +32,6 @@ if (!class_exists(\BackWPup::class, false)) {
 
         private static $job_types = [];
 
-        private static $wizards = [];
-
-        private static $is_pro = false;
-
         /**
          * Set needed filters and actions and load.
          */
@@ -60,8 +47,6 @@ if (!class_exists(\BackWPup::class, false)) {
                 require_once __DIR__ . '/vendor/autoload.php';
             }
 
-            self::$is_pro = file_exists(__DIR__ . '/inc/Pro/class-pro.php');
-
             // Start upgrade if needed
             if (get_site_option('backwpup_version') !== self::get_plugin_data('Version')
                  || !wp_next_scheduled('backwpup_check_cleanup')
@@ -69,30 +54,8 @@ if (!class_exists(\BackWPup::class, false)) {
                 BackWPup_Install::activate();
             }
 
-            $pluginData = [
-                'version' => BackWPup::get_plugin_data('version'),
-                'pluginName' => 'backwpup-pro/backwpup.php',
-                'slug' => 'backwpup',
-            ];
-
 			// Register the third party services.
 			BackWPup_ThirdParties::register();
-
-            // Load pro features
-            if (self::$is_pro) {
-                $license = new License(
-                    get_site_option('license_product_id', ''),
-                    get_site_option('license_api_key', ''),
-                    get_site_option('license_instance_key') ?: wp_generate_password(12, false),
-                    get_site_option('license_status', 'inactive')
-                );
-
-                $pluginUpdate = new PluginUpdate($license, $pluginData);
-                $pluginInformation = new PluginInformation($license, $pluginData);
-
-                $pro = new BackWPup_Pro($pluginUpdate, $pluginInformation);
-                $pro->init();
-            }
 
             // WP-Cron
             if (defined('DOING_CRON') && DOING_CRON) {
@@ -119,35 +82,6 @@ if (!class_exists(\BackWPup::class, false)) {
                 $settings_views = [];
                 $settings_updaters = [];
 
-                if (\BackWPup::is_pro()) {
-                    $activate = new LicenseActivation($pluginData);
-                    $deactivate = new LicenseDeactivation($pluginData);
-                    $status = new LicenseStatusRequest();
-
-                    $settings_views = array_merge(
-                        $settings_views,
-                        [
-                            new EncryptionSettingsView(),
-                            new LicenseSettingsView(
-                                $activate,
-                                $deactivate,
-                                $status
-                            ),
-                        ]
-                    );
-                    $settings_updaters = array_merge(
-                        $settings_updaters,
-                        [
-                            new EncryptionSettingUpdater(),
-                            new LicenseSettingUpdater(
-                                $activate,
-                                $deactivate,
-                                $status
-                            ),
-                        ]
-                    );
-                }
-
                 $settings = new BackWPup_Page_Settings(
                     $settings_views,
                     $settings_updaters
@@ -167,8 +101,6 @@ if (!class_exists(\BackWPup::class, false)) {
 					$admin_bar = new BackWPup_Adminbar( $admin );
 					add_action( 'init', [ $admin_bar, 'init' ] );
 				}
-
-                new BackWPup_EasyCron();
             }
 
             // Work with wp-cli
@@ -187,14 +119,6 @@ if (!class_exists(\BackWPup::class, false)) {
             }
 
             return self::$instance;
-        }
-
-        /**
-         * @return bool
-         */
-        public static function is_pro()
-        {
-            return self::$is_pro;
         }
 
         /**
@@ -378,21 +302,6 @@ if (!class_exists(\BackWPup::class, false)) {
                     'classes' => [],
                 ],
             ];
-            // backup with mail
-            self::$registered_destinations['EMAIL'] = [
-                'class' => \BackWPup_Destination_Email::class,
-                'info' => [
-                    'ID' => 'EMAIL',
-                    'name' => __('Email', 'backwpup'),
-                    'description' => __('Backup sent via email', 'backwpup'),
-                ],
-                'can_sync' => false,
-                'needed' => [
-                    'php_version' => '',
-                    'functions' => [],
-                    'classes' => [],
-                ],
-            ];
             // backup to ftp
             self::$registered_destinations['FTP'] = [
                 'class' => \BackWPup_Destination_Ftp::class,
@@ -405,21 +314,6 @@ if (!class_exists(\BackWPup::class, false)) {
                 'needed' => [
                     'php_version' => '',
                     'functions' => ['ftp_nb_fput'],
-                    'classes' => [],
-                ],
-            ];
-            // backup to dropbox
-            self::$registered_destinations['DROPBOX'] = [
-                'class' => \BackWPup_Destination_Dropbox::class,
-                'info' => [
-                    'ID' => 'DROPBOX',
-                    'name' => __('Dropbox', 'backwpup'),
-                    'description' => __('Backup to Dropbox', 'backwpup'),
-                ],
-                'can_sync' => false,
-                'needed' => [
-                    'php_version' => '',
-                    'functions' => ['curl_exec'],
                     'classes' => [],
                 ],
             ];
@@ -436,51 +330,6 @@ if (!class_exists(\BackWPup::class, false)) {
                     'php_version' => '',
                     'functions' => ['curl_exec'],
                     'classes' => [\XMLWriter::class],
-                ],
-            ];
-            // backup to MS Azure
-            self::$registered_destinations['MSAZURE'] = [
-                'class' => \BackWPup_Destination_MSAzure::class,
-                'info' => [
-                    'ID' => 'MSAZURE',
-                    'name' => __('MS Azure', 'backwpup'),
-                    'description' => __('Backup to Microsoft Azure (Blob)', 'backwpup'),
-                ],
-                'can_sync' => false,
-                'needed' => [
-                    'php_version' => '5.6.0',
-                    'functions' => [],
-                    'classes' => [],
-                ],
-            ];
-            // backup to Rackspace Cloud
-            self::$registered_destinations['RSC'] = [
-                'class' => \BackWPup_Destination_RSC::class,
-                'info' => [
-                    'ID' => 'RSC',
-                    'name' => __('RSC', 'backwpup'),
-                    'description' => __('Backup to Rackspace Cloud Files', 'backwpup'),
-                ],
-                'can_sync' => false,
-                'needed' => [
-                    'php_version' => '',
-                    'functions' => ['curl_exec'],
-                    'classes' => [],
-                ],
-            ];
-            // backup to Sugarsync
-            self::$registered_destinations['SUGARSYNC'] = [
-                'class' => \BackWPup_Destination_SugarSync::class,
-                'info' => [
-                    'ID' => 'SUGARSYNC',
-                    'name' => __('SugarSync', 'backwpup'),
-                    'description' => __('Backup to SugarSync', 'backwpup'),
-                ],
-                'can_sync' => false,
-                'needed' => [
-                    'php_version' => '',
-                    'functions' => ['curl_exec'],
-                    'classes' => [],
                 ],
             ];
 
@@ -558,8 +407,6 @@ if (!class_exists(\BackWPup::class, false)) {
 
             self::$job_types['DBDUMP'] = new BackWPup_JobType_DBDump();
             self::$job_types['FILE'] = new BackWPup_JobType_File();
-            self::$job_types['WPEXP'] = new BackWPup_JobType_WPEXP();
-            self::$job_types['WPPLUGIN'] = new BackWPup_JobType_WPPlugin();
             self::$job_types['DBCHECK'] = new BackWPup_JobType_DBCheck();
 
             self::$job_types = apply_filters('backwpup_job_types', self::$job_types);
@@ -573,52 +420,6 @@ if (!class_exists(\BackWPup::class, false)) {
 
             return self::$job_types;
         }
-
-        /**
-         * Gets a array of instances from Wizards.
-         *
-         * @return array BackWPup_Pro_Wizards
-         */
-        public static function get_wizards()
-        {
-            if (!empty(self::$wizards)) {
-                return self::$wizards;
-            }
-
-            self::$wizards = apply_filters('backwpup_pro_wizards', self::$wizards);
-
-            //remove wizards can't load
-            foreach (self::$wizards as $key => $wizard) {
-                if (empty($wizard) || !is_object($wizard)) {
-                    unset(self::$wizards[$key]);
-                }
-            }
-
-            return self::$wizards;
-        }
-    }
-
-    require_once __DIR__ . '/inc/class-system-requirements.php';
-
-    require_once __DIR__ . '/inc/class-system-tests.php';
-    $system_requirements = new BackWPup_System_Requirements();
-    $system_tests = new BackWPup_System_Tests($system_requirements);
-
-	// Don't activate on anything less than PHP 7.4 or WordPress 4.9.
-	if ( ! $system_tests->is_php_version_compatible() || ! $system_tests->is_wp_version_compatible() ) {
-		require_once ABSPATH . 'wp-admin/includes/plugin.php';
-        deactivate_plugins(__FILE__);
-
-        exit(
-        sprintf(
-            esc_html__(
-                'BackWPup requires PHP version %1$s with spl extension or greater and WordPress %2$s or greater.',
-                'backwpup'
-            ),
-            $system_requirements->php_minimum_version(),
-            $system_requirements->wp_minimum_version()
-        )
-        );
     }
 
     //Start Plugin

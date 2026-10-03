@@ -7,3 +7,4 @@
 /tools export-ignore
 /phpcs.xml.dist export-ignore
 /readme.md export-ignore
+/composer.json export-ignore

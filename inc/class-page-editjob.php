@@ -38,9 +38,6 @@ class BackWPup_Page_Editjob
 
                 //set type of backup
                 $backuptype = 'archive';
-                if (class_exists(\BackWPup_Pro::class, false) && $_POST['backuptype'] === 'sync') {
-                    $backuptype = 'sync';
-                }
                 BackWPup_Option::update($jobid, 'backuptype', $backuptype);
 
                 $type_post = isset($_POST['type']) ? (array) $_POST['type'] : [];
@@ -80,12 +77,6 @@ class BackWPup_Page_Editjob
                         unset($destinations_post[$key]);
 
                         continue;
-                    }
-                    //if sync remove all not sync destinations
-                    if ($backuptype === 'sync') {
-                        if (!$destinations[$dest_id]['can_sync']) {
-                            unset($destinations_post[$key]);
-                        }
                     }
                 }
                 sort($destinations_post);
@@ -128,7 +119,6 @@ class BackWPup_Page_Editjob
                 $activetype = in_array($_POST['activetype'], [
                     '',
                     'wpcron',
-                    'easycron',
                     'link',
                 ], true) ? $_POST['activetype'] : '';
                 BackWPup_Option::update($jobid, 'activetype', $activetype);
@@ -196,12 +186,6 @@ class BackWPup_Page_Editjob
                 if ($activetype === 'wpcron') {
                     $cron_next = BackWPup_Cron::cron_next(BackWPup_Option::get($jobid, 'cron'));
                     wp_schedule_single_event($cron_next, 'backwpup_cron', ['arg' => $jobid]);
-                }
-                $easy_cron_job_id = BackWPup_Option::get($jobid, 'easycronjobid');
-                if ($activetype === 'easycron') {
-                    BackWPup_EasyCron::update($jobid);
-                } elseif ($easy_cron_job_id) {
-                    BackWPup_EasyCron::delete($jobid);
                 }
                 break;
 
@@ -307,14 +291,6 @@ class BackWPup_Page_Editjob
         $destinations = BackWPup::get_registered_destinations();
         $job_types = BackWPup::get_job_types();
 
-        // Is encryption disabled?
-        $disable_encryption = true;
-        if ((get_site_option('backwpup_cfg_encryption') === 'symmetric' && get_site_option('backwpup_cfg_encryptionkey'))
-             || (get_site_option('backwpup_cfg_encryption') === 'asymmetric' && get_site_option('backwpup_cfg_publickey'))
-        ) {
-            $disable_encryption = false;
-        }
-
         $archive_format_option = BackWPup_Option::get($jobid, 'archiveformat'); ?>
     <div class="wrap" id="backwpup-page">
 		<?php
@@ -412,26 +388,6 @@ class BackWPup_Page_Editjob
 					<h3 class="title hasdests"><?php esc_html_e('Backup File Creation', 'backwpup'); ?></h3>
 					<p class="hasdests"></p>
 					<table class="form-table hasdests">
-						<?php if (class_exists(\BackWPup_Pro::class, false)) { ?>
-						<tr>
-							<th scope="row"><?php esc_html_e('Backup type', 'backwpup'); ?></th>
-							<td>
-								<fieldset>
-									<legend class="screen-reader-text">	<span><?php esc_html_e('Backup type', 'backwpup'); ?></span></legend>
-									<p>
-										<label for="idbackuptype-sync">
-											<input class="radio" type="radio"<?php checked('sync', BackWPup_Option::get($jobid, 'backuptype'), true); ?> name="backuptype" id="idbackuptype-sync" value="sync" /> <?php esc_html_e('Synchronize file by file to destination', 'backwpup'); ?>
-										</label>
-									</p>
-									<p>
-										<label for="idbackuptype-archive">
-											<input class="radio" type="radio"<?php checked('archive', BackWPup_Option::get($jobid, 'backuptype'), true); ?> name="backuptype" id="idbackuptype-archive" value="archive" /> <?php esc_html_e('Create a backup archive', 'backwpup'); ?>
-										</label>
-									</p>
-								</fieldset>
-							</td>
-						</tr>
-						<?php } ?>
 						<tr class="nosync">
 							<th scope="row"><label for="archivename"><?php esc_html_e('Archive name', 'backwpup'); ?></label></th>
 							<td>
@@ -486,36 +442,6 @@ class BackWPup_Page_Editjob
 								</fieldset>
 							</td>
 						</tr>
-						<?php if (class_exists(\BackWPup_Pro::class, false)) { ?>
-							<tr class="nosync">
-								<th scope="row">
-									<?php esc_html_e('Encrypt Archive', 'backwpup'); ?>
-								</th>
-								<td>
-									<fieldset>
-										<legend class="screen-reader-text">
-										<span><?php esc_html_e('Encrypt Archive', 'backwpup'); ?></span>
-										</legend>
-										<?php
-                                        ?>
-										<label for="archiveencryption">
-											<input type="checkbox" name="archiveencryption"
-												id="archiveencryption" value="1"<?php if ($disable_encryption) {
-                                            ?> disabled="disabled"<?php
-                                        } else {
-                                            checked(BackWPup_Option::get($jobid, 'archiveencryption'));
-                                        } ?> />
-											<?php _e('Encrypt Archive', 'backwpup'); ?>
-										</label>
-										<?php if ($disable_encryption) { ?>
-											<p class="description">
-												<?php _e('You must generate your encryption key in BackWPup Settings before you can enable this option.', 'backwpup'); ?>
-											</p>
-										<?php } ?>
-									</fieldset>
-								</td>
-							</tr>
-						<?php } ?>
 					</table>
 
 					<h3 class="title hasdests"><?php esc_html_e('Job Destination', 'backwpup'); ?></h3>

@@ -272,10 +272,9 @@ final class TemplateLoader
                 break;
 
             case 3:
-                // Only go to migrate step if in pro version
-                // Note that this is hard-coded: if new steps are inserted, please modify as necessary
+                // The migrate step belongs to the former Pro version and stays disabled.
                 $bind = [
-                    'migrate_allowed' => \BackWPup::is_pro(),
+                    'migrate_allowed' => false,
                 ];
                 break;
 

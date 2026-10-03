@@ -83,12 +83,15 @@ Retiré : envoi par e-mail, export XML de WordPress, liste des extensions instal
 
 Plus tard : service de cron propre à l'agence, branché sur l'URL de déclenchement.
 
+Le réglage de la clé de chiffrement et le déchiffrement au téléchargement faisaient partie de BackWPup Pro, absent du fork. Ils sont à réécrire pour tenir l'engagement sur le chiffrement.
+
 ## Migration depuis BackWPup
 
 Quand l'extension détecte une installation de BackWPup, une notice propose « Importer mes tâches et réglages » ou « Ignorer ». L'import est facultatif et ne modifie ni ne supprime les données de BackWPup. Les deux extensions ne peuvent pas être actives en même temps.
 
 ## Distribution et mises à jour
 
+- Prérequis : WordPress 6.4 et PHP 8.1, déclarés dans l'en-tête du plugin. WordPress refuse l'activation sur un serveur qui ne les remplit pas.
 - Utilisateurs : les clients de l'agence, dans leur administration.
 - Distribution : releases GitHub, puis wordpress.org.
 - Mises à jour : en-tête `Update URI` et filtre `update_plugins_github.com`. Le plugin lit la dernière release, télécharge le zip construit par la CI (dossier `oueb-wp-backup/`), garde la réponse en cache 12 heures. La classe vit dans son propre fichier pour être retirée de la version wordpress.org.
@@ -119,7 +122,7 @@ Pas d'échéance. Ordre de travail :
 2. **Supports.** Vérification des fournisseurs, fiches et sources, SFTP, écran de choix, cron-job.org.
 3. **RGAA.** Nouvelle interface d'après les maquettes, audit, corrections, grille de conformité.
 
-Le rebranding (nom, text domain, préfixes, migration des réglages) accompagne les lots 1 et 3.
+Le rebranding (nom, text domain, préfixes, migration des réglages) accompagne les lots 1 et 3. Il doit renommer les options : le fork utilise encore les noms de BackWPup (`backwpup_*`), et sa désinstallation effacerait les réglages d'un BackWPup installé sur le même site.
 
 ## Points ouverts
 

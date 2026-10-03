@@ -16,7 +16,6 @@ class BackWPup_Encryption
 
     private static $classes = [
         BackWPup_Encryption_OpenSSL::PREFIX => \BackWPup_Encryption_OpenSSL::class,
-        BackWPup_Encryption_Mcrypt::PREFIX => \BackWPup_Encryption_Mcrypt::class,
         BackWPup_Encryption_Fallback::PREFIX => \BackWPup_Encryption_Fallback::class,
     ];
 
@@ -56,7 +55,7 @@ class BackWPup_Encryption
 
         // The given string is not encrypted, let's encrypt it and return
         if (!$cypher_class) {
-            /** @var BackWPup_Encryption_OpenSSL|BackWPup_Encryption_Mcrypt|BackWPup_Encryption_Fallback $best_cypher */
+            /** @var BackWPup_Encryption_OpenSSL|BackWPup_Encryption_Fallback $best_cypher */
             $best_cypher = new $best_cipher_class($key, $key_type);
 
             return $best_cypher->encrypt($string);
@@ -69,7 +68,7 @@ class BackWPup_Encryption
             return $string;
         }
 
-        /** @var BackWPup_Encryption_OpenSSL|BackWPup_Encryption_Mcrypt|BackWPup_Encryption_Fallback $cypher */
+        /** @var BackWPup_Encryption_OpenSSL|BackWPup_Encryption_Fallback $cypher */
         $cypher = new $cypher_class($key, $key_type);
 
         $string = $cypher->decrypt($string);
@@ -111,7 +110,7 @@ class BackWPup_Encryption
             return '';
         }
 
-        /** @var BackWPup_Encryption_OpenSSL|BackWPup_Encryption_Mcrypt|BackWPup_Encryption_Fallback $cypher */
+        /** @var BackWPup_Encryption_OpenSSL|BackWPup_Encryption_Fallback $cypher */
         $cypher = new $cypher_class($key, $key_type);
 
         return trim(stripslashes($cypher->decrypt($string)), "\0");

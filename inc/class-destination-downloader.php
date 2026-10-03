@@ -1,14 +1,11 @@
 <?php
 
-use function Inpsyde\BackWPup\Infrastructure\Restore\restore_container;
 /**
  * BackWPup_Destination_Downloader.
  *
  * @since   3.6.0
  */
 
-use Inpsyde\Restore\Api\Controller\DecryptController;
-use Inpsyde\Restore\Api\Module\Decryption\Exception\DecryptException;
 
 /**
  * Class BackWPup_Destination_Downloader.
@@ -85,6 +82,9 @@ class BackWPup_Destination_Downloader
 
         /** @var \BackWPup_Destinations $dest_class */
         $dest_class = BackWPup::get_destination($dest);
+        if (!$dest_class) {
+            return;
+        }
         $dest_class->file_download(
             $job_id,
             trim(sanitize_text_field($file)),
@@ -133,14 +133,6 @@ class BackWPup_Destination_Downloader
 
                 if ($start_byte < $size && $end_byte >= $size) {
                     $end_byte = $size - 1;
-                }
-            }
-
-            if (BackWPup::is_pro()) {
-                /** @var \Inpsyde\Restore\Api\Module\Decryption\Decrypter $decrypter */
-                $decrypter = restore_container('decrypter');
-                if ($decrypter->isEncrypted($local_file_path)) {
-                    throw new DecryptException(DecryptController::STATE_NEED_DECRYPTION_KEY);
                 }
             }
         } catch (Exception $e) {

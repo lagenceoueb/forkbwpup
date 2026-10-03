@@ -56,16 +56,8 @@ class BackWPup_Page_Settings
         $information['wpversion']['value'] = BackWPup::get_plugin_data('wp_version');
 
         // BackWPup version
-        if (!BackWPup::is_pro()) {
-            $information['bwuversion']['label'] = esc_html__('BackWPup version', 'backwpup');
-            $information['bwuversion']['value'] = BackWPup::get_plugin_data('Version');
-            $information['bwuversion']['html'] = BackWPup::get_plugin_data('Version') .
-                                                 ' <a href="' . __('http://backwpup.com', 'backwpup') . '">' .
-                                                 esc_html__('Get pro.', 'backwpup') . '</a>';
-        } else {
-            $information['bwuversion']['label'] = __('BackWPup Pro version', 'backwpup');
-            $information['bwuversion']['value'] = BackWPup::get_plugin_data('Version');
-        }
+        $information['bwuversion']['label'] = esc_html__('Plugin version', 'backwpup');
+        $information['bwuversion']['value'] = BackWPup::get_plugin_data('Version');
 
         // PHP version
         $information['phpversion']['label'] = esc_html__('PHP version', 'backwpup');
@@ -322,42 +314,6 @@ class BackWPup_Page_Settings
             true
         );
 
-        if (\BackWPup::is_pro()) {
-            wp_enqueue_script(
-				'backwpuppagesettings-encryption',
-				untrailingslashit( BackWPup::get_plugin_data( 'URL' ) ) . "/assets/js/settings-encryption{$suffix}.js",
-				[
-                    'underscore',
-                    'jquery',
-                    'backwpuppagesettings',
-                    'thickbox',
-				],
-				filemtime( untrailingslashit( BackWPup::get_plugin_data( 'plugindir' ) ) . "/assets/js/settings-encryption{$suffix}.js" ),
-				true
-            );
-
-            wp_localize_script(
-                'backwpuppagesettings-encryption',
-                'settingsEncryptionVariables',
-                [
-                    'validPublicKey' => esc_html__('Public key is valid.', 'backwpup'),
-                    'invalidPublicKey' => esc_html__('Public key is invalid.', 'backwpup'),
-                    'privateKeyMissed' => esc_html__('Please enter your private key.', 'backwpup'),
-                    'publicKeyMissed' => esc_html__(
-                        'Please enter a public key first, or generate a key pair.',
-                        'backwpup'
-                    ),
-                    'mustDownloadPrivateKey' => esc_html__(
-                        'Please download the private key before continuing. If you do not save it locally, you cannot decrypt your backups later.',
-                        'backwpup'
-                    ),
-                    'mustDownloadSymmetricKey' => esc_html__(
-                        'Please download the key before continuing. If you do not save it locally, you cannot decrypt your backups later.',
-                        'backwpup'
-                    ),
-                ]
-            );
-        }
     }
 
     public function save_post_form()
@@ -382,13 +338,6 @@ class BackWPup_Page_Settings
             delete_site_option('backwpup_cfg_protectfolders');
             delete_site_option('backwpup_cfg_authentication');
             delete_site_option('backwpup_cfg_logfolder');
-            delete_site_option('backwpup_cfg_dropboxappkey');
-            delete_site_option('backwpup_cfg_dropboxappsecret');
-            delete_site_option('backwpup_cfg_dropboxsandboxappkey');
-            delete_site_option('backwpup_cfg_dropboxsandboxappsecret');
-            delete_site_option('backwpup_cfg_sugarsynckey');
-            delete_site_option('backwpup_cfg_sugarsyncsecret');
-            delete_site_option('backwpup_cfg_sugarsyncappid');
             delete_site_option('backwpup_cfg_hash');
             delete_site_option('backwpup_cfg_keepplugindata');
 
@@ -500,16 +449,9 @@ class BackWPup_Page_Settings
 			<?php
 			$tabs        = [];
 			$tabs['job'] = esc_html__( 'Jobs', 'backwpup' );
-			if ( BackWPup::is_pro() ) {
-				$tabs['encryption'] = esc_html__( 'Encryption', 'backwpup' );
-			}
 			$tabs['log']         = esc_html__( 'Logs', 'backwpup' );
 			$tabs['net']         = esc_html__( 'Network', 'backwpup' );
-			$tabs['apikey']      = esc_html__( 'API Keys', 'backwpup' );
 			$tabs['information'] = esc_html__( 'Information', 'backwpup' );
-			if ( BackWPup::is_pro() ) {
-				$tabs['license'] = esc_html__( 'License', 'backwpup' );
-			}
 			$tabs = apply_filters( 'backwpup_page_settings_tab', $tabs );
 			echo '<h2 class="nav-tab-wrapper">';
 
@@ -938,9 +880,6 @@ class BackWPup_Page_Settings
 
 				</div>
 
-				<div class="table ui-tabs-hide" id="backwpup-tab-apikey">
-					<?php do_action('backwpup_page_settings_tab_apikey'); ?>
-				</div>
 
 				<div class="table ui-tabs-hide" id="backwpup-tab-information">
 					<br/>
@@ -971,21 +910,6 @@ class BackWPup_Page_Settings
             'backwpup'
         ); ?>
 						</p>
-						<p>
-							<?php
-                            echo wp_kses(
-            __(
-                '<strong>Note</strong>: ' .
-                                    'Would you like faster, more streamlined support? Pro users can contact BackWPup from right within the plugin.',
-                'backwpup'
-            ),
-            ['strong' => []]
-        ); ?>
-							<a href="<?php _e('https://backwpup.com', 'backwpup'); ?>">
-								<?php _e('Get Pro', 'backwpup'); ?>
-							</a>
-						</p>
-
 						<?php
                         $html = ob_get_clean();
         echo apply_filters('backwpup_get_debug_info_text', $html); ?>
