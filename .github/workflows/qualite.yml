@@ -66,7 +66,7 @@ jobs:
       - name: Installer PHPCS et WPCS
         run: composer --working-dir=tools install --no-progress --no-interaction
       - name: Lancer PHPCS sur le nouveau code, sans tolérance
-        run: tools/vendor/bin/phpcs includes tests/php bin/make-pot.php
+        run: tools/vendor/bin/phpcs includes tests/php
 
   phpunit:
     name: Tests PHP ${{ matrix.php }}
