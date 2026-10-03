@@ -151,7 +151,7 @@ msgstr "Sauvegarde envoyée vers kDrive : %s."
 msgid "kDrive: %s"
 msgstr "kDrive : %s"
 
-#: inc/class-backwpup-destination-kdrive.php:272 inc/class-backwpup-destination-sftp.php:358
+#: inc/class-backwpup-destination-kdrive.php:272 inc/class-backwpup-destination-sftp.php:354
 msgid "This file is not a backup of this job."
 msgstr "Ce fichier n'est pas une sauvegarde de cette opération."
 
@@ -196,12 +196,6 @@ msgstr "Choisir un service"
 #: inc/class-destination-s3.php:67
 msgid "The service saved in this job is no longer offered. Backups to it stopped. Choose a European provider, then check the bucket."
 msgstr "Le service enregistré dans cette opération n'est plus proposé et les sauvegardes vers lui sont arrêtées. Choisissez un fournisseur européen, puis vérifiez le bucket."
-
-#. translators: %s: storage or job type id, such as DROPBOX.
-#: inc/class-job.php:1352
-#, php-format
-msgid "%s is no longer available in this plugin. This step is skipped."
-msgstr "%s n'est plus disponible dans cette extension. Cette étape est ignorée."
 
 #: inc/class-backwpup-destination-sftp.php:59
 msgid "SFTP server"
@@ -292,19 +286,19 @@ msgid "The file size on the SFTP server does not match the local file."
 msgstr "La taille du fichier sur le serveur SFTP ne correspond pas à celle du fichier local."
 
 #. translators: %s: file path on the server.
-#: inc/class-backwpup-destination-sftp.php:285
+#: inc/class-backwpup-destination-sftp.php:281
 #, php-format
 msgid "Backup transferred to %s."
 msgstr "Sauvegarde envoyée vers %s."
 
 #. translators: %s: file path on the server.
-#: inc/class-backwpup-destination-sftp.php:476
+#: inc/class-backwpup-destination-sftp.php:472
 #, php-format
 msgid "Cannot delete %s on the SFTP server."
 msgstr "Impossible de supprimer %s sur le serveur SFTP."
 
 #. translators: %d: number of deleted files.
-#: inc/class-backwpup-destination-sftp.php:482
+#: inc/class-backwpup-destination-sftp.php:478
 #, php-format
 msgid "%d file deleted on the SFTP server."
 msgid_plural "%d files deleted on the SFTP server."
@@ -383,62 +377,56 @@ msgstr "Impossible d'écrire dans le fichier."
 msgid "cron-job.org did not return a job ID."
 msgstr "cron-job.org n'a pas renvoyé d'identifiant de tâche."
 
-#. translators: %s: cron field, such as "*\/5".
-#: inc/class-oueb-cronjob-org.php:226
-#, php-format
-msgid "The schedule field %s cannot be sent to cron-job.org. Check the schedule of this job."
-msgstr "Le champ de planification %s ne peut pas être envoyé à cron-job.org. Vérifiez la planification de cette opération."
-
 #. translators: %s: technical error message.
-#: inc/class-oueb-cronjob-org.php:265
+#: inc/class-oueb-cronjob-org.php:225
 #, php-format
 msgid "The site cannot reach cron-job.org (%s). Check that your host allows outgoing connections."
 msgstr "Le site n'arrive pas à joindre cron-job.org (%s). Vérifiez que votre hébergeur autorise les connexions sortantes."
 
-#: inc/class-oueb-cronjob-org.php:273 inc/class-oueb-cronjob-org.php:274
+#: inc/class-oueb-cronjob-org.php:233 inc/class-oueb-cronjob-org.php:234
 msgid "cron-job.org refused the API key."
 msgstr "cron-job.org a refusé la clé d'API."
 
-#: inc/class-oueb-cronjob-org.php:275
+#: inc/class-oueb-cronjob-org.php:235
 msgid "The job no longer exists on cron-job.org."
 msgstr "La tâche n'existe plus sur cron-job.org."
 
-#: inc/class-oueb-cronjob-org.php:276
+#: inc/class-oueb-cronjob-org.php:236
 msgid "Too many requests to cron-job.org. Try again in a few minutes."
 msgstr "Trop de requêtes vers cron-job.org. Réessayez dans quelques minutes."
 
 #. translators: %d: HTTP status code.
-#: inc/class-oueb-cronjob-org.php:279
+#: inc/class-oueb-cronjob-org.php:239
 #, php-format
 msgid "cron-job.org answered with error %d."
 msgstr "cron-job.org a répondu par l'erreur %d."
 
-#: inc/cronjob-org.php:174
+#: inc/cronjob-org.php:159
 msgid "Enter your cron-job.org API key to schedule this job."
 msgstr "Saisissez votre clé d'API cron-job.org pour planifier cette opération."
 
 #. translators: %s: error message.
-#: inc/cronjob-org.php:194 inc/cronjob-org.php:218
+#: inc/cronjob-org.php:179 inc/cronjob-org.php:203
 #, php-format
 msgid "cron-job.org: %s"
 msgstr "cron-job.org : %s"
 
-#: inc/cronjob-org.php:234
+#: inc/cronjob-org.php:219
 msgid "with cron-job.org, a free and open source service"
 msgstr "avec cron-job.org, service gratuit et au code ouvert"
 
-#: inc/cronjob-org.php:237
+#: inc/cronjob-org.php:222
 msgid "The job starts at the exact time, even when nobody visits the site. The plugin sends cron-job.org the trigger link and the schedule of this job, nothing else."
 msgstr "L'opération démarre à l'heure exacte, même quand personne ne visite le site. L'extension envoie à cron-job.org le lien de déclenchement et la planification de cette opération, rien d'autre."
 
-#: inc/cronjob-org.php:240
+#: inc/cronjob-org.php:225
 msgid "cron-job.org API key"
 msgstr "Clé d'API cron-job.org"
 
-#: inc/cronjob-org.php:246
+#: inc/cronjob-org.php:231
 msgid "A key is saved for all jobs. Leave empty to keep it."
 msgstr "Une clé est enregistrée pour toutes les opérations. Laissez vide pour la garder."
 
-#: inc/cronjob-org.php:248
+#: inc/cronjob-org.php:233
 msgid "Create a free account on cron-job.org, then generate a key in Settings, API."
 msgstr "Créez un compte gratuit sur cron-job.org, puis générez une clé dans Settings, API."
