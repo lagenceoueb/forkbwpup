@@ -61,6 +61,7 @@ Tous proposent un stockage compatible S3 : Scaleway, OVHcloud, Clever Cloud (Cel
 
 ### Autres supports
 
+- Infomaniak kDrive, repris de la branche `feature/kdrive-destination` avec ces corrections : identifiant kDrive limité aux chiffres, mot de passe d'application exigé, champ mot de passe jamais prérempli, liste, téléchargement et suppression des sauvegardes depuis l'administration, valeur 0 (illimité) enregistrable, noms de fichiers encodés dans l'URL, envoi adapté aux gros sites. Le commit de rebranding de cette branche n'est pas repris.
 - Serveur SFTP administré par le client.
 - Dossier sur le serveur du site, présenté comme une copie complémentaire seulement.
 
@@ -120,7 +121,7 @@ Maquettes validées : https://claude.ai/artifact/2vzez61heo6EDwMKyERgSU
 Pas d'échéance. Ordre de travail :
 
 1. **Sobriété.** Outillage qualité et CI, retrait du code mort et des supports écartés, nettoyage des dépendances et des assets, client S3 léger à la place du SDK AWS.
-2. **Supports.** Vérification des fournisseurs, fiches et sources, SFTP, écran de choix, cron-job.org.
+2. **Supports.** Vérification des fournisseurs, fiches et sources, SFTP, kDrive, écran de choix, cron-job.org.
 3. **RGAA.** Nouvelle interface d'après les maquettes, audit, corrections, grille de conformité.
 
 Le rebranding (nom, text domain, préfixes, migration des réglages) accompagne les lots 1 et 3. Il doit renommer les options : le fork utilise encore les noms de BackWPup (`backwpup_*`), et sa désinstallation effacerait les réglages d'un BackWPup installé sur le même site.
