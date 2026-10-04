@@ -88,6 +88,16 @@ La nouvelle interface ne s'affiche que si `wp-config.php` contient :
 define( 'OUEB_WP_BACKUP_NEXT', true );
 ```
 
+Avec cette constante, le tableau de bord lance aussi les sauvegardes du nouveau moteur. Elles restent sur le serveur, dans `wp-content/uploads/oueb-wp-backup-<jeton>/`, en attendant les stockages du lot 3. Le jeton aléatoire rend le nom du dossier imprévisible. Apache et IIS appliquent les fichiers `.htaccess` et `web.config` que l'extension y dépose. Nginx les ignore : bloquez ce dossier dans la configuration du site.
+
+```nginx
+location ~ ^/wp-content/uploads/oueb-wp-backup- {
+    deny all;
+}
+```
+
+Le moteur avance par passages courts et se relance lui-même par une requête vers le site. Si l'hébergeur bloque ces requêtes, une tâche WP-Cron reprend la sauvegarde toutes les deux minutes.
+
 Les outils PHP ont leur propre `composer.json` dans `tools/`, séparé des dépendances embarquées dans `vendor/`. Ceux de l'interface sont dans `package.json`.
 
 ```sh

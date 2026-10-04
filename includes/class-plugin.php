@@ -11,13 +11,24 @@ declare( strict_types=1 );
 namespace Oueb\WpBackup;
 
 use Oueb\WpBackup\Admin\Admin_Page;
+use Oueb\WpBackup\Admin\Download;
+use Oueb\WpBackup\Engine\Continuation;
+use Oueb\WpBackup\Engine\Run_Repository;
+use Oueb\WpBackup\Engine\Runner;
+use Oueb\WpBackup\Engine\Schema;
+use Oueb\WpBackup\Engine\Steps\Step_Factory;
+use Oueb\WpBackup\Engine\Watchdog;
+use Oueb\WpBackup\Job\Job_Repository;
+use Oueb\WpBackup\Rest\Jobs_Controller;
+use Oueb\WpBackup\Rest\Runs_Controller;
 use Oueb\WpBackup\Rest\Settings_Controller;
 use Oueb\WpBackup\Security\Capabilities;
+use Oueb\WpBackup\Storage\Workspace;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Branche les services de l'extension sur WordPress.
+ * Branche les services de l'extension sur WordPress et les fournit.
  *
  * Pendant la refonte, l'interface React ne s'affiche que si la constante
  * OUEB_WP_BACKUP_NEXT vaut true dans wp-config.php. L'ancienne interface
@@ -44,6 +55,14 @@ final class Plugin {
 	private static string $file = '';
 
 	/**
+	 * Services déjà construits.
+	 *
+	 * @since 0.1.0
+	 * @var array<string, object>
+	 */
+	private static array $services = array();
+
+	/**
 	 * Démarre l'extension.
 	 *
 	 * @since 0.1.0
@@ -57,7 +76,10 @@ final class Plugin {
 		self::$file = $file;
 
 		Capabilities::register();
+		add_action( 'init', array( Schema::class, 'maybe_upgrade' ) );
 		add_action( 'rest_api_init', array( self::class, 'register_rest_routes' ) );
+		add_action( Watchdog::HOOK, array( self::class, 'run_watchdog' ) );
+		Download::register();
 
 		if ( self::is_next_enabled() && is_admin() ) {
 			Admin_Page::register();
@@ -71,6 +93,92 @@ final class Plugin {
 	 */
 	public static function register_rest_routes(): void {
 		( new Settings_Controller() )->register_routes();
+		( new Jobs_Controller( self::jobs() ) )->register_routes();
+		( new Runs_Controller( self::runs(), self::jobs(), self::runner(), self::continuation(), self::workspace() ) )->register_routes();
+	}
+
+	/**
+	 * Lance la surveillance des exécutions, appelée par WP-Cron.
+	 *
+	 * @since 0.1.0
+	 */
+	public static function run_watchdog(): void {
+		Watchdog::check( self::runs(), self::runner() );
+	}
+
+	/**
+	 * Renvoie le dépôt des tâches.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return Job_Repository Tâches.
+	 */
+	public static function jobs(): Job_Repository {
+		return self::service( Job_Repository::class, static fn(): Job_Repository => new Job_Repository() );
+	}
+
+	/**
+	 * Renvoie le dépôt des exécutions.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return Run_Repository Exécutions.
+	 */
+	public static function runs(): Run_Repository {
+		return self::service( Run_Repository::class, static fn(): Run_Repository => new Run_Repository() );
+	}
+
+	/**
+	 * Renvoie les dossiers de travail.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return Workspace Dossiers de travail.
+	 */
+	public static function workspace(): Workspace {
+		return self::service( Workspace::class, static fn(): Workspace => new Workspace() );
+	}
+
+	/**
+	 * Renvoie la relance des exécutions.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return Continuation Relance.
+	 */
+	public static function continuation(): Continuation {
+		return self::service( Continuation::class, static fn(): Continuation => new Continuation( self::runs() ) );
+	}
+
+	/**
+	 * Renvoie le moteur.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return Runner Moteur.
+	 */
+	public static function runner(): Runner {
+		return self::service(
+			Runner::class,
+			static fn(): Runner => new Runner( self::runs(), self::jobs(), self::workspace(), new Step_Factory(), self::continuation() )
+		);
+	}
+
+	/**
+	 * Construit un service une seule fois.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param string   $name    Nom du service.
+	 * @param callable $factory Fonction qui le construit.
+	 * @return mixed Service.
+	 */
+	private static function service( string $name, callable $factory ) {
+		if ( ! isset( self::$services[ $name ] ) ) {
+			self::$services[ $name ] = $factory();
+		}
+
+		return self::$services[ $name ];
 	}
 
 	/**
