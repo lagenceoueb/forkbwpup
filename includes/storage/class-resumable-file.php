@@ -71,6 +71,33 @@ final class Resumable_File {
 	}
 
 	/**
+	 * Lit exactement le nombre d'octets demandé, ou jusqu'à la fin du fichier.
+	 *
+	 * Un flux qui n'est pas un simple fichier rend au plus 8 Ko par lecture :
+	 * une partie S3 serait alors trop courte, et l'objet assemblé faux.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param resource $handle Fichier ouvert.
+	 * @param int      $length Nombre d'octets.
+	 * @return string Octets lus, moins que demandé seulement en fin de fichier.
+	 */
+	public static function read( $handle, int $length ): string {
+		$data = '';
+		$left = $length;
+		while ( $left > 0 && ! feof( $handle ) ) {
+			$chunk = fread( $handle, $left );
+			if ( false === $chunk || '' === $chunk ) {
+				break;
+			}
+			$data .= $chunk;
+			$left -= strlen( $chunk );
+		}
+
+		return $data;
+	}
+
+	/**
 	 * Vide les tampons et renvoie la taille à valider.
 	 *
 	 * @since 0.1.0

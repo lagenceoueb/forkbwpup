@@ -12,7 +12,7 @@ import { __, sprintf } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { fetchJob, fetchRuns } from '../api';
+import { fetchJob, fetchRuns, fetchStorages } from '../api';
 import { contentsLabel, formatDate } from '../format';
 import RunsTable from '../components/runs-table';
 import BackupNow from './backup-now';
@@ -77,6 +77,7 @@ export function protectionSummary( runs ) {
 export default function DashboardScreen() {
 	const [ runs, setRuns ] = useState( null );
 	const [ job, setJob ] = useState( null );
+	const [ storages, setStorages ] = useState( [] );
 	const [ error, setError ] = useState( null );
 
 	const load = useCallback( () => {
@@ -89,6 +90,9 @@ export default function DashboardScreen() {
 		load();
 		fetchJob()
 			.then( setJob )
+			.catch( ( e ) => setError( e.message ) );
+		fetchStorages()
+			.then( setStorages )
 			.catch( ( e ) => setError( e.message ) );
 	}, [ load ] );
 
@@ -142,11 +146,19 @@ export default function DashboardScreen() {
 					<h2 id="oueb-where" className="oueb-card__title">
 						{ __( 'Where', 'oueb-wp-backup' ) }
 					</h2>
+					<ul className="oueb-where">
+						{ storages
+							.filter( ( storage ) =>
+								job?.storages.includes( storage.id )
+							)
+							.map( ( storage ) => (
+								<li key={ storage.id }>{ storage.name }</li>
+							) ) }
+					</ul>
 					<p>
-						{ __(
-							'On this server, in a protected folder.',
-							'oueb-wp-backup'
-						) }
+						<a href="#/storage">
+							{ __( 'Choose the storages', 'oueb-wp-backup' ) }
+						</a>
 					</p>
 				</section>
 				<section className="oueb-card" aria-labelledby="oueb-when">

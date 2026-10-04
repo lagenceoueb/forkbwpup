@@ -168,10 +168,12 @@ final class Runner {
 		if ( function_exists( 'set_time_limit' ) ) {
 			set_time_limit( $max + 30 );
 		}
+		// Une partie d'envoi S3 tient en mémoire : 8 Mo au moins.
+		wp_raise_memory_limit( 'admin' );
 
 		$again = false;
 		try {
-			$again = $this->advance( $run, $max );
+			$again = $this->advance( $run, $max, $owner );
 		} finally {
 			$this->runs->release( $run->id, $owner );
 		}
@@ -221,11 +223,12 @@ final class Runner {
 	 *
 	 * @since 0.1.0
 	 *
-	 * @param Run $run Exécution, verrou pris.
-	 * @param int $max Durée maximale du passage, en secondes.
+	 * @param Run    $run   Exécution, verrou pris.
+	 * @param int    $max   Durée maximale du passage, en secondes.
+	 * @param string $owner Détenteur du verrou.
 	 * @return bool Vrai s'il faut un autre passage.
 	 */
-	private function advance( Run $run, int $max ): bool {
+	private function advance( Run $run, int $max, string $owner ): bool {
 		$logger = $this->logger( $run );
 		$job    = $this->jobs->get( $run->job_id );
 		if ( null === $job ) {
@@ -238,6 +241,15 @@ final class Runner {
 		$context = new Run_Context( $run, $job, $this->workspace, $logger, new Deadline( max( 5, $max - 3 ) ) );
 		$context->watch_abort( array( $this->runs, 'abort_requested' ) );
 		$context->save_with( array( $this->runs, 'save' ) );
+		$context->keep_alive_with(
+			function ( Run $current ) use ( $owner, $max ): void {
+				$this->runs->acquire( $current->id, $owner, $max + 60 );
+				$this->runs->save( $current );
+				if ( function_exists( 'set_time_limit' ) ) {
+					set_time_limit( $max + 30 );
+				}
+			}
+		);
 
 		$run->status = Run::RUNNING;
 		$this->runs->save( $run );
@@ -261,6 +273,9 @@ final class Runner {
 
 			try {
 				$done = $step->run( $context );
+			} catch ( Step_Failure $error ) {
+				$this->fail( $run, $logger, $error->getMessage() );
+				return false;
 			} catch ( Throwable $error ) {
 				return $this->retry_or_fail( $run, $logger, $step, $error );
 			}
@@ -342,7 +357,7 @@ final class Runner {
 	 * @param Logger $logger Journal.
 	 */
 	private function complete( Run $run, Logger $logger ): void {
-		$run->status = $run->warnings > 0 ? Run::WARNING : Run::SUCCESS;
+		$run->status = $run->warnings > 0 || $run->errors > 0 ? Run::WARNING : Run::SUCCESS;
 		$logger->info(
 			Run::SUCCESS === $run->status
 				? __( 'Backup finished.', 'oueb-wp-backup' )
@@ -396,6 +411,11 @@ final class Runner {
 			$run->progress = 100;
 		}
 		$this->runs->save( $run );
+
+		$forget = array_map( 'strval', (array) ( $run->state['forget'] ?? array() ) );
+		if ( array() !== $forget ) {
+			$this->runs->forget_archives( $run->job_id, $forget );
+		}
 
 		$this->workspace->clean_tmp( $run->id );
 		$this->runs->prune( (int) Settings::get( 'max_logs' ), $this->workspace->logs() );

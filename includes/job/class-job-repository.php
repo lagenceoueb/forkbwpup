@@ -75,7 +75,7 @@ final class Job_Repository {
 	 * @param Job $job Tâche.
 	 */
 	public function save( Job $job ): void {
-		$jobs            = $this->all();
+		$jobs             = $this->all();
 		$jobs[ $job->id ] = $job;
 
 		update_site_option(

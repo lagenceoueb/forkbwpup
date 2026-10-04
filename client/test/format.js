@@ -82,5 +82,6 @@ describe( 'stepLabel', () => {
 	it( 'falls back on a generic label', () => {
 		expect( stepLabel( 'unknown' ) ).toBe( 'Preparing' );
 		expect( stepLabel( 'archive' ) ).toBe( 'Creating the archive' );
+		expect( stepLabel( 'store' ) ).toBe( 'Sending the archive' );
 	} );
 } );

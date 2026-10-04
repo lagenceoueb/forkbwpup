@@ -5,6 +5,7 @@
 /**
  * WordPress dependencies
  */
+import { Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 
 /**
@@ -15,12 +16,13 @@ import { contentsLabel, formatDate, formatSize, statusLabel } from '../format';
 /**
  * Affiche une liste de sauvegardes, avec leurs actions.
  *
- * @param {Object} props         Propriétés.
- * @param {Array}  props.runs    Exécutions.
- * @param {string} props.caption Légende du tableau, lue par les lecteurs d'écran.
+ * @param {Object}   props          Propriétés.
+ * @param {Array}    props.runs     Exécutions.
+ * @param {string}   props.caption  Légende du tableau, lue par les lecteurs d'écran.
+ * @param {Function} props.onDelete Appelée avec l'exécution dont l'archive est à supprimer. Sans elle, pas de bouton.
  * @return {Element} Tableau.
  */
-export default function RunsTable( { runs, caption } ) {
+export default function RunsTable( { runs, caption, onDelete } ) {
 	if ( runs.length === 0 ) {
 		return (
 			<p className="oueb-empty">
@@ -44,6 +46,9 @@ export default function RunsTable( { runs, caption } ) {
 						</th>
 						<th scope="col">{ __( 'Size', 'oueb-wp-backup' ) }</th>
 						<th scope="col">
+							{ __( 'Stored in', 'oueb-wp-backup' ) }
+						</th>
+						<th scope="col">
 							{ __( 'Status', 'oueb-wp-backup' ) }
 						</th>
 						<th scope="col">
@@ -63,6 +68,13 @@ export default function RunsTable( { runs, caption } ) {
 								<td>
 									{ run.archive_size
 										? formatSize( run.archive_size )
+										: '' }
+								</td>
+								<td>
+									{ run.archive_file
+										? ( run.storage_names || [] ).join(
+												', '
+										  )
 										: '' }
 								</td>
 								<td>
@@ -104,6 +116,23 @@ export default function RunsTable( { runs, caption } ) {
 									>
 										{ __( 'Log', 'oueb-wp-backup' ) }
 									</a>
+									{ onDelete && run.download_url && (
+										<Button
+											variant="link"
+											isDestructive
+											aria-label={ sprintf(
+												/* translators: %s: backup date. */
+												__(
+													'Delete the backup of %s',
+													'oueb-wp-backup'
+												),
+												date
+											) }
+											onClick={ () => onDelete( run ) }
+										>
+											{ __( 'Delete', 'oueb-wp-backup' ) }
+										</Button>
+									) }
 								</td>
 							</tr>
 						);

@@ -120,7 +120,9 @@ final class Logger {
 	 * @param string $message Message, sur une ligne.
 	 */
 	private function write( string $level, string $message ): void {
-		$line = gmdate( 'Y-m-d\TH:i:s\Z' ) . "\t" . $level . "\t" . str_replace( array( "\r", "\n", "\t" ), ' ', $message ) . "\n";
+		// Les messages des exceptions arrivent échappés pour le HTML : le journal garde le texte brut.
+		$message = wp_specialchars_decode( $message, ENT_QUOTES );
+		$line    = gmdate( 'Y-m-d\TH:i:s\Z' ) . "\t" . $level . "\t" . str_replace( array( "\r", "\n", "\t" ), ' ', $message ) . "\n";
 		file_put_contents( $this->file, $line, FILE_APPEND | LOCK_EX );
 	}
 

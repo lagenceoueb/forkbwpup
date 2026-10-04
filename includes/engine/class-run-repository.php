@@ -191,6 +191,32 @@ final class Run_Repository {
 	}
 
 	/**
+	 * Oublie des archives supprimées par la rotation : leurs exécutions n'ont plus rien à télécharger.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param string   $job_id Tâche.
+	 * @param string[] $names  Noms des archives.
+	 */
+	public function forget_archives( string $job_id, array $names ): void {
+		global $wpdb;
+
+		foreach ( $names as $name ) {
+			$wpdb->update(
+				Schema::table(),
+				array(
+					'archive_file' => '',
+					'archive_size' => 0,
+				),
+				array(
+					'job_id'       => $job_id,
+					'archive_file' => $name,
+				)
+			);
+		}
+	}
+
+	/**
 	 * Demande l'arrêt d'une exécution.
 	 *
 	 * La demande vit dans sa propre colonne : le processus en cours, qui

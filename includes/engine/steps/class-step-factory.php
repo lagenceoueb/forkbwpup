@@ -12,6 +12,8 @@ namespace Oueb\WpBackup\Engine\Steps;
 
 use Oueb\WpBackup\Engine\Step;
 use Oueb\WpBackup\Job\Job;
+use Oueb\WpBackup\Settings\Settings;
+use Oueb\WpBackup\Storage\Storage_Repository;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -21,6 +23,25 @@ defined( 'ABSPATH' ) || exit;
  * @since 0.1.0
  */
 class Step_Factory {
+
+	/**
+	 * Stockages.
+	 *
+	 * @since 0.1.0
+	 * @var Storage_Repository
+	 */
+	private Storage_Repository $storages;
+
+	/**
+	 * Crée la fabrique.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param Storage_Repository $storages Stockages.
+	 */
+	public function __construct( Storage_Repository $storages ) {
+		$this->storages = $storages;
+	}
 
 	/**
 	 * Renvoie les étapes d'une tâche, dans l'ordre d'exécution.
@@ -40,7 +61,8 @@ class Step_Factory {
 		}
 		$steps[] = new Manifest();
 		$steps[] = new Archive();
-		$steps[] = new Finish();
+		$steps[] = new Store( $this->storages, (int) Settings::get( 'step_retries' ) );
+		$steps[] = new Finish( $this->storages );
 
 		/**
 		 * Filtre les étapes d'une tâche.

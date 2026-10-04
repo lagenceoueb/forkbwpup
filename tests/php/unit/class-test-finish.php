@@ -31,30 +31,25 @@ final class Test_Finish extends Test_Case {
 	}
 
 	/**
-	 * La rotation ne touche qu'aux archives de la tâche et garde toujours la dernière.
+	 * La rotation ne garde que les archives les plus récentes du site et de la tâche, une au moins.
 	 */
-	public function test_rotate(): void {
-		Functions\when( 'wp_delete_file' )->alias( fn( $file ) => unlink( $file ) );
-		$dir = sys_get_temp_dir() . '/oueb-rotate-' . bin2hex( random_bytes( 6 ) );
-		mkdir( $dir );
-		$files = array(
+	public function test_outdated(): void {
+		$names = array(
 			'site_main_2026-10-01_000000.zip',
 			'site_main_2026-10-02_000000.tar.gz',
 			'site_main_2026-10-03_000000.zip',
+			'site_main_2026-10-03_000000.zip.part',
+			'other-site_main_2026-09-01_000000.zip',
 			'site_job-a_2026-09-01_000000.zip',
 			'notes.txt',
 		);
-		foreach ( $files as $file ) {
-			touch( $dir . '/' . $file );
-		}
 
-		$this->assertSame( 1, Finish::rotate( $dir, 'main', 2 ) );
-		$this->assertFileDoesNotExist( $dir . '/site_main_2026-10-01_000000.zip' );
-		$this->assertSame( 1, Finish::rotate( $dir, 'main', 0 ), 'Keeps at least one archive.' );
-		$this->assertFileExists( $dir . '/site_main_2026-10-03_000000.zip' );
-		$this->assertFileExists( $dir . '/site_job-a_2026-09-01_000000.zip' );
-		$this->assertFileExists( $dir . '/notes.txt' );
-
-		exec( 'rm -rf ' . escapeshellarg( $dir ) );
+		$this->assertSame( array( 'site_main_2026-10-01_000000.zip' ), Finish::outdated( $names, 'site_main_', 2 ) );
+		$this->assertSame(
+			array( 'site_main_2026-10-02_000000.tar.gz', 'site_main_2026-10-01_000000.zip' ),
+			Finish::outdated( $names, 'site_main_', 0 ),
+			'Keeps at least one archive.'
+		);
+		$this->assertSame( array(), Finish::outdated( $names, 'site_job-a_', 5 ) );
 	}
 }

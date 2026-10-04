@@ -232,6 +232,7 @@ final class Run {
 			'warnings'     => $this->warnings,
 			'errors'       => $this->errors,
 			'contents'     => $this->state['contents'] ?? array(),
+			'stored'       => array_values( (array) ( $this->state['stored'] ?? array() ) ),
 		);
 	}
 }

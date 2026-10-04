@@ -18,7 +18,9 @@ use Oueb\WpBackup\Engine\Run_Repository;
 use Oueb\WpBackup\Engine\Runner;
 use Oueb\WpBackup\Job\Job;
 use Oueb\WpBackup\Job\Job_Repository;
+use Oueb\WpBackup\Storage\Storage_Repository;
 use Oueb\WpBackup\Storage\Workspace;
+use Throwable;
 use WP_Error;
 use WP_REST_Controller;
 use WP_REST_Request;
@@ -74,6 +76,14 @@ final class Runs_Controller extends WP_REST_Controller {
 	private Continuation $continuation;
 
 	/**
+	 * Stockages.
+	 *
+	 * @since 0.1.0
+	 * @var Storage_Repository
+	 */
+	private Storage_Repository $storages;
+
+	/**
 	 * Dossiers de travail.
 	 *
 	 * @since 0.1.0
@@ -86,18 +96,20 @@ final class Runs_Controller extends WP_REST_Controller {
 	 *
 	 * @since 0.1.0
 	 *
-	 * @param Run_Repository $runs         Exécutions.
-	 * @param Job_Repository $jobs         Tâches.
-	 * @param Runner         $runner       Moteur.
-	 * @param Continuation   $continuation Relance.
-	 * @param Workspace      $workspace    Dossiers de travail.
+	 * @param Run_Repository     $runs         Exécutions.
+	 * @param Job_Repository     $jobs         Tâches.
+	 * @param Runner             $runner       Moteur.
+	 * @param Continuation       $continuation Relance.
+	 * @param Workspace          $workspace    Dossiers de travail.
+	 * @param Storage_Repository $storages Stockages.
 	 */
-	public function __construct( Run_Repository $runs, Job_Repository $jobs, Runner $runner, Continuation $continuation, Workspace $workspace ) {
+	public function __construct( Run_Repository $runs, Job_Repository $jobs, Runner $runner, Continuation $continuation, Workspace $workspace, Storage_Repository $storages ) {
 		$this->runs         = $runs;
 		$this->jobs         = $jobs;
 		$this->runner       = $runner;
 		$this->continuation = $continuation;
 		$this->workspace    = $workspace;
+		$this->storages     = $storages;
 		$this->namespace    = Settings_Controller::REST_NAMESPACE;
 		$this->rest_base    = 'runs';
 	}
@@ -164,6 +176,16 @@ final class Runs_Controller extends WP_REST_Controller {
 			array(
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_log' ),
+				'permission_callback' => $manage,
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
+			$id . '/archive',
+			array(
+				'methods'             => WP_REST_Server::DELETABLE,
+				'callback'            => array( $this, 'delete_archive' ),
 				'permission_callback' => $manage,
 			)
 		);
@@ -315,10 +337,70 @@ final class Runs_Controller extends WP_REST_Controller {
 	public function prepare_run( Run $run ): array {
 		$data = $run->to_public_array();
 
-		$file                 = '' === $run->archive_file ? '' : $this->workspace->root() . '/archives/' . basename( $run->archive_file );
-		$data['download_url'] = '' !== $file && is_file( $file ) ? Download::url( $run ) : null;
+		$data['storage_names'] = array();
+		foreach ( $data['stored'] as $storage_id ) {
+			$record = $this->storages->get( (string) $storage_id );
+			if ( null !== $record ) {
+				$data['storage_names'][] = $record['name'];
+			}
+		}
+
+		$file      = '' === $run->archive_file ? '' : $this->workspace->root() . '/archives/' . basename( $run->archive_file );
+		$available = '' !== $file && ( is_file( $file ) || array() !== array_diff( $data['stored'], array( Storage_Repository::LOCAL ) ) );
+
+		$data['download_url'] = $available && ! $run->is_active() ? Download::url( $run ) : null;
 
 		return $data;
+	}
+
+	/**
+	 * Supprime l'archive d'une exécution de tous ses stockages.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param WP_REST_Request $request Requête.
+	 * @return WP_REST_Response|WP_Error Exécution, ou erreur.
+	 */
+	public function delete_archive( $request ) {
+		$run = $this->runs->find( (int) $request['id'] );
+		if ( null === $run ) {
+			return self::not_found();
+		}
+		if ( $run->is_active() || '' === $run->archive_file ) {
+			return new WP_Error( 'oueb_wp_backup_no_archive', __( 'This backup has no archive to delete.', 'oueb-wp-backup' ), array( 'status' => 409 ) );
+		}
+
+		$name   = basename( $run->archive_file );
+		$failed = array();
+		$ids    = array_unique( array_merge( array( Storage_Repository::LOCAL ), (array) ( $run->state['stored'] ?? array() ) ) );
+		foreach ( $ids as $storage_id ) {
+			$storage = $this->storages->instance( (string) $storage_id );
+			if ( null === $storage ) {
+				continue;
+			}
+			try {
+				$storage->delete( $name );
+			} catch ( Throwable $error ) {
+				$record   = $this->storages->get( (string) $storage_id );
+				$failed[] = ( null === $record ? $storage_id : $record['name'] ) . ' (' . wp_specialchars_decode( $error->getMessage(), ENT_QUOTES ) . ')';
+			}
+		}
+
+		if ( array() !== $failed ) {
+			return new WP_Error(
+				'oueb_wp_backup_delete_failed',
+				sprintf(
+					/* translators: %s: list of storages with their error. */
+					__( 'The archive could not be deleted from: %s.', 'oueb-wp-backup' ),
+					implode( ', ', $failed )
+				),
+				array( 'status' => 502 )
+			);
+		}
+
+		$this->runs->forget_archives( $run->job_id, array( $name ) );
+
+		return rest_ensure_response( $this->prepare_run( $this->runs->find( $run->id ) ) );
 	}
 
 	/**
