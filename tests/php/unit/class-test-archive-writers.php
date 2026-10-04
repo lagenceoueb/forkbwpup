@@ -41,9 +41,9 @@ final class Test_Archive_Writers extends Test_Case {
 		mkdir( $this->dir . '/src', 0777, true );
 
 		$files = array(
-			'database.sql'                           => str_repeat( "INSERT INTO t VALUES (1);\n", 5000 ),
-			'uploads/photo.jpg'                      => random_bytes( 70000 ),
-			'uploads/empty.txt'                      => '',
+			'database.sql'      => str_repeat( "INSERT INTO t VALUES (1);\n", 5000 ),
+			'uploads/photo.jpg' => random_bytes( 70000 ),
+			'uploads/empty.txt' => '',
 			'plugins/' . str_repeat( 'long-name/', 12 ) . 'é.php' => '<?php echo 1;',
 		);
 		$index = 0;

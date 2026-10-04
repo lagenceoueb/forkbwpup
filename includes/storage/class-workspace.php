@@ -161,8 +161,9 @@ final class Workspace {
 		$dir = $this->root . '/' . $relative;
 		if ( ! is_dir( $dir ) && ! wp_mkdir_p( $dir ) ) {
 			throw new RuntimeException(
-				/* translators: %s: folder path. */
-				esc_html( sprintf( __( 'Cannot create the folder %s. Check the permissions of the uploads folder.', 'oueb-wp-backup' ), $dir ) )
+				esc_html( /* translators: %s: folder path. */
+					esc_html( sprintf( __( 'Cannot create the folder %s. Check the permissions of the uploads folder.', 'oueb-wp-backup' ), $dir ) )
+				)
 			);
 		}
 
@@ -183,18 +184,35 @@ final class Workspace {
 
 		if ( ! is_dir( $this->root ) && ! wp_mkdir_p( $this->root ) ) {
 			throw new RuntimeException(
-				/* translators: %s: folder path. */
-				esc_html( sprintf( __( 'Cannot create the folder %s. Check the permissions of the uploads folder.', 'oueb-wp-backup' ), $this->root ) )
+				esc_html( /* translators: %s: folder path. */
+					esc_html( sprintf( __( 'Cannot create the folder %s. Check the permissions of the uploads folder.', 'oueb-wp-backup' ), $this->root ) )
+				)
 			);
 		}
 
+		self::protect_dir( $this->root );
+	}
+
+	/**
+	 * Dépose dans un dossier les fichiers qui en refusent l'accès web.
+	 *
+	 * Apache et IIS les appliquent. Nginx les ignore : le readme donne la
+	 * règle à ajouter.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param string $dir Dossier existant.
+	 */
+	public static function protect_dir( string $dir ): void {
 		$files = array(
 			'.htaccess'  => "# Oueb WP Backup : accès web refusé.\n<IfModule mod_authz_core.c>\n\tRequire all denied\n</IfModule>\n<IfModule !mod_authz_core.c>\n\tOrder deny,allow\n\tDeny from all\n</IfModule>\n",
 			'web.config' => "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<configuration><system.webServer><authorization><deny users=\"*\" /></authorization></system.webServer></configuration>\n",
 			'index.php'  => "<?php\n// Silence.\n",
 		);
 		foreach ( $files as $name => $content ) {
-			file_put_contents( $this->root . '/' . $name, $content );
+			if ( ! is_file( $dir . '/' . $name ) ) {
+				file_put_contents( $dir . '/' . $name, $content );
+			}
 		}
 	}
 

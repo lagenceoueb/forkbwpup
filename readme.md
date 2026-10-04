@@ -45,7 +45,7 @@ Certains sites de fournisseurs étaient inaccessibles pendant la vérification. 
 
 - **Infomaniak kDrive**, par WebDAV. Il faut un mot de passe d'application kDrive.
 - **SFTP**, sur un serveur que vous administrez. L'extension enregistre l'empreinte de la clé du serveur à la première connexion, puis refuse tout serveur dont la clé a changé.
-- **FTP**, repris de BackWPup.
+- **FTP**, dans l'ancien code seulement. La nouvelle version ne le reprend pas : le FTP transmet le mot de passe en clair. Utilisez SFTP.
 - **Dossier sur le serveur du site.** Une copie sur le même serveur que le site disparaît avec lui : gardez ce support en complément d'un stockage externe.
 
 ## Déclenchement des sauvegardes
@@ -88,7 +88,9 @@ La nouvelle interface ne s'affiche que si `wp-config.php` contient :
 define( 'OUEB_WP_BACKUP_NEXT', true );
 ```
 
-Avec cette constante, le tableau de bord lance aussi les sauvegardes du nouveau moteur. Elles restent sur le serveur, dans `wp-content/uploads/oueb-wp-backup-<jeton>/`, en attendant les stockages du lot 3. Le jeton aléatoire rend le nom du dossier imprévisible. Apache et IIS appliquent les fichiers `.htaccess` et `web.config` que l'extension y dépose. Nginx les ignore : bloquez ce dossier dans la configuration du site.
+Avec cette constante, le tableau de bord lance aussi les sauvegardes du nouveau moteur. La section Stockage choisit où elles partent : S3 chez un fournisseur retenu, SFTP, kDrive, et une copie sur ce serveur dans `wp-content/uploads/oueb-wp-backup-<jeton>/archives/`. Un envoi interrompu reprend au dernier morceau confirmé, sauf vers kDrive : WebDAV n'envoie pas par morceaux, et l'envoi recommence. Après chaque sauvegarde, la rotation garde le nombre d'archives choisi dans chaque stockage, sans toucher aux archives des autres sites.
+
+Le jeton aléatoire rend le nom du dossier local imprévisible. Apache et IIS appliquent les fichiers `.htaccess` et `web.config` que l'extension y dépose. Nginx les ignore : bloquez ce dossier dans la configuration du site.
 
 ```nginx
 location ~ ^/wp-content/uploads/oueb-wp-backup- {
@@ -137,7 +139,7 @@ Le fichier [`.gitattributes`](.gitattributes) liste ce qui reste hors de l'archi
 - Les options gardent les noms de BackWPup (`backwpup_*`). Désinstaller Oueb WP Backup effacerait les réglages d'un BackWPup présent sur le même site.
 - Les textes ajoutés par le fork utilisent le domaine de traduction `oueb-wp-backup`, que l'extension ne charge pas encore. Ces textes s'affichent en anglais.
 - Le réglage de la clé de chiffrement et le déchiffrement au téléchargement faisaient partie de BackWPup Pro. Ils restent à réécrire.
-- Le cadrage ne prévoit pas de support FTP, mais il est encore dans le code.
+- Le FTP reste dans l'ancien code jusqu'à la bascule du lot 6. Le nouveau moteur ne le propose pas.
 - Les tâches BackWPup qui envoient vers Dropbox, Amazon S3, Google Cloud Storage, Azure, Rackspace, SugarSync ou par e-mail ne fonctionnent plus dans le fork.
 
 ## Feuille de route

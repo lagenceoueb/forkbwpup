@@ -5,14 +5,16 @@
 /**
  * WordPress dependencies
  */
-import { Button, Notice, Spinner } from '@wordpress/components';
+import { Button, Modal, Notice, Spinner } from '@wordpress/components';
 import { useEffect, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { speak } from '@wordpress/a11y';
 
 /**
  * Internal dependencies
  */
-import { fetchRuns } from '../api';
+import { deleteArchive, fetchRuns } from '../api';
+import { formatDate } from '../format';
 import RunsTable from '../components/runs-table';
 
 const PER_PAGE = 20;
@@ -26,13 +28,35 @@ export default function BackupsScreen() {
 	const [ page, setPage ] = useState( 1 );
 	const [ result, setResult ] = useState( null );
 	const [ error, setError ] = useState( null );
+	const [ notice, setNotice ] = useState( null );
+	const [ removing, setRemoving ] = useState( null );
+	const [ version, setVersion ] = useState( 0 );
 
 	useEffect( () => {
 		setResult( null );
 		fetchRuns( PER_PAGE, page )
 			.then( setResult )
 			.catch( ( e ) => setError( e.message ) );
-	}, [ page ] );
+	}, [ page, version ] );
+
+	const remove = () => {
+		const run = removing;
+		setRemoving( null );
+		deleteArchive( run.id )
+			.then( () => {
+				const message = __(
+					'Backup deleted from all its storages.',
+					'oueb-wp-backup'
+				);
+				setNotice( { status: 'success', message } );
+				speak( message );
+				setVersion( version + 1 );
+			} )
+			.catch( ( e ) => {
+				setNotice( { status: 'error', message: e.message } );
+				speak( e.message, 'assertive' );
+			} );
+	};
 
 	if ( error ) {
 		return <Notice status="error">{ error }</Notice>;
@@ -50,7 +74,52 @@ export default function BackupsScreen() {
 
 	return (
 		<section className="oueb-card">
+			{ notice && (
+				<Notice
+					status={ notice.status }
+					onRemove={ () => setNotice( null ) }
+				>
+					{ notice.message }
+				</Notice>
+			) }
+			{ removing && (
+				<Modal
+					title={ sprintf(
+						/* translators: %s: backup date. */
+						__( 'Delete the backup of %s?', 'oueb-wp-backup' ),
+						formatDate( removing.started_at )
+					) }
+					onRequestClose={ () => setRemoving( null ) }
+				>
+					<p>
+						{ sprintf(
+							/* translators: %s: list of storage names. */
+							__(
+								'The archive will be deleted from: %s. This cannot be undone.',
+								'oueb-wp-backup'
+							),
+							( removing.storage_names || [] ).join( ', ' )
+						) }
+					</p>
+					<div className="oueb-form__actions">
+						<Button
+							variant="primary"
+							isDestructive
+							onClick={ remove }
+						>
+							{ __( 'Delete the backup', 'oueb-wp-backup' ) }
+						</Button>
+						<Button
+							variant="tertiary"
+							onClick={ () => setRemoving( null ) }
+						>
+							{ __( 'Cancel', 'oueb-wp-backup' ) }
+						</Button>
+					</div>
+				</Modal>
+			) }
 			<RunsTable
+				onDelete={ setRemoving }
 				runs={ result.runs }
 				caption={ __( 'All backups', 'oueb-wp-backup' ) }
 			/>

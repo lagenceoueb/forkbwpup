@@ -81,3 +81,97 @@ export function abortRun( id ) {
 export function fetchJob( id = 'main' ) {
 	return apiFetch( { path: `${ BASE }/jobs/${ id }` } );
 }
+
+/**
+ * Enregistre des modifications d'une tâche.
+ *
+ * @param {string} id      Tâche.
+ * @param {Object} changes Champs modifiés.
+ * @return {Promise<Object>} Tâche.
+ */
+export function saveJob( id, changes ) {
+	return apiFetch( {
+		path: `${ BASE }/jobs/${ id }`,
+		method: 'POST',
+		data: changes,
+	} );
+}
+
+/**
+ * Renvoie les stockages.
+ *
+ * @return {Promise<Array>} Stockages.
+ */
+export function fetchStorages() {
+	return apiFetch( { path: `${ BASE }/storages` } );
+}
+
+/**
+ * Renvoie les types de stockage et les fournisseurs S3.
+ *
+ * @return {Promise<Object>} Types, fournisseurs et date de vérification.
+ */
+export function fetchStorageTypes() {
+	return apiFetch( { path: `${ BASE }/storages/types` } );
+}
+
+/**
+ * Crée ou modifie un stockage.
+ *
+ * @param {string|null} id      Stockage, null pour en créer un.
+ * @param {Object}      payload Type, nom et réglages.
+ * @return {Promise<Object>} Stockage.
+ */
+export function saveStorage( id, payload ) {
+	return apiFetch( {
+		path: id ? `${ BASE }/storages/${ id }` : `${ BASE }/storages`,
+		method: 'POST',
+		data: payload,
+	} );
+}
+
+/**
+ * Supprime un stockage.
+ *
+ * @param {string} id Stockage.
+ * @return {Promise<Object>} Accusé.
+ */
+export function deleteStorage( id ) {
+	return apiFetch( { path: `${ BASE }/storages/${ id }`, method: 'DELETE' } );
+}
+
+/**
+ * Teste un stockage.
+ *
+ * @param {string} id Stockage.
+ * @return {Promise<{message: string}>} Compte rendu.
+ */
+export function testStorage( id ) {
+	return apiFetch( {
+		path: `${ BASE }/storages/${ id }/test`,
+		method: 'POST',
+	} );
+}
+
+/**
+ * Liste les archives d'un stockage.
+ *
+ * @param {string} id Stockage.
+ * @return {Promise<Array>} Archives.
+ */
+export function fetchStorageFiles( id ) {
+	return apiFetch( { path: `${ BASE }/storages/${ id }/files` } );
+}
+
+/**
+ * Supprime l'archive d'une exécution de tous ses stockages.
+ *
+ * @param {number} id Exécution.
+ * @return {Promise<Object>} Exécution.
+ */
+export function deleteArchive( id ) {
+	return apiFetch( {
+		path: `${ BASE }/runs/${ id }/archive`,
+		method: 'DELETE',
+	} );
+}

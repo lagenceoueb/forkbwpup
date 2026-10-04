@@ -22,7 +22,9 @@ use Oueb\WpBackup\Job\Job_Repository;
 use Oueb\WpBackup\Rest\Jobs_Controller;
 use Oueb\WpBackup\Rest\Runs_Controller;
 use Oueb\WpBackup\Rest\Settings_Controller;
+use Oueb\WpBackup\Rest\Storages_Controller;
 use Oueb\WpBackup\Security\Capabilities;
+use Oueb\WpBackup\Storage\Storage_Repository;
 use Oueb\WpBackup\Storage\Workspace;
 
 defined( 'ABSPATH' ) || exit;
@@ -93,8 +95,9 @@ final class Plugin {
 	 */
 	public static function register_rest_routes(): void {
 		( new Settings_Controller() )->register_routes();
-		( new Jobs_Controller( self::jobs() ) )->register_routes();
-		( new Runs_Controller( self::runs(), self::jobs(), self::runner(), self::continuation(), self::workspace() ) )->register_routes();
+		( new Jobs_Controller( self::jobs(), self::storages() ) )->register_routes();
+		( new Runs_Controller( self::runs(), self::jobs(), self::runner(), self::continuation(), self::workspace(), self::storages() ) )->register_routes();
+		( new Storages_Controller( self::storages(), self::jobs() ) )->register_routes();
 	}
 
 	/**
@@ -140,6 +143,17 @@ final class Plugin {
 	}
 
 	/**
+	 * Renvoie le dépôt des stockages.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return Storage_Repository Stockages.
+	 */
+	public static function storages(): Storage_Repository {
+		return self::service( Storage_Repository::class, static fn(): Storage_Repository => new Storage_Repository( self::workspace() ) );
+	}
+
+	/**
 	 * Renvoie la relance des exécutions.
 	 *
 	 * @since 0.1.0
@@ -160,7 +174,7 @@ final class Plugin {
 	public static function runner(): Runner {
 		return self::service(
 			Runner::class,
-			static fn(): Runner => new Runner( self::runs(), self::jobs(), self::workspace(), new Step_Factory(), self::continuation() )
+			static fn(): Runner => new Runner( self::runs(), self::jobs(), self::workspace(), new Step_Factory( self::storages() ), self::continuation() )
 		);
 	}
 

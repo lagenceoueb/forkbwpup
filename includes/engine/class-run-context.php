@@ -104,6 +104,22 @@ final class Run_Context {
 	private float $saved_at = 0.0;
 
 	/**
+	 * Maintien du verrou pendant une longue opération.
+	 *
+	 * @since 0.1.0
+	 * @var callable|null
+	 */
+	private $keeper = null;
+
+	/**
+	 * Dernier maintien du verrou (microtime).
+	 *
+	 * @since 0.1.0
+	 * @var float
+	 */
+	private float $kept_at = 0.0;
+
+	/**
 	 * Demande d'arrêt déjà constatée.
 	 *
 	 * @since 0.1.0
@@ -256,6 +272,37 @@ final class Run_Context {
 
 		$this->saved_at = $now;
 		call_user_func( $this->saver, $this->run );
+	}
+
+	/**
+	 * Fournit le maintien du verrou pendant une longue opération.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param callable $keeper Fonction qui reçoit l'exécution, prolonge son verrou et l'enregistre.
+	 */
+	public function keep_alive_with( callable $keeper ): void {
+		$this->keeper  = $keeper;
+		$this->kept_at = microtime( true );
+	}
+
+	/**
+	 * Signale que l'exécution travaille encore, toutes les dix secondes au plus.
+	 *
+	 * Un envoi en une seule requête peut durer plus longtemps que le verrou.
+	 * Sans ce signal, le chien de garde croirait l'exécution bloquée et en
+	 * lancerait une seconde.
+	 *
+	 * @since 0.1.0
+	 */
+	public function keep_alive(): void {
+		$now = microtime( true );
+		if ( null === $this->keeper || $now - $this->kept_at < 10.0 ) {
+			return;
+		}
+
+		$this->kept_at = $now;
+		call_user_func( $this->keeper, $this->run );
 	}
 
 	/**

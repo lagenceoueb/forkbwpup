@@ -13,6 +13,8 @@ namespace Oueb\WpBackup\Admin;
 use Oueb\WpBackup\Engine\Run;
 use Oueb\WpBackup\Plugin;
 use Oueb\WpBackup\Security\Capabilities;
+use Oueb\WpBackup\Storage\Storage_Repository;
+use Throwable;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -33,6 +35,14 @@ final class Download {
 	 * @var string
 	 */
 	const ACTION = 'oueb_wp_backup_download';
+
+	/**
+	 * Taille des morceaux relayés depuis un stockage distant.
+	 *
+	 * @since 0.1.0
+	 * @var int
+	 */
+	const CHUNK = 8388608;
 
 	/**
 	 * Branche l'action.
@@ -77,23 +87,76 @@ final class Download {
 		}
 		check_admin_referer( self::ACTION . '_' . $run_id );
 
-		$run  = Plugin::runs()->find( $run_id );
-		$file = null === $run || '' === $run->archive_file ? '' : Plugin::workspace()->archives() . '/' . basename( $run->archive_file );
-		if ( '' === $file || ! is_file( $file ) ) {
-			wp_die( esc_html__( 'This archive is no longer on the server.', 'oueb-wp-backup' ), '', array( 'response' => 404 ) );
+		$run = Plugin::runs()->find( $run_id );
+		if ( null === $run || '' === $run->archive_file ) {
+			wp_die( esc_html__( 'This archive no longer exists.', 'oueb-wp-backup' ), '', array( 'response' => 404 ) );
 		}
 
+		$name  = basename( $run->archive_file );
+		$local = Plugin::workspace()->root() . '/archives/' . $name;
+		if ( is_file( $local ) ) {
+			self::headers( $name, (int) filesize( $local ) );
+			readfile( $local );
+			exit;
+		}
+
+		// L'archive n'est plus sur le serveur : elle est relayée depuis un stockage distant.
+		foreach ( (array) ( $run->state['stored'] ?? array() ) as $id ) {
+			$storage = Plugin::storages()->instance( (string) $id );
+			if ( null === $storage || Storage_Repository::LOCAL === $id ) {
+				continue;
+			}
+
+			try {
+				$chunk = $storage->read( $name, 0, self::CHUNK );
+			} catch ( Throwable $error ) {
+				continue;
+			}
+
+			self::headers( $name, $run->archive_size );
+			$output = fopen( 'php://output', 'wb' );
+			$offset = 0;
+			while ( '' !== $chunk && false !== $output ) {
+				fwrite( $output, $chunk );
+				flush();
+				$offset += strlen( $chunk );
+				if ( $offset >= $run->archive_size ) {
+					break;
+				}
+				try {
+					$chunk = $storage->read( $name, $offset, self::CHUNK );
+				} catch ( Throwable $error ) {
+					break;
+				}
+			}
+			exit;
+		}
+
+		wp_die( esc_html__( 'This archive is no longer available in any storage.', 'oueb-wp-backup' ), '', array( 'response' => 404 ) );
+	}
+
+	/**
+	 * Envoie les en-têtes d'un téléchargement.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param string $name Nom du fichier.
+	 * @param int    $size Taille.
+	 */
+	private static function headers( string $name, int $size ): void {
 		while ( ob_get_level() > 0 ) {
 			ob_end_clean();
 		}
 
 		nocache_headers();
 		header( 'Content-Type: application/octet-stream' );
-		header( 'Content-Disposition: attachment; filename="' . basename( $file ) . '"' );
-		header( 'Content-Length: ' . (string) filesize( $file ) );
+		header( 'Content-Disposition: attachment; filename="' . $name . '"' );
+		if ( $size > 0 ) {
+			header( 'Content-Length: ' . (string) $size );
+		}
 		header( 'X-Content-Type-Options: nosniff' );
-
-		readfile( $file );
-		exit;
+		if ( function_exists( 'set_time_limit' ) ) {
+			set_time_limit( 0 );
+		}
 	}
 }

@@ -57,7 +57,9 @@ La cartographie du 3 octobre 2026 donne l'état de départ :
 
 ### Stockages
 
-Une interface commune, reprise des correctifs déjà fusionnés : dossier local, S3 (six fournisseurs), SFTP, kDrive, FTP. Chaque stockage sait envoyer avec reprise, lister, télécharger, supprimer, tester la connexion et appliquer la rotation.
+Une interface commune, reprise des correctifs déjà fusionnés : dossier local, S3 (six fournisseurs), SFTP, kDrive. Chaque stockage sait envoyer avec reprise, lister, télécharger, supprimer, tester la connexion et appliquer la rotation.
+
+Le FTP n'est pas réécrit (décision du 4 octobre 2026) : il transmet le mot de passe en clair, et le SFTP le remplace. Les tâches BackWPup qui envoient en FTP seront signalées à l'import du lot 6.
 
 ### Déclenchement
 
@@ -92,7 +94,7 @@ Chaque lot fait l'objet d'une pull request. L'ancien code reste en place et fonc
 |---|---|---|
 | 1. Socle | Fichier principal, autoloader, réglages, capacité, chiffrement des secrets, squelette REST, construction React, PHPUnit, Jest, CI | Les tests passent en CI, la page React vide s'affiche |
 | 2. Moteur | Modèle de tâche, exécuteur et reprise, verrou, journal, export de la base, collecte des fichiers, archive, manifeste | Une sauvegarde complète en dossier local, testée sur un WordPress réel |
-| 3. Stockages | Dossier, S3, SFTP, kDrive et FTP réécrits, rotation, liste, téléchargement, test de connexion | Envoi et rotation vers chaque stockage |
+| 3. Stockages | Dossier, S3, SFTP et kDrive réécrits, rotation, liste, téléchargement, test de connexion | Envoi et rotation vers chaque stockage |
 | 4. Déclenchement et chiffrement | WP-Cron, adresse de déclenchement, cron-job.org, nouveau format de chiffrement, déchiffrement | Une sauvegarde planifiée et chiffrée, puis déchiffrée |
 | 5. Restauration | Historique, envoi d'archive, maintenance, import SQL, fichiers, sauvegarde préalable | Aller-retour sauvegarde puis restauration |
 | 6. Interface et bascule | Interface React complète d'après les maquettes, import BackWPup, bascule, suppression de `inc/`, `views/`, `vendor/inpsyde` | L'extension tourne entièrement sur le nouveau code |

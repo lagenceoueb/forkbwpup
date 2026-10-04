@@ -126,7 +126,8 @@ export function stepLabel( step ) {
 		files: __( 'Listing the files', 'oueb-wp-backup' ),
 		manifest: __( 'Describing the backup', 'oueb-wp-backup' ),
 		archive: __( 'Creating the archive', 'oueb-wp-backup' ),
-		finish: __( 'Storing the archive', 'oueb-wp-backup' ),
+		store: __( 'Sending the archive', 'oueb-wp-backup' ),
+		finish: __( 'Deleting old backups', 'oueb-wp-backup' ),
 	};
 	return labels[ step ] || __( 'Preparing', 'oueb-wp-backup' );
 }

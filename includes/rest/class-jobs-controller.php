@@ -12,6 +12,7 @@ namespace Oueb\WpBackup\Rest;
 
 use Oueb\WpBackup\Job\Job;
 use Oueb\WpBackup\Job\Job_Repository;
+use Oueb\WpBackup\Storage\Storage_Repository;
 use WP_Error;
 use WP_REST_Controller;
 use WP_REST_Request;
@@ -36,14 +37,24 @@ final class Jobs_Controller extends WP_REST_Controller {
 	private Job_Repository $jobs;
 
 	/**
+	 * Stockages.
+	 *
+	 * @since 0.1.0
+	 * @var Storage_Repository
+	 */
+	private Storage_Repository $storages;
+
+	/**
 	 * Prépare le contrôleur.
 	 *
 	 * @since 0.1.0
 	 *
-	 * @param Job_Repository $jobs Tâches.
+	 * @param Job_Repository     $jobs     Tâches.
+	 * @param Storage_Repository $storages Stockages.
 	 */
-	public function __construct( Job_Repository $jobs ) {
+	public function __construct( Job_Repository $jobs, Storage_Repository $storages ) {
 		$this->jobs      = $jobs;
+		$this->storages  = $storages;
 		$this->namespace = Settings_Controller::REST_NAMESPACE;
 		$this->rest_base = 'jobs';
 	}
@@ -125,6 +136,19 @@ final class Jobs_Controller extends WP_REST_Controller {
 		$changes = $request->get_json_params();
 		if ( ! is_array( $changes ) ) {
 			return new WP_Error( 'oueb_wp_backup_invalid_body', __( 'The request body must be a JSON object.', 'oueb-wp-backup' ), array( 'status' => 400 ) );
+		}
+
+		foreach ( (array) ( $changes['storages'] ?? array() ) as $id ) {
+			if ( ! is_string( $id ) || null === $this->storages->get( $id ) ) {
+				return new WP_Error(
+					'oueb_wp_backup_storage_not_found',
+					__( 'This storage does not exist.', 'oueb-wp-backup' ),
+					array(
+						'status' => 400,
+						'field'  => 'storages',
+					)
+				);
+			}
 		}
 
 		$result = $job->apply( $changes );

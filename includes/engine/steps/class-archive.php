@@ -145,8 +145,8 @@ final class Archive implements Step {
 
 				if ( is_readable( $path ) && ! is_dir( $path ) ) {
 					$writer->add_file( $path, $name );
-					$size                   = (int) filesize( $path );
-					$batch_bytes           += $size;
+					$size         = (int) filesize( $path );
+					$batch_bytes += $size;
 					++$batch_files;
 					++$pending['files'];
 					$pending['bytes'] += $size;

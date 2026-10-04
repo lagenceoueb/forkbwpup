@@ -121,12 +121,20 @@ final class Job {
 	public string $archive_format = 'zip';
 
 	/**
-	 * Nombre d'archives gardées dans le dossier local.
+	 * Nombre d'archives gardées dans chaque stockage.
 	 *
 	 * @since 0.1.0
 	 * @var int
 	 */
 	public int $keep = 14;
+
+	/**
+	 * Stockages qui reçoivent l'archive, par identifiant.
+	 *
+	 * @since 0.1.0
+	 * @var string[]
+	 */
+	public array $storages = array( 'local' );
 
 	/**
 	 * Construit une tâche.
@@ -185,6 +193,7 @@ final class Job {
 			'exclude'               => $this->exclude,
 			'archive_format'        => $this->archive_format,
 			'keep'                  => $this->keep,
+			'storages'              => $this->storages,
 		);
 	}
 
@@ -247,6 +256,31 @@ final class Job {
 						return self::invalid( $key );
 					}
 					$copy->archive_format = $value;
+					break;
+
+				case 'storages':
+					if ( ! is_array( $value ) ) {
+						return self::invalid( $key );
+					}
+					$ids = array();
+					foreach ( $value as $id ) {
+						if ( ! is_string( $id ) || ! preg_match( '/^[a-z0-9-]{1,40}$/', $id ) ) {
+							return self::invalid( $key );
+						}
+						$ids[] = $id;
+					}
+					$ids = array_values( array_unique( $ids ) );
+					if ( array() === $ids ) {
+						return new WP_Error(
+							'oueb_wp_backup_no_storage',
+							__( 'Choose at least one storage.', 'oueb-wp-backup' ),
+							array(
+								'status' => 400,
+								'field'  => $key,
+							)
+						);
+					}
+					$copy->storages = $ids;
 					break;
 
 				case 'keep':

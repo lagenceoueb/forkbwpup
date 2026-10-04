@@ -17,6 +17,7 @@ import SettingsScreen from './settings/settings-screen';
 import DashboardScreen from './dashboard/dashboard-screen';
 import BackupsScreen from './backups/backups-screen';
 import LogScreen from './log/log-screen';
+import StorageScreen from './storage/storage-screen';
 import { getSections, paramFromHash, sectionFromHash } from './sections';
 
 /**
@@ -33,6 +34,8 @@ function Screen( { section, param } ) {
 			return <DashboardScreen />;
 		case 'backups':
 			return <BackupsScreen />;
+		case 'storage':
+			return <StorageScreen />;
 		case 'log':
 			return <LogScreen runId={ param } />;
 		case 'settings':
