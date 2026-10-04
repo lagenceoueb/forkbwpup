@@ -426,3 +426,57 @@ $oueb-warning: #8a5300;
 .oueb-card > .components-button {
 	align-self: flex-start;
 }
+
+.oueb-inline-fields {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	align-items: flex-start;
+
+	> * {
+		flex: 1 1 200px;
+	}
+}
+
+.oueb-help {
+	color: $oueb-muted;
+}
+
+.oueb-trigger-link {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	align-items: flex-start;
+
+	> :first-child {
+		align-self: stretch;
+	}
+}
+
+.oueb-key {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 16px;
+	border-left: 4px solid $oueb-warning;
+	background: #fcf9e8;
+}
+
+.oueb-key__value {
+	padding: 8px;
+	background: #fff;
+	font-size: 14px;
+	overflow-wrap: anywhere;
+	user-select: all;
+}
+
+.oueb-key-import {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	align-items: flex-start;
+
+	> :first-child {
+		align-self: stretch;
+	}
+}

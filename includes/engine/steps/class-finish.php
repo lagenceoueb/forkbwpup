@@ -155,7 +155,7 @@ final class Finish implements Step {
 	 * @return string[] Noms à supprimer.
 	 */
 	public static function outdated( array $names, string $prefix, int $keep ): array {
-		$pattern  = '/^' . preg_quote( $prefix, '/' ) . '\d{4}-\d{2}-\d{2}_\d{6}\.(zip|tar\.gz)$/';
+		$pattern  = '/^' . preg_quote( $prefix, '/' ) . '\d{4}-\d{2}-\d{2}_\d{6}\.(zip|tar\.gz)(\.enc)?$/';
 		$archives = array_values( preg_grep( $pattern, array_map( 'strval', $names ) ) );
 
 		// Le nom contient la date : l'ordre alphabétique inverse met les plus récentes en premier.

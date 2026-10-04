@@ -175,3 +175,45 @@ export function deleteArchive( id ) {
 		method: 'DELETE',
 	} );
 }
+
+/**
+ * Liste les clés de chiffrement, sans leur valeur.
+ *
+ * @return {Promise<Array>} Clés.
+ */
+export function fetchKeys() {
+	return apiFetch( { path: `${ BASE }/encryption/keys` } );
+}
+
+/**
+ * Crée une clé, ou importe celle donnée.
+ *
+ * @param {string} key Clé en base64, vide pour en créer une.
+ * @return {Promise<{id: string, key: string}>} Clé.
+ */
+export function createKey( key = '' ) {
+	return apiFetch( {
+		path: `${ BASE }/encryption/keys`,
+		method: 'POST',
+		data: key ? { key } : {},
+	} );
+}
+
+/**
+ * Exporte une clé.
+ *
+ * @param {string} id Identifiant.
+ * @return {Promise<{id: string, key: string}>} Clé.
+ */
+export function exportKey( id ) {
+	return apiFetch( { path: `${ BASE }/encryption/keys/${ id }` } );
+}
+
+/**
+ * Renvoie les réglages.
+ *
+ * @return {Promise<Object>} Réglages, sans secret.
+ */
+export function fetchSettings() {
+	return apiFetch( { path: `${ BASE }/settings` } );
+}

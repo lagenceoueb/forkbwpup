@@ -273,11 +273,15 @@ final class S3_Storage implements Storage {
 		}
 
 		if ( '' === $upload_id || (int) $transfer->get( 'part_size', 0 ) !== $part ) {
+			if ( '' !== $upload_id ) {
+				$this->abandon( $key, $upload_id );
+			}
 			$transfer->reset();
 			$upload_id = $this->client->create_multipart( $this->bucket, $key );
 			$transfer->set( 'upload_id', $upload_id );
 			$transfer->set( 'part_size', $part );
 			$transfer->set( 'etags', array() );
+			$transfer->save();
 		}
 
 		$etags  = (array) $transfer->get( 'etags', array() );
@@ -389,6 +393,23 @@ final class S3_Storage implements Storage {
 		$this->client->delete_object( $this->bucket, $probe );
 
 		return __( 'The bucket is reachable and writable.', 'oueb-wp-backup' );
+	}
+
+	/**
+	 * Abandonne un envoi en plusieurs parties, pour que le fournisseur libère ses parties.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param string $key       Clé.
+	 * @param string $upload_id Identifiant de l'envoi.
+	 */
+	private function abandon( string $key, string $upload_id ): void {
+		try {
+			$this->client->abort_multipart( $this->bucket, $key, $upload_id );
+		} catch ( Remote_Exception $error ) {
+			// Envoi déjà expiré : il n'y a rien à libérer.
+			unset( $error );
+		}
 	}
 
 	/**

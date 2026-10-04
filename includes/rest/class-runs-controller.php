@@ -350,6 +350,11 @@ final class Runs_Controller extends WP_REST_Controller {
 
 		$data['download_url'] = $available && ! $run->is_active() ? Download::url( $run ) : null;
 
+		// Une archive chiffrée se télécharge aussi déchiffrée, si le site a encore la clé.
+		$encrypted                      = '.enc' === substr( $run->archive_file, -4 );
+		$data['encrypted']              = $encrypted;
+		$data['download_decrypted_url'] = null !== $data['download_url'] && $encrypted ? Download::url( $run, true ) : null;
+
 		return $data;
 	}
 

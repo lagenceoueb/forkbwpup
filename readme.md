@@ -56,6 +56,20 @@ Trois modes au choix, tâche par tâche :
 - **URL de déclenchement**, à appeler depuis le service de votre choix. Elle contient une clé à garder secrète.
 - **cron-job.org**, service gratuit, au code ouvert, hébergé en Allemagne. L'extension crée et met à jour la tâche distante avec votre clé d'API.
 
+Dans la nouvelle version, la section Planification propose des fréquences avec leur cas d'usage (deux fois par jour, chaque jour, chaque semaine, chaque mois) ou une expression cron à cinq champs, dans le fuseau du site. Une sauvegarde ne part pas plus de quatre fois par heure. Le lien de déclenchement accepte GET et POST ; une mauvaise clé reçoit une erreur 403.
+
+## Chiffrement
+
+Dans la nouvelle version, une option chiffre l'archive sur le serveur, avant tout envoi : les fournisseurs de stockage ne peuvent pas la lire. Le format est XChaCha20-Poly1305 en flux (libsodium) ; chaque bloc de 1 Mio est authentifié, et une archive modifiée, tronquée ou rallongée est refusée. Le chiffrement reprend après une coupure, comme les autres étapes.
+
+Les clés se gèrent dans les réglages. La plus récente chiffre les nouvelles archives, les anciennes restent pour déchiffrer les anciennes archives. **Sans la clé, une archive chiffrée est perdue, même pour l'agence** : téléchargez chaque clé et gardez-la hors du site, par exemple dans un gestionnaire de mots de passe.
+
+Depuis l'écran des sauvegardes, une archive chiffrée se télécharge telle quelle ou déchiffrée. Si le site a disparu, l'outil livré avec l'extension la déchiffre sans WordPress, avec PHP et Sodium :
+
+```sh
+php oueb-decrypt.php site_main_2026-10-04_030000.zip.enc cle.txt
+```
+
 ## Prérequis
 
 - WordPress 6.6 ou plus récent
@@ -138,7 +152,8 @@ Le fichier [`.gitattributes`](.gitattributes) liste ce qui reste hors de l'archi
 - Le code hérité ne respecte pas encore les WordPress Coding Standards. La CI comptait 36 373 erreurs et 1 443 avertissements PHPCS au 3 octobre 2026.
 - Les options gardent les noms de BackWPup (`backwpup_*`). Désinstaller Oueb WP Backup effacerait les réglages d'un BackWPup présent sur le même site.
 - Les textes ajoutés par le fork utilisent le domaine de traduction `oueb-wp-backup`, que l'extension ne charge pas encore. Ces textes s'affichent en anglais.
-- Le réglage de la clé de chiffrement et le déchiffrement au téléchargement faisaient partie de BackWPup Pro. Ils restent à réécrire.
+- Les archives chiffrées par BackWPup Pro utilisent l'ancien format, que la nouvelle version ne lit pas. Déchiffrez-les avec BackWPup avant l'import du lot 6.
+- Le moteur de la nouvelle version ne sait pas encore traverser une protection par mot de passe HTTP du site (authentification Basic) : sa relance par le site et le lien de déclenchement seraient refusés.
 - Le FTP reste dans l'ancien code jusqu'à la bascule du lot 6. Le nouveau moteur ne le propose pas.
 - Les tâches BackWPup qui envoient vers Dropbox, Amazon S3, Google Cloud Storage, Azure, Rackspace, SugarSync ou par e-mail ne fonctionnent plus dans le fork.
 

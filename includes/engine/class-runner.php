@@ -468,6 +468,7 @@ final class Runner {
 			'plugins'       => $job->include_plugins,
 			'other_content' => $job->include_other_content,
 			'core'          => $job->include_core,
+			'encrypted'     => $job->encrypt,
 		);
 	}
 }

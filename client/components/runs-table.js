@@ -116,6 +116,24 @@ export default function RunsTable( { runs, caption, onDelete } ) {
 									>
 										{ __( 'Log', 'oueb-wp-backup' ) }
 									</a>
+									{ run.download_decrypted_url && (
+										<a
+											href={ run.download_decrypted_url }
+											aria-label={ sprintf(
+												/* translators: %s: backup date. */
+												__(
+													'Download the decrypted backup of %s',
+													'oueb-wp-backup'
+												),
+												date
+											) }
+										>
+											{ __(
+												'Decrypted',
+												'oueb-wp-backup'
+											) }
+										</a>
+									) }
 									{ onDelete && run.download_url && (
 										<Button
 											variant="link"

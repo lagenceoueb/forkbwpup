@@ -12,6 +12,7 @@ namespace Oueb\WpBackup\Admin;
 
 use Oueb\WpBackup\Engine\Run;
 use Oueb\WpBackup\Plugin;
+use Oueb\WpBackup\Security\Archive_Cipher;
 use Oueb\WpBackup\Security\Capabilities;
 use Oueb\WpBackup\Storage\Storage_Repository;
 use Throwable;
@@ -58,20 +59,23 @@ final class Download {
 	 *
 	 * @since 0.1.0
 	 *
-	 * @param Run $run Exécution.
+	 * @param Run  $run     Exécution.
+	 * @param bool $decrypt Vrai pour télécharger l'archive déchiffrée.
 	 * @return string Adresse, avec nonce.
 	 */
-	public static function url( Run $run ): string {
+	public static function url( Run $run, bool $decrypt = false ): string {
 		// Pas de wp_nonce_url() : elle échappe « & » pour le HTML, et l'adresse
 		// passe par l'API REST avant d'arriver dans l'attribut href.
-		return add_query_arg(
-			array(
-				'action'   => self::ACTION,
-				'run'      => $run->id,
-				'_wpnonce' => wp_create_nonce( self::ACTION . '_' . $run->id ),
-			),
-			admin_url( 'admin-post.php' )
+		$args = array(
+			'action'   => self::ACTION,
+			'run'      => $run->id,
+			'_wpnonce' => wp_create_nonce( self::ACTION . '_' . $run->id ),
 		);
+		if ( $decrypt ) {
+			$args['decrypt'] = 1;
+		}
+
+		return add_query_arg( $args, admin_url( 'admin-post.php' ) );
 	}
 
 	/**
@@ -92,47 +96,119 @@ final class Download {
 			wp_die( esc_html__( 'This archive no longer exists.', 'oueb-wp-backup' ), '', array( 'response' => 404 ) );
 		}
 
-		$name  = basename( $run->archive_file );
-		$local = Plugin::workspace()->root() . '/archives/' . $name;
-		if ( is_file( $local ) ) {
-			self::headers( $name, (int) filesize( $local ) );
-			readfile( $local );
-			exit;
+		$name   = basename( $run->archive_file );
+		$reader = self::reader( $run, $name );
+		if ( null === $reader ) {
+			wp_die( esc_html__( 'This archive is no longer available in any storage.', 'oueb-wp-backup' ), '', array( 'response' => 404 ) );
 		}
 
-		// L'archive n'est plus sur le serveur : elle est relayée depuis un stockage distant.
+		$decrypt = ! empty( $_GET['decrypt'] ) && '.enc' === substr( $name, -4 );
+		if ( $decrypt ) {
+			self::send_decrypted( $reader, substr( $name, 0, -4 ) );
+		}
+
+		self::headers( $name, $run->archive_size );
+		$output = fopen( 'php://output', 'wb' );
+		$offset = 0;
+		while ( false !== $output && $offset < $run->archive_size ) {
+			try {
+				$chunk = call_user_func( $reader, $offset, self::CHUNK );
+			} catch ( Throwable $error ) {
+				break;
+			}
+			if ( '' === $chunk ) {
+				break;
+			}
+			fwrite( $output, $chunk );
+			flush();
+			$offset += strlen( $chunk );
+		}
+		exit;
+	}
+
+	/**
+	 * Trouve où lire l'archive : sur le serveur, sinon dans un stockage distant qui répond.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param Run    $run  Exécution.
+	 * @param string $name Nom de l'archive.
+	 * @return callable|null Lecture : reçoit une position et une longueur, renvoie des octets. Null si l'archive est introuvable.
+	 */
+	private static function reader( Run $run, string $name ): ?callable {
+		$local = Plugin::workspace()->root() . '/archives/' . $name;
+		if ( is_file( $local ) ) {
+			return static fn( int $offset, int $length ): string => (string) file_get_contents( $local, false, null, $offset, $length );
+		}
+
 		foreach ( (array) ( $run->state['stored'] ?? array() ) as $id ) {
-			$storage = Plugin::storages()->instance( (string) $id );
-			if ( null === $storage || Storage_Repository::LOCAL === $id ) {
+			$storage = Storage_Repository::LOCAL === $id ? null : Plugin::storages()->instance( (string) $id );
+			if ( null === $storage ) {
 				continue;
 			}
-
 			try {
-				$chunk = $storage->read( $name, 0, self::CHUNK );
+				$storage->read( $name, 0, 1 );
 			} catch ( Throwable $error ) {
 				continue;
 			}
 
-			self::headers( $name, $run->archive_size );
-			$output = fopen( 'php://output', 'wb' );
-			$offset = 0;
-			while ( '' !== $chunk && false !== $output ) {
-				fwrite( $output, $chunk );
-				flush();
-				$offset += strlen( $chunk );
-				if ( $offset >= $run->archive_size ) {
-					break;
-				}
-				try {
-					$chunk = $storage->read( $name, $offset, self::CHUNK );
-				} catch ( Throwable $error ) {
-					break;
-				}
-			}
-			exit;
+			return static fn( int $offset, int $length ): string => $storage->read( $name, $offset, $length );
 		}
 
-		wp_die( esc_html__( 'This archive is no longer available in any storage.', 'oueb-wp-backup' ), '', array( 'response' => 404 ) );
+		return null;
+	}
+
+	/**
+	 * Envoie l'archive déchiffrée, puis s'arrête.
+	 *
+	 * La clé est vérifiée avant l'envoi des en-têtes. Une erreur plus tardive
+	 * coupe le téléchargement : l'archive reçue est alors incomplète, et
+	 * l'outil d'extraction le signale.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param callable $reader Lecture de l'archive chiffrée.
+	 * @param string   $name   Nom du fichier déchiffré.
+	 */
+	private static function send_decrypted( callable $reader, string $name ): void {
+		$keys = Plugin::keys();
+		$id   = Archive_Cipher::key_id( (string) call_user_func( $reader, 0, Archive_Cipher::HEADER_BYTES ) );
+		if ( null === $id ) {
+			wp_die( esc_html__( 'This file is not an encrypted backup.', 'oueb-wp-backup' ), '', array( 'response' => 409 ) );
+		}
+		if ( null === $keys->find( $id ) ) {
+			/* translators: %s: key identifier. */
+			wp_die( esc_html( sprintf( __( 'The key %s is missing. Add it in the encryption settings, or decrypt the archive with the offline tool.', 'oueb-wp-backup' ), $id ) ), '', array( 'response' => 409 ) );
+		}
+
+		self::headers( $name, 0 );
+		$output = fopen( 'php://output', 'wb' );
+		$offset = 0;
+		$buffer = '';
+		try {
+			Archive_Cipher::decrypt(
+				static function ( int $length ) use ( $reader, &$offset, &$buffer ): string {
+					// Lectures distantes par gros morceaux, découpées ensuite à la demande.
+					if ( strlen( $buffer ) < $length ) {
+						$chunk   = (string) call_user_func( $reader, $offset, max( $length, self::CHUNK ) );
+						$offset += strlen( $chunk );
+						$buffer .= $chunk;
+					}
+					$data   = (string) substr( $buffer, 0, $length );
+					$buffer = (string) substr( $buffer, strlen( $data ) );
+					return $data;
+				},
+				static function ( string $plain ) use ( $output ): void {
+					fwrite( $output, $plain );
+					flush();
+				},
+				array( $keys, 'find' )
+			);
+		} catch ( Throwable $error ) {
+			// Les en-têtes sont partis : l'archive reçue reste incomplète.
+			exit;
+		}
+		exit;
 	}
 
 	/**

@@ -177,6 +177,21 @@ class Transfer {
 	}
 
 	/**
+	 * Enregistre l'état sans attendre.
+	 *
+	 * Sert après une opération qu'il ne faut pas refaire, comme l'ouverture
+	 * d'un envoi S3 : refaite à chaque coupure, elle laisserait des parties
+	 * orphelines, facturées par le fournisseur.
+	 *
+	 * @since 0.1.0
+	 */
+	public function save(): void {
+		if ( null !== $this->context ) {
+			$this->context->checkpoint( true );
+		}
+	}
+
+	/**
 	 * Signale une longue opération en cours, pour garder le verrou.
 	 *
 	 * @since 0.1.0
