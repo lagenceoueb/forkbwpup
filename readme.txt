@@ -20,6 +20,9 @@ Oueb WP Backup saves the database and the files of a WordPress site, sends the a
 * Restore from the list of backups, from a storage or from an uploaded archive, with a backup of the current site first.
 * Every step resumes after an interruption, on small hostings too.
 * Import of the jobs and settings of BackWPup, without changing them.
+* Multisite: one backup for the whole network, managed from the network admin.
+* Database maintenance: check, repair and optimize the tables.
+* WP-CLI commands: `wp oueb-backup backup`, `restore`, `list`, `db`, and more.
 
 Oueb WP Backup is a fork of BackWPup 4.1.7 by Inpsyde and WP Media, released under the GPL v2 or later.
 
@@ -28,3 +31,4 @@ Oueb WP Backup is a fork of BackWPup 4.1.7 by Inpsyde and WP Media, released und
 = 0.1.0 =
 * New engine, interface, storages, encryption and restore, written from scratch.
 * Import of BackWPup jobs and settings.
+* Multisite, database maintenance and WP-CLI commands.

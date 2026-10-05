@@ -123,6 +123,29 @@ Si BackWPup est installé, ou l'a été, le tableau de bord propose d'importer s
 
 Désactivez ensuite BackWPup : sinon, les deux extensions font les mêmes sauvegardes. Les archives chiffrées par BackWPup Pro ne se lisent pas avec le nouveau format : déchiffrez-les avec BackWPup avant de le désactiver.
 
+## Ligne de commande
+
+La commande `wp oueb-backup` reprend les actions de l'administration. Une sauvegarde ou une restauration lancée en ligne de commande avance dans ce processus et affiche son journal ; elle n'attend pas WP-Cron.
+
+```sh
+wp oueb-backup backup                    # tâche principale
+wp oueb-backup backup job-1a2b3c         # autre tâche, voir wp oueb-backup jobs
+wp oueb-backup list --kind=backup
+wp oueb-backup log 42
+wp oueb-backup restore 42 --database     # base seule, après confirmation
+wp oueb-backup restore --file=/home/site/sauvegarde.zip --yes
+wp oueb-backup import                    # tâches de BackWPup
+wp oueb-backup db check                  # aussi : tables, repair, optimize
+```
+
+Sans `--user`, la commande agit au nom du premier administrateur qui peut gérer les sauvegardes. `wp help oueb-backup <commande>` détaille les options.
+
+## Multisite
+
+En multisite, l'extension s'active sur le réseau et se règle depuis l'administration du réseau, par les super-administrateurs. Une sauvegarde couvre tout le réseau : toutes les tables et les fichiers de tous les sites.
+
+La base d'un réseau se restaure sur ce même réseau, à la même adresse. Les réglages de l'extension et son activation sur le réseau restent ceux d'avant la restauration. Les fichiers seuls se restaurent partout.
+
 ## Développement
 
 Le code PHP vit dans `includes/`, l'interface React dans `client/`. Le plan de la réécriture et le découpage en lots sont dans [`docs/refonte.md`](docs/refonte.md).
@@ -174,13 +197,14 @@ Le fichier [`.gitattributes`](.gitattributes) liste ce qui reste hors de l'archi
 ## Limites connues
 
 - L'interface est en anglais : la traduction française arrive au lot 7.
+- La maintenance de la base vérifie, répare et optimise les tables du site. InnoDB, le moteur par défaut, ne se répare pas de cette façon : la réparation le signale sans erreur.
 - Les archives chiffrées par BackWPup Pro utilisent l'ancien format, que la nouvelle version ne lit pas.
 - Le moteur de la nouvelle version ne sait pas encore traverser une protection par mot de passe HTTP du site (authentification Basic) : sa relance par le site et le lien de déclenchement seraient refusés.
 - Le FTP n'est plus proposé : il transmet le mot de passe en clair. Utilisez SFTP.
-- Les commandes WP-CLI, le multisite et la maintenance de la base (vérification, réparation, optimisation) de BackWPup sont à réécrire (lot 7).
 - La désinstallation efface les réglages et les clés de chiffrement, mais laisse les archives du dossier local. Téléchargez les clés avant de désinstaller.
 - La restauration ne remplace pas les adresses dans le contenu. Une sauvegarde venue d'un autre domaine garde ses liens vers l'ancien.
-- La restauration refuse une base dont le préfixe des tables diffère de celui du site, et ne gère pas encore le multisite (lot 7).
+- La restauration refuse une base dont le préfixe des tables diffère de celui du site. Elle refuse aussi la base d'un réseau sur un site seul, celle d'un site seul sur un réseau, et celle d'un réseau sur un réseau d'une autre adresse.
+- Les tables d'un site créé après la sauvegarde restent dans la base après la restauration du réseau : le site disparaît de la liste, ses tables non.
 - La restauration ne lit que les archives d'Oueb WP Backup, qui portent un manifeste. Une archive de BackWPup se restaure à la main.
 
 ## Feuille de route
@@ -188,7 +212,7 @@ Le fichier [`.gitattributes`](.gitattributes) liste ce qui reste hors de l'archi
 Le travail avance par lots, sans échéance (détail dans [`docs/refonte.md`](docs/refonte.md)) :
 
 1. Socle, moteur, stockages, déclenchement et chiffrement, restauration : terminés.
-2. Interface complète, import de BackWPup et bascule : lot 6, en cours.
-3. WP-CLI, multisite, audit RGAA, traductions et version 0.1.0 publiée : lot 7.
+2. Interface complète, import de BackWPup et bascule : terminés.
+3. WP-CLI, multisite, maintenance de la base, audit RGAA, traductions et version 0.1.0 publiée : lot 7, en cours.
 
 La version 1.0 sera prête quand PHPCS passera sans erreur, quand les écrans n'auront plus de non-conformité RGAA bloquante, et quand une sauvegarde suivie d'une restauration aura réussi sur chaque support.

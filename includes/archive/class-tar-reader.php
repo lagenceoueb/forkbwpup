@@ -370,9 +370,9 @@ final class Tar_Reader implements Archive_Reader {
 			$filled = strlen( $this->buffer ) >= $length;
 		}
 
-		$data          = (string) substr( $this->buffer, 0, $length );
-		$this->buffer  = (string) substr( $this->buffer, strlen( $data ) );
-		$this->taken  += strlen( $data );
+		$data         = (string) substr( $this->buffer, 0, $length );
+		$this->buffer = (string) substr( $this->buffer, strlen( $data ) );
+		$this->taken += strlen( $data );
 
 		return $data;
 	}

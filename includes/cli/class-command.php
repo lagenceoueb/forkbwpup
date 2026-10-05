@@ -367,14 +367,16 @@ final class Command {
 		);
 
 		self::drive_here();
+		$upload = '';
 		if ( null === $source ) {
+			$upload = $this->upload( (string) $assoc_args['file'] );
 			$source = array(
 				'type'      => 'upload',
-				'upload_id' => $this->upload( (string) $assoc_args['file'] ),
+				'upload_id' => $upload,
 			);
 		}
 
-		$run = $this->request(
+		$response = $this->send(
 			'POST',
 			'/restore',
 			array(
@@ -384,7 +386,17 @@ final class Command {
 				'safety'   => $safety,
 			)
 		);
-		$this->follow( (int) $run['id'] );
+		$run      = is_wp_error( $response ) ? null : $this->drive( (int) $response['id'] );
+
+		// Après un échec, la copie de l'archive ne sert plus : une nouvelle commande en refait une.
+		if ( '' !== $upload && ( null === $run || in_array( $run->status, array( Run::FAILED, Run::ABORTED ), true ) ) ) {
+			( new Upload_Repository( Plugin::workspace() ) )->delete( $upload );
+		}
+		if ( null === $run ) {
+			WP_CLI::error( self::message( $response ) );
+			return;
+		}
+		self::finish( $run );
 	}
 
 	/**
@@ -516,6 +528,18 @@ final class Command {
 	 * @param int $run_id Exécution.
 	 */
 	private function follow( int $run_id ): void {
+		self::finish( $this->drive( $run_id ) );
+	}
+
+	/**
+	 * Mène une exécution jusqu'à sa fin dans ce processus, en affichant son journal.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param int $run_id Exécution.
+	 * @return Run Exécution terminée.
+	 */
+	private function drive( int $run_id ): Run {
 		self::drive_here();
 
 		$runs    = Plugin::runs();
@@ -524,8 +548,8 @@ final class Command {
 			$worked = Plugin::runner()->process( $run_id );
 			$run    = $runs->find( $run_id );
 			if ( null === $run ) {
+				// WP_CLI::error() arrête la commande.
 				WP_CLI::error( __( 'This backup does not exist.', 'oueb-wp-backup' ) );
-				return;
 			}
 
 			$entries = Logger::read( Logger::path( $run, Plugin::workspace()->logs() ) );
@@ -539,7 +563,7 @@ final class Command {
 			}
 		} while ( $run->is_active() );
 
-		self::finish( $run );
+		return $run;
 	}
 
 	/**
@@ -681,6 +705,25 @@ final class Command {
 	 * @return array<mixed> Réponse.
 	 */
 	private function request( string $method, string $route, array $params = array() ): array {
+		$data = $this->send( $method, $route, $params );
+		if ( is_wp_error( $data ) ) {
+			WP_CLI::error( self::message( $data ) );
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Appelle une route REST de l'extension, et renvoie son erreur au lieu de s'arrêter.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param string               $method Méthode HTTP.
+	 * @param string               $route  Route, après l'espace de noms.
+	 * @param array<string, mixed> $params Paramètres.
+	 * @return array<mixed>|WP_Error Réponse, ou erreur.
+	 */
+	private function send( string $method, string $route, array $params = array() ) {
 		self::act_as_admin();
 
 		$request = new WP_REST_Request( $method, '/oueb-wp-backup/v1' . $route );
@@ -689,11 +732,8 @@ final class Command {
 		}
 
 		$response = rest_do_request( $request );
-		if ( $response->is_error() ) {
-			WP_CLI::error( self::message( $response->as_error() ) );
-		}
 
-		return (array) $response->get_data();
+		return $response->is_error() ? $response->as_error() : (array) $response->get_data();
 	}
 
 	/**

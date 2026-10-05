@@ -83,6 +83,7 @@ final class Manifest implements Step {
 				'siteurl'   => site_url(),
 				'name'      => get_bloginfo( 'name' ),
 				'multisite' => is_multisite(),
+				'network'   => is_multisite() ? self::network() : null,
 				'abspath'   => wp_normalize_path( ABSPATH ),
 			),
 			'versions'   => array(
@@ -116,5 +117,22 @@ final class Manifest implements Step {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Adresse du réseau, pour ne restaurer un réseau que sur lui-même.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return array{domain: string, path: string, sites: int} Domaine, chemin et nombre de sites.
+	 */
+	public static function network(): array {
+		$network = get_network();
+
+		return array(
+			'domain' => null === $network ? '' : (string) $network->domain,
+			'path'   => null === $network ? '/' : (string) $network->path,
+			'sites'  => (int) get_sites( array( 'count' => true ) ),
+		);
 	}
 }

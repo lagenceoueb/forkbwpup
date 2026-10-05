@@ -33,6 +33,7 @@ use Oueb\WpBackup\Rest\Runs_Controller;
 use Oueb\WpBackup\Rest\Settings_Controller;
 use Oueb\WpBackup\Rest\Storages_Controller;
 use Oueb\WpBackup\Rest\Trigger_Controller;
+use Oueb\WpBackup\Schedule\Main_Site;
 use Oueb\WpBackup\Schedule\Scheduler;
 use Oueb\WpBackup\Security\Capabilities;
 use Oueb\WpBackup\Security\Key_Ring;
@@ -121,8 +122,12 @@ final class Plugin {
 	 * @since 0.1.0
 	 */
 	public static function deactivate(): void {
-		wp_unschedule_hook( Scheduler::HOOK );
-		wp_unschedule_hook( Watchdog::HOOK );
+		Main_Site::run(
+			static function (): void {
+				wp_unschedule_hook( Scheduler::HOOK );
+				wp_unschedule_hook( Watchdog::HOOK );
+			}
+		);
 	}
 
 	/**

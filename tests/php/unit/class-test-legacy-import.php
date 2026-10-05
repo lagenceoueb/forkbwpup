@@ -104,7 +104,7 @@ final class Test_Legacy_Import extends Test_Case {
 	 * L'import crée les tâches et un stockage par destination, une seule fois, sans toucher BackWPup.
 	 */
 	public function test_run_imports_jobs_and_reports(): void {
-		$jobs = array(
+		$jobs                                = array(
 			1 => array(
 				'name'          => 'Quotidienne',
 				'type'          => array( 'DBDUMP', 'FILE' ),
@@ -151,7 +151,7 @@ final class Test_Legacy_Import extends Test_Case {
 				'cron'         => '0 4 * * *',
 			),
 		);
-		$this->site_options['backwpup_jobs']                    = $jobs;
+		$this->site_options['backwpup_jobs'] = $jobs;
 		$this->site_options['backwpup_cfg_jobmaxexecutiontime'] = 45;
 		$this->site_options['oueb_cronjob_org_key']             = 'cle-cronjob';
 

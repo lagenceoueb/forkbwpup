@@ -10,6 +10,8 @@ declare( strict_types=1 );
 
 namespace Oueb\WpBackup\Engine;
 
+use Oueb\WpBackup\Schedule\Main_Site;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -45,9 +47,13 @@ final class Watchdog {
 	 * @since 0.1.0
 	 */
 	public static function schedule(): void {
-		if ( ! wp_next_scheduled( self::HOOK ) ) {
-			wp_schedule_single_event( time() + 120, self::HOOK );
-		}
+		Main_Site::run(
+			static function (): void {
+				if ( ! wp_next_scheduled( self::HOOK ) ) {
+					wp_schedule_single_event( time() + 120, self::HOOK );
+				}
+			}
+		);
 	}
 
 	/**
