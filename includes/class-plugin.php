@@ -19,11 +19,18 @@ use Oueb\WpBackup\Engine\Schema;
 use Oueb\WpBackup\Engine\Steps\Step_Factory;
 use Oueb\WpBackup\Engine\Watchdog;
 use Oueb\WpBackup\Job\Job_Repository;
+use Oueb\WpBackup\Restore\Restore_Plan;
+use Oueb\WpBackup\Restore\Upload_Repository;
+use Oueb\WpBackup\Rest\Encryption_Controller;
 use Oueb\WpBackup\Rest\Jobs_Controller;
+use Oueb\WpBackup\Rest\Restore_Controller;
 use Oueb\WpBackup\Rest\Runs_Controller;
 use Oueb\WpBackup\Rest\Settings_Controller;
 use Oueb\WpBackup\Rest\Storages_Controller;
+use Oueb\WpBackup\Rest\Trigger_Controller;
+use Oueb\WpBackup\Schedule\Scheduler;
 use Oueb\WpBackup\Security\Capabilities;
+use Oueb\WpBackup\Security\Key_Ring;
 use Oueb\WpBackup\Storage\Storage_Repository;
 use Oueb\WpBackup\Storage\Workspace;
 
@@ -81,6 +88,8 @@ final class Plugin {
 		add_action( 'init', array( Schema::class, 'maybe_upgrade' ) );
 		add_action( 'rest_api_init', array( self::class, 'register_rest_routes' ) );
 		add_action( Watchdog::HOOK, array( self::class, 'run_watchdog' ) );
+		add_action( Scheduler::HOOK, array( self::class, 'run_scheduled' ) );
+		add_action( 'init', array( self::class, 'ensure_schedules' ), 20 );
 		Download::register();
 
 		if ( self::is_next_enabled() && is_admin() ) {
@@ -95,9 +104,12 @@ final class Plugin {
 	 */
 	public static function register_rest_routes(): void {
 		( new Settings_Controller() )->register_routes();
-		( new Jobs_Controller( self::jobs(), self::storages() ) )->register_routes();
+		( new Jobs_Controller( self::jobs(), self::storages(), self::scheduler() ) )->register_routes();
+		( new Trigger_Controller( self::jobs(), self::runner() ) )->register_routes();
+		( new Encryption_Controller( self::keys() ) )->register_routes();
 		( new Runs_Controller( self::runs(), self::jobs(), self::runner(), self::continuation(), self::workspace(), self::storages() ) )->register_routes();
 		( new Storages_Controller( self::storages(), self::jobs() ) )->register_routes();
+		( new Restore_Controller( self::runs(), self::jobs(), self::runner(), self::storages(), self::workspace(), new Upload_Repository( self::workspace() ) ) )->register_routes();
 	}
 
 	/**
@@ -107,6 +119,50 @@ final class Plugin {
 	 */
 	public static function run_watchdog(): void {
 		Watchdog::check( self::runs(), self::runner() );
+	}
+
+	/**
+	 * Lance une tâche planifiée, appelée par WP-Cron.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param string $job_id Tâche.
+	 */
+	public static function run_scheduled( $job_id ): void {
+		self::scheduler()->run( (string) $job_id );
+	}
+
+	/**
+	 * Reprogramme les tâches WP-Cron perdues, pendant WP-Cron et en administration.
+	 *
+	 * @since 0.1.0
+	 */
+	public static function ensure_schedules(): void {
+		if ( wp_doing_cron() || is_admin() ) {
+			self::scheduler()->ensure();
+		}
+	}
+
+	/**
+	 * Renvoie les clés de chiffrement.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return Key_Ring Clés.
+	 */
+	public static function keys(): Key_Ring {
+		return self::service( Key_Ring::class, static fn(): Key_Ring => new Key_Ring() );
+	}
+
+	/**
+	 * Renvoie le planificateur.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return Scheduler Planificateur.
+	 */
+	public static function scheduler(): Scheduler {
+		return self::service( Scheduler::class, static fn(): Scheduler => new Scheduler( self::jobs(), self::runner() ) );
 	}
 
 	/**
@@ -174,7 +230,14 @@ final class Plugin {
 	public static function runner(): Runner {
 		return self::service(
 			Runner::class,
-			static fn(): Runner => new Runner( self::runs(), self::jobs(), self::workspace(), new Step_Factory( self::storages() ), self::continuation() )
+			static fn(): Runner => new Runner(
+				self::runs(),
+				self::jobs(),
+				self::workspace(),
+				new Step_Factory( self::storages(), self::keys() ),
+				self::continuation(),
+				new Restore_Plan( self::storages(), self::keys(), self::runs() )
+			)
 		);
 	}
 
@@ -204,6 +267,17 @@ final class Plugin {
 	 */
 	public static function is_next_enabled(): bool {
 		return defined( 'OUEB_WP_BACKUP_NEXT' ) && true === OUEB_WP_BACKUP_NEXT;
+	}
+
+	/**
+	 * Renvoie le nom de l'extension pour WordPress, tel qu'il figure dans active_plugins.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return string Nom, par exemple « oueb-wp-backup/backwpup.php ».
+	 */
+	public static function basename(): string {
+		return plugin_basename( self::$file );
 	}
 
 	/**

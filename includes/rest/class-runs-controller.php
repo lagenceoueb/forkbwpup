@@ -16,6 +16,7 @@ use Oueb\WpBackup\Engine\Logger;
 use Oueb\WpBackup\Engine\Run;
 use Oueb\WpBackup\Engine\Run_Repository;
 use Oueb\WpBackup\Engine\Runner;
+use Oueb\WpBackup\Engine\Watchdog;
 use Oueb\WpBackup\Job\Job;
 use Oueb\WpBackup\Job\Job_Repository;
 use Oueb\WpBackup\Storage\Storage_Repository;
@@ -143,6 +144,11 @@ final class Runs_Controller extends WP_REST_Controller {
 							'default' => 1,
 							'minimum' => 1,
 						),
+						'kind'     => array(
+							'type'    => 'string',
+							'default' => '',
+							'enum'    => array( '', Run::KIND_BACKUP, Run::KIND_RESTORE ),
+						),
 					),
 				),
 				array(
@@ -229,10 +235,11 @@ final class Runs_Controller extends WP_REST_Controller {
 	public function get_items( $request ) {
 		$per_page = (int) $request['per_page'];
 		$page     = (int) $request['page'];
-		$runs     = $this->runs->latest( $per_page, ( $page - 1 ) * $per_page );
+		$kind     = (string) $request['kind'];
+		$runs     = $this->runs->latest( $per_page, ( $page - 1 ) * $per_page, '', $kind );
 
 		$response = rest_ensure_response( array_map( array( $this, 'prepare_run' ), $runs ) );
-		$response->header( 'X-WP-Total', (string) $this->runs->count() );
+		$response->header( 'X-WP-Total', (string) $this->runs->count( $kind ) );
 
 		return $response;
 	}
@@ -272,8 +279,17 @@ final class Runs_Controller extends WP_REST_Controller {
 	 */
 	public function get_item( $request ) {
 		$run = $this->runs->find( (int) $request['id'] );
+		if ( null === $run ) {
+			return self::not_found();
+		}
 
-		return null === $run ? self::not_found() : rest_ensure_response( $this->prepare_run( $run ) );
+		// Pendant une restauration, la maintenance bloque WP-Cron et son chien
+		// de garde : le suivi depuis l'interface relance une exécution inactive.
+		if ( Watchdog::is_stale( $run, time() ) ) {
+			$this->continuation->spawn( $run );
+		}
+
+		return rest_ensure_response( $this->prepare_run( $run ) );
 	}
 
 	/**
@@ -349,6 +365,11 @@ final class Runs_Controller extends WP_REST_Controller {
 		$available = '' !== $file && ( is_file( $file ) || array() !== array_diff( $data['stored'], array( Storage_Repository::LOCAL ) ) );
 
 		$data['download_url'] = $available && ! $run->is_active() ? Download::url( $run ) : null;
+
+		// Une archive chiffrée se télécharge aussi déchiffrée, si le site a encore la clé.
+		$encrypted                      = '.enc' === substr( $run->archive_file, -4 );
+		$data['encrypted']              = $encrypted;
+		$data['download_decrypted_url'] = null !== $data['download_url'] && $encrypted ? Download::url( $run, true ) : null;
 
 		return $data;
 	}

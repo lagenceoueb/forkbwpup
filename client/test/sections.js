@@ -16,12 +16,13 @@ describe( 'sectionFromHash', () => {
 		expect( sectionFromHash( hash ) ).toBe( expected );
 	} );
 
-	it( 'lists the six sections of the mock-ups', () => {
+	it( 'lists the sections of the mock-ups, with the restore', () => {
 		expect( getSections().map( ( section ) => section.id ) ).toEqual( [
 			'dashboard',
 			'backups',
 			'storage',
 			'schedule',
+			'restore',
 			'log',
 			'settings',
 		] );

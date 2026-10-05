@@ -15,3 +15,20 @@
 /package.json export-ignore
 /package-lock.json export-ignore
 /phpunit.xml.dist export-ignore
+# Fichiers des dépendances inutiles à l'exécution. Les licences restent.
+/vendor/**/*.md export-ignore
+/vendor/**/CHANGELOG* export-ignore
+/vendor/**/composer.json export-ignore
+/vendor/**/package.xml export-ignore
+/vendor/**/.github export-ignore
+/vendor/composer/installed.json export-ignore
+/vendor/**/Tests export-ignore
+/vendor/**/tests export-ignore
+/vendor/**/phpunit.xml* export-ignore
+/vendor/**/.travis.yml export-ignore
+/vendor/**/.gitattributes export-ignore
+/vendor/**/.gitignore export-ignore
+# Composer 2 charge autoload_static.php ; ces tables en double ne servent pas.
+/vendor/composer/autoload_classmap.php export-ignore
+/vendor/composer/autoload_psr4.php export-ignore
+/vendor/composer/autoload_namespaces.php export-ignore

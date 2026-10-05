@@ -354,7 +354,7 @@ final class Storages_Controller extends WP_REST_Controller {
 		$own   = substr( $own, 0, -1 );
 		$items = array();
 		foreach ( $files as $file ) {
-			if ( preg_match( '/_\d{4}-\d{2}-\d{2}_\d{6}\.(zip|tar\.gz)$/', $file['name'] ) ) {
+			if ( preg_match( '/_\d{4}-\d{2}-\d{2}_\d{6}\.(zip|tar\.gz)(\.enc)?$/', $file['name'] ) ) {
 				$items[] = $file + array( 'this_site' => 0 === strpos( $file['name'], $own ) );
 			}
 		}

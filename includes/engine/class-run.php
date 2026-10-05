@@ -71,6 +71,22 @@ final class Run {
 	const ABORTED = 'aborted';
 
 	/**
+	 * Sauvegarde.
+	 *
+	 * @since 0.1.0
+	 * @var string
+	 */
+	const KIND_BACKUP = 'backup';
+
+	/**
+	 * Restauration.
+	 *
+	 * @since 0.1.0
+	 * @var string
+	 */
+	const KIND_RESTORE = 'restore';
+
+	/**
 	 * Identifiant.
 	 *
 	 * @since 0.1.0
@@ -85,6 +101,14 @@ final class Run {
 	 * @var string
 	 */
 	public string $job_id = '';
+
+	/**
+	 * Nature : sauvegarde ou restauration.
+	 *
+	 * @since 0.1.0
+	 * @var string
+	 */
+	public string $kind = self::KIND_BACKUP;
 
 	/**
 	 * État : une des constantes de la classe.
@@ -217,9 +241,10 @@ final class Run {
 	 * @return array<string, mixed> Exécution.
 	 */
 	public function to_public_array(): array {
-		return array(
+		$data = array(
 			'id'           => $this->id,
 			'job_id'       => $this->job_id,
+			'kind'         => $this->kind,
 			'status'       => $this->status,
 			'trigger'      => $this->trigger,
 			'started_at'   => gmdate( 'c', $this->started_at ),
@@ -234,5 +259,19 @@ final class Run {
 			'contents'     => $this->state['contents'] ?? array(),
 			'stored'       => array_values( (array) ( $this->state['stored'] ?? array() ) ),
 		);
+
+		if ( self::KIND_RESTORE === $this->kind ) {
+			$restore         = (array) ( $this->state['restore'] ?? array() );
+			$data['restore'] = array(
+				'archive'    => (string) ( $restore['source']['name'] ?? '' ),
+				'database'   => ! empty( $restore['database'] ),
+				'files'      => ! empty( $restore['files'] ),
+				'safety'     => ! empty( $restore['safety'] ),
+				'committed'  => ! empty( $restore['committed'] ),
+				'safety_run' => (int) ( $restore['safety_run'] ?? 0 ),
+			);
+		}
+
+		return $data;
 	}
 }

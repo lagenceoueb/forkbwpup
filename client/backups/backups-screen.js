@@ -34,7 +34,7 @@ export default function BackupsScreen() {
 
 	useEffect( () => {
 		setResult( null );
-		fetchRuns( PER_PAGE, page )
+		fetchRuns( PER_PAGE, page, 'backup' )
 			.then( setResult )
 			.catch( ( e ) => setError( e.message ) );
 	}, [ page, version ] );

@@ -88,14 +88,14 @@ final class Store implements Step {
 	 * @throws Step_Failure Si aucun stockage n'a reçu l'archive.
 	 */
 	public function run( Run_Context $context ): bool {
-		$file = Archive::path( $context );
+		$file = $context->job->encrypt ? Encrypt::path( $context ) : Archive::path( $context );
 
 		if ( null === $context->get( 'targets' ) ) {
 			if ( ! is_file( $file ) ) {
 				throw new Step_Failure( esc_html__( 'The archive is missing.', 'oueb-wp-backup' ) );
 			}
 			clearstatcache( true, $file );
-			$context->set( 'name', Finish::archive_name( $context->job->id, $context->run->started_at, $context->job->archive_format ) );
+			$context->set( 'name', Finish::archive_name( $context->job->id, $context->run->started_at, $context->job->archive_format . ( $context->job->encrypt ? '.enc' : '' ) ) );
 			$context->set( 'size', (int) filesize( $file ) );
 			$context->set( 'targets', $this->targets( $context ) );
 			$context->set( 'index', 0 );
@@ -152,6 +152,7 @@ final class Store implements Step {
 					)
 				);
 				$this->next( $context, $index );
+				$context->checkpoint( true );
 				continue;
 			}
 
@@ -167,7 +168,7 @@ final class Store implements Step {
 				sprintf( __( 'Archive sent to %s.', 'oueb-wp-backup' ), $record['name'] )
 			);
 			$this->next( $context, $index );
-			$context->checkpoint();
+			$context->checkpoint( true );
 
 			if ( $index + 1 < $count && $context->should_pause() ) {
 				return false;

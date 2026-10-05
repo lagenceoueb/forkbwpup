@@ -426,3 +426,91 @@ $oueb-warning: #8a5300;
 .oueb-card > .components-button {
 	align-self: flex-start;
 }
+
+.oueb-inline-fields {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	align-items: flex-start;
+
+	> * {
+		flex: 1 1 200px;
+	}
+}
+
+.oueb-help {
+	color: $oueb-muted;
+}
+
+.oueb-trigger-link {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	align-items: flex-start;
+
+	> :first-child {
+		align-self: stretch;
+	}
+}
+
+.oueb-key {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 16px;
+	border-left: 4px solid $oueb-warning;
+	background: #fcf9e8;
+}
+
+.oueb-key__value {
+	padding: 8px;
+	background: #fff;
+	font-size: 14px;
+	overflow-wrap: anywhere;
+	user-select: all;
+}
+
+.oueb-key-import {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	align-items: flex-start;
+
+	> :first-child {
+		align-self: stretch;
+	}
+}
+
+.oueb-upload {
+	margin-top: 16px;
+}
+
+.oueb-upload__label {
+	display: block;
+	font-weight: 600;
+	margin-bottom: 8px;
+}
+
+.oueb-upload__done {
+	margin: 16px 0 0;
+}
+
+.oueb-restore-summary {
+	list-style: disc;
+	margin: 0 0 16px 20px;
+}
+
+.oueb-restore-result__links {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 24px;
+	margin: 16px 0;
+}
+
+.oueb-log--short {
+	margin: 16px 0;
+
+	.oueb-log__entry {
+		grid-template-columns: 8ch 1fr;
+	}
+}

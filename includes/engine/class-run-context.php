@@ -263,10 +263,12 @@ final class Run_Context {
 	 * le travail déjà fait n'est pas perdu.
 	 *
 	 * @since 0.1.0
+	 *
+	 * @param bool $force Vrai pour enregistrer sans attendre, après un travail coûteux comme un envoi complet.
 	 */
-	public function checkpoint(): void {
+	public function checkpoint( bool $force = false ): void {
 		$now = microtime( true );
-		if ( null === $this->saver || $now - $this->saved_at < 2.0 ) {
+		if ( null === $this->saver || ( ! $force && $now - $this->saved_at < 2.0 ) ) {
 			return;
 		}
 

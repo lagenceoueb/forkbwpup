@@ -7,7 +7,7 @@
  */
 import { Notice, SelectControl, Spinner } from '@wordpress/components';
 import { useEffect, useState } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -75,7 +75,15 @@ export default function LogScreen( { runId } ) {
 
 	const options = runs.map( ( run ) => ( {
 		value: String( run.id ),
-		label: `${ formatDate( run.started_at ) } (${ statusLabel( run ) })`,
+		label:
+			run.kind === 'restore'
+				? sprintf(
+						/* translators: 1: date, 2: status. */
+						__( 'Restore of %1$s (%2$s)', 'oueb-wp-backup' ),
+						formatDate( run.started_at ),
+						statusLabel( run )
+				  )
+				: `${ formatDate( run.started_at ) } (${ statusLabel( run ) })`,
 	} ) );
 	if ( ! options.some( ( option ) => option.value === current ) ) {
 		options.unshift( { value: current, label: `#${ current }` } );

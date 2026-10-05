@@ -12,6 +12,7 @@ namespace Oueb\WpBackup\Rest;
 
 use Oueb\WpBackup\Job\Job;
 use Oueb\WpBackup\Job\Job_Repository;
+use Oueb\WpBackup\Schedule\Scheduler;
 use Oueb\WpBackup\Storage\Storage_Repository;
 use WP_Error;
 use WP_REST_Controller;
@@ -45,16 +46,26 @@ final class Jobs_Controller extends WP_REST_Controller {
 	private Storage_Repository $storages;
 
 	/**
+	 * Planificateur.
+	 *
+	 * @since 0.1.0
+	 * @var Scheduler
+	 */
+	private Scheduler $scheduler;
+
+	/**
 	 * Prépare le contrôleur.
 	 *
 	 * @since 0.1.0
 	 *
 	 * @param Job_Repository     $jobs     Tâches.
-	 * @param Storage_Repository $storages Stockages.
+	 * @param Storage_Repository $storages  Stockages.
+	 * @param Scheduler          $scheduler Planificateur.
 	 */
-	public function __construct( Job_Repository $jobs, Storage_Repository $storages ) {
+	public function __construct( Job_Repository $jobs, Storage_Repository $storages, Scheduler $scheduler ) {
 		$this->jobs      = $jobs;
 		$this->storages  = $storages;
+		$this->scheduler = $scheduler;
 		$this->namespace = Settings_Controller::REST_NAMESPACE;
 		$this->rest_base = 'jobs';
 	}
@@ -102,7 +113,7 @@ final class Jobs_Controller extends WP_REST_Controller {
 	 * @return WP_REST_Response Tâches.
 	 */
 	public function get_items( $request ) {
-		return rest_ensure_response( array_values( array_map( static fn( Job $job ): array => $job->to_array(), $this->jobs->all() ) ) );
+		return rest_ensure_response( array_values( array_map( array( $this, 'prepare_job' ), $this->jobs->all() ) ) );
 	}
 
 	/**
@@ -116,7 +127,7 @@ final class Jobs_Controller extends WP_REST_Controller {
 	public function get_item( $request ) {
 		$job = $this->jobs->get( (string) $request['id'] );
 
-		return null === $job ? self::not_found() : rest_ensure_response( $job->to_array() );
+		return null === $job ? self::not_found() : rest_ensure_response( $this->prepare_job( $job ) );
 	}
 
 	/**
@@ -158,7 +169,41 @@ final class Jobs_Controller extends WP_REST_Controller {
 
 		$this->jobs->save( $job );
 
-		return rest_ensure_response( $job->to_array() );
+		$sync_error         = $this->scheduler->sync( $job );
+		$data               = $this->prepare_job( $job );
+		$data['sync_error'] = $sync_error;
+
+		return rest_ensure_response( $data );
+	}
+
+	/**
+	 * Prépare une tâche pour l'API : prochaine exécution et lien de déclenchement en plus.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param Job $job Tâche.
+	 * @return array<string, mixed> Données.
+	 */
+	public function prepare_job( Job $job ): array {
+		$data                = $job->to_array();
+		$data['next_run']    = $this->next_run( $job );
+		$data['trigger_url'] = Scheduler::trigger_url( $job );
+
+		return $data;
+	}
+
+	/**
+	 * Renvoie la prochaine exécution, au format ISO 8601.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param Job $job Tâche.
+	 * @return string|null Date, ou null.
+	 */
+	private function next_run( Job $job ): ?string {
+		$next = $this->scheduler->next_run( $job );
+
+		return null === $next ? null : gmdate( 'c', $next );
 	}
 
 	/**

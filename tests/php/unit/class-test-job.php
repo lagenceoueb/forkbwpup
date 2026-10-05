@@ -146,4 +146,38 @@ final class Test_Job extends Test_Case {
 		$this->assertInstanceOf( \WP_Error::class, ( new Job_Repository() )->create( array() ) );
 		$this->assertArrayNotHasKey( Job_Repository::OPTION, $this->site_options );
 	}
+
+	/**
+	 * Le déclencheur, la planification et le chiffrement sont validés.
+	 */
+	public function test_schedule_fields(): void {
+		$job = Job::main();
+
+		$this->assertTrue(
+			$job->apply(
+				array(
+					'trigger'  => 'wpcron',
+					'schedule' => ' 0  2 * * 1 ',
+					'encrypt'  => true,
+				)
+			)
+		);
+		$this->assertSame( '0 2 * * 1', $job->schedule );
+		$this->assertTrue( $job->encrypt );
+		$this->assertSame( 'trigger', $job->apply( array( 'trigger' => 'easycron' ) )->get_error_data()['field'] );
+		$this->assertSame( 'schedule', $job->apply( array( 'schedule' => '* * * * *' ) )->get_error_data()['field'] );
+		$this->assertSame( 'encrypt', $job->apply( array( 'encrypt' => 'oui' ) )->get_error_data()['field'] );
+	}
+
+	/**
+	 * L'identifiant cron-job.org ne se règle pas par l'API, mais survit à l'enregistrement.
+	 */
+	public function test_cronjob_org_id(): void {
+		$job = Job::main();
+		$job->apply( array( 'cronjob_org_id' => 99 ) );
+		$this->assertSame( 0, $job->cronjob_org_id );
+
+		$job->cronjob_org_id = 4242;
+		$this->assertSame( 4242, Job::from_array( $job->to_array() )->cronjob_org_id );
+	}
 }

@@ -10,6 +10,7 @@ declare( strict_types=1 );
 
 namespace Oueb\WpBackup\Job;
 
+use Oueb\WpBackup\Schedule\Cron_Expression;
 use WP_Error;
 
 defined( 'ABSPATH' ) || exit;
@@ -39,6 +40,14 @@ final class Job {
 	 * @var string[]
 	 */
 	const FORMATS = array( 'zip', 'tar.gz' );
+
+	/**
+	 * Déclencheurs possibles.
+	 *
+	 * @since 0.1.0
+	 * @var string[]
+	 */
+	const TRIGGERS = array( 'manual', 'wpcron', 'link', 'cronjoborg' );
 
 	/**
 	 * Identifiant, en lettres minuscules, chiffres et tirets.
@@ -137,6 +146,38 @@ final class Job {
 	public array $storages = array( 'local' );
 
 	/**
+	 * Déclencheur : manual, wpcron, link ou cronjoborg.
+	 *
+	 * @since 0.1.0
+	 * @var string
+	 */
+	public string $trigger = 'manual';
+
+	/**
+	 * Planification, en expression cron à cinq champs, dans le fuseau du site.
+	 *
+	 * @since 0.1.0
+	 * @var string
+	 */
+	public string $schedule = '0 3 * * *';
+
+	/**
+	 * Vrai pour chiffrer l'archive avant l'envoi.
+	 *
+	 * @since 0.1.0
+	 * @var bool
+	 */
+	public bool $encrypt = false;
+
+	/**
+	 * Identifiant de la tâche distante chez cron-job.org, 0 s'il n'y en a pas.
+	 *
+	 * @since 0.1.0
+	 * @var int
+	 */
+	public int $cronjob_org_id = 0;
+
+	/**
 	 * Construit une tâche.
 	 *
 	 * @since 0.1.0
@@ -194,6 +235,10 @@ final class Job {
 			'archive_format'        => $this->archive_format,
 			'keep'                  => $this->keep,
 			'storages'              => $this->storages,
+			'trigger'               => $this->trigger,
+			'schedule'              => $this->schedule,
+			'encrypt'               => $this->encrypt,
+			'cronjob_org_id'        => $this->cronjob_org_id,
 		);
 	}
 
@@ -256,6 +301,40 @@ final class Job {
 						return self::invalid( $key );
 					}
 					$copy->archive_format = $value;
+					break;
+
+				case 'trigger':
+					if ( ! in_array( $value, self::TRIGGERS, true ) ) {
+						return self::invalid( $key );
+					}
+					$copy->trigger = $value;
+					break;
+
+				case 'schedule':
+					$schedule = is_string( $value ) ? trim( (string) preg_replace( '/\s+/', ' ', $value ) ) : '';
+					$error    = Cron_Expression::error( $schedule );
+					if ( '' !== $error ) {
+						return new WP_Error(
+							'oueb_wp_backup_invalid_job',
+							$error,
+							array(
+								'status' => 400,
+								'field'  => $key,
+							)
+						);
+					}
+					$copy->schedule = $schedule;
+					break;
+
+				case 'encrypt':
+					if ( ! is_bool( $value ) ) {
+						return self::invalid( $key );
+					}
+					$copy->encrypt = $value;
+					break;
+
+				case 'cronjob_org_id':
+					// Tenu par la synchronisation avec cron-job.org, pas par l'interface.
 					break;
 
 				case 'storages':
@@ -331,6 +410,7 @@ final class Job {
 		foreach ( $data as $key => $value ) {
 			$job->apply( array( $key => $value ) );
 		}
+		$job->cronjob_org_id = max( 0, (int) ( $data['cronjob_org_id'] ?? 0 ) );
 
 		return $job;
 	}

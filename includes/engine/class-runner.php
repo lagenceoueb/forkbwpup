@@ -13,6 +13,8 @@ namespace Oueb\WpBackup\Engine;
 use Oueb\WpBackup\Engine\Steps\Step_Factory;
 use Oueb\WpBackup\Job\Job;
 use Oueb\WpBackup\Job\Job_Repository;
+use Oueb\WpBackup\Restore\Maintenance;
+use Oueb\WpBackup\Restore\Restore_Plan;
 use Oueb\WpBackup\Settings\Settings;
 use Oueb\WpBackup\Storage\Workspace;
 use Throwable;
@@ -73,6 +75,14 @@ final class Runner {
 	private Continuation $continuation;
 
 	/**
+	 * Plan des restaurations.
+	 *
+	 * @since 0.1.0
+	 * @var Restore_Plan|null
+	 */
+	private ?Restore_Plan $restore;
+
+	/**
 	 * Construit le moteur.
 	 *
 	 * @since 0.1.0
@@ -82,13 +92,15 @@ final class Runner {
 	 * @param Workspace      $workspace    Dossiers de travail.
 	 * @param Step_Factory   $steps        Fabrique des étapes.
 	 * @param Continuation   $continuation Relance des passages.
+	 * @param Restore_Plan   $restore      Plan des restaurations.
 	 */
-	public function __construct( Run_Repository $runs, Job_Repository $jobs, Workspace $workspace, Step_Factory $steps, Continuation $continuation ) {
+	public function __construct( Run_Repository $runs, Job_Repository $jobs, Workspace $workspace, Step_Factory $steps, Continuation $continuation, ?Restore_Plan $restore = null ) {
 		$this->runs         = $runs;
 		$this->jobs         = $jobs;
 		$this->workspace    = $workspace;
 		$this->steps        = $steps;
 		$this->continuation = $continuation;
+		$this->restore      = $restore;
 	}
 
 	/**
@@ -132,6 +144,66 @@ final class Runner {
 				__( 'Backup “%1$s” started (%2$s).', 'oueb-wp-backup' ),
 				$job->name,
 				$trigger
+			)
+		);
+
+		Watchdog::schedule();
+		$this->continuation->spawn( $run );
+
+		return $run;
+	}
+
+	/**
+	 * Lance une restauration.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param array<string, mixed> $options Réglages : source, database, files, safety, user_id, token_hash.
+	 * @param Job                  $safety  Tâche de la sauvegarde préalable.
+	 * @return Run|WP_Error Exécution créée, ou erreur 409 si une autre tourne.
+	 */
+	public function start_restore( array $options, Job $safety ) {
+		$active = $this->runs->active();
+		if ( null !== $active ) {
+			return new WP_Error(
+				'oueb_wp_backup_run_in_progress',
+				Run::KIND_RESTORE === $active->kind
+					? __( 'A restore is already running.', 'oueb-wp-backup' )
+					: __( 'A backup is running. Wait until it ends, or stop it, then start the restore.', 'oueb-wp-backup' ),
+				array(
+					'status' => 409,
+					'run_id' => $active->id,
+				)
+			);
+		}
+		if ( null === $this->restore ) {
+			return new WP_Error( 'oueb_wp_backup_restore_unavailable', __( 'Restoring is not available.', 'oueb-wp-backup' ), array( 'status' => 500 ) );
+		}
+
+		$plan = array_keys( $this->restore->steps( $options ) );
+		$run  = $this->runs->create(
+			'restore',
+			'manual',
+			array(
+				'plan'     => $plan,
+				'index'    => 0,
+				'attempts' => 0,
+				'contents' => array(
+					'database' => ! empty( $options['database'] ),
+					'files'    => ! empty( $options['files'] ),
+				),
+				'restore'  => $options,
+				'job'      => $safety->to_array(),
+				'steps'    => array(),
+			),
+			Run::KIND_RESTORE
+		);
+
+		$this->logger( $run )->info(
+			sprintf(
+				/* translators: %s: archive name. */
+				__( 'Restore of %s started.', 'oueb-wp-backup' ),
+				(string) ( $options['source']['name'] ?? '' )
 			)
 		);
 
@@ -204,6 +276,13 @@ final class Runner {
 		if ( ! $run->is_active() ) {
 			return new WP_Error( 'oueb_wp_backup_run_finished', __( 'This backup is already finished.', 'oueb-wp-backup' ), array( 'status' => 409 ) );
 		}
+		if ( Run::KIND_RESTORE === $run->kind && ! empty( $run->state['restore']['committed'] ) ) {
+			return new WP_Error(
+				'oueb_wp_backup_restore_committed',
+				__( 'The restore is changing the site and cannot be stopped now: the site would be left half restored.', 'oueb-wp-backup' ),
+				array( 'status' => 409 )
+			);
+		}
 
 		$this->runs->request_abort( $run->id );
 
@@ -230,13 +309,18 @@ final class Runner {
 	 */
 	private function advance( Run $run, int $max, string $owner ): bool {
 		$logger = $this->logger( $run );
-		$job    = $this->jobs->get( $run->job_id );
+		if ( Run::KIND_RESTORE === $run->kind ) {
+			$job   = Job::from_array( (array) ( $run->state['job'] ?? array() ) );
+			$steps = null === $this->restore ? array() : $this->restore->steps( (array) ( $run->state['restore'] ?? array() ) );
+		} else {
+			$job   = $this->jobs->get( $run->job_id );
+			$steps = null === $job ? array() : $this->steps->for_job( $job );
+		}
 		if ( null === $job ) {
 			$this->fail( $run, $logger, __( 'The backup job was deleted while it was running.', 'oueb-wp-backup' ) );
 			return false;
 		}
 
-		$steps   = $this->steps->for_job( $job );
 		$plan    = (array) ( $run->state['plan'] ?? array() );
 		$context = new Run_Context( $run, $job, $this->workspace, $logger, new Deadline( max( 5, $max - 3 ) ) );
 		$context->watch_abort( array( $this->runs, 'abort_requested' ) );
@@ -263,7 +347,7 @@ final class Runner {
 
 			$step_id = (string) $plan[ (int) $run->state['index'] ];
 			if ( ! isset( $steps[ $step_id ] ) ) {
-				$this->fail( $run, $logger, __( 'The backup plan changed while it was running. Start the backup again.', 'oueb-wp-backup' ) );
+				$this->fail( $run, $logger, __( 'The plan changed while it was running. Start again.', 'oueb-wp-backup' ) );
 				return false;
 			}
 
@@ -337,8 +421,11 @@ final class Runner {
 			$this->fail(
 				$run,
 				$logger,
-				/* translators: %s: step label. */
-				sprintf( __( 'The backup stopped: %s kept failing.', 'oueb-wp-backup' ), $step->label() )
+				Run::KIND_RESTORE === $run->kind
+					/* translators: %s: step label. */
+					? sprintf( __( 'The restore stopped: %s kept failing.', 'oueb-wp-backup' ), $step->label() )
+					/* translators: %s: step label. */
+					: sprintf( __( 'The backup stopped: %s kept failing.', 'oueb-wp-backup' ), $step->label() )
 			);
 			return false;
 		}
@@ -358,6 +445,16 @@ final class Runner {
 	 */
 	private function complete( Run $run, Logger $logger ): void {
 		$run->status = $run->warnings > 0 || $run->errors > 0 ? Run::WARNING : Run::SUCCESS;
+		if ( Run::KIND_RESTORE === $run->kind ) {
+			$logger->info(
+				Run::SUCCESS === $run->status
+					? __( 'Restore finished.', 'oueb-wp-backup' )
+					/* translators: %d: number of warnings. */
+					: sprintf( _n( 'Restore finished with %d warning.', 'Restore finished with %d warnings.', $run->warnings, 'oueb-wp-backup' ), $run->warnings )
+			);
+			$this->finish( $run );
+			return;
+		}
 		$logger->info(
 			Run::SUCCESS === $run->status
 				? __( 'Backup finished.', 'oueb-wp-backup' )
@@ -378,6 +475,15 @@ final class Runner {
 	 */
 	private function fail( Run $run, Logger $logger, string $message ): void {
 		$logger->error( $message );
+		if ( Run::KIND_RESTORE === $run->kind && ! empty( $run->state['restore']['committed'] ) ) {
+			$safety = (int) ( $run->state['restore']['safety_run'] ?? 0 );
+			$logger->error(
+				$safety > 0
+					/* translators: %d: backup number. */
+					? sprintf( __( 'The site may be half restored. Restore the backup made just before (#%d), or start this restore again.', 'oueb-wp-backup' ), $safety )
+					: __( 'The site may be half restored. Start this restore again, or restore another backup.', 'oueb-wp-backup' )
+			);
+		}
 		$run->status = Run::FAILED;
 		$this->finish( $run );
 	}
@@ -391,7 +497,11 @@ final class Runner {
 	 * @param Logger $logger Journal.
 	 */
 	private function stop( Run $run, Logger $logger ): void {
-		$logger->warning( __( 'Backup stopped by an administrator.', 'oueb-wp-backup' ) );
+		$logger->warning(
+			Run::KIND_RESTORE === $run->kind
+				? __( 'Restore stopped by an administrator. The site was not changed.', 'oueb-wp-backup' )
+				: __( 'Backup stopped by an administrator.', 'oueb-wp-backup' )
+		);
 		$run->status = Run::ABORTED;
 		$this->finish( $run );
 	}
@@ -415,6 +525,11 @@ final class Runner {
 		$forget = array_map( 'strval', (array) ( $run->state['forget'] ?? array() ) );
 		if ( array() !== $forget ) {
 			$this->runs->forget_archives( $run->job_id, $forget );
+		}
+
+		// Une restauration ne laisse jamais le site en maintenance, même en échec.
+		if ( Run::KIND_RESTORE === $run->kind ) {
+			Maintenance::end();
 		}
 
 		$this->workspace->clean_tmp( $run->id );
@@ -468,6 +583,7 @@ final class Runner {
 			'plugins'       => $job->include_plugins,
 			'other_content' => $job->include_other_content,
 			'core'          => $job->include_core,
+			'encrypted'     => $job->encrypt,
 		);
 	}
 }

@@ -27,7 +27,7 @@ final class Schema {
 	 * @since 0.1.0
 	 * @var int
 	 */
-	const VERSION = 1;
+	const VERSION = 2;
 
 	/**
 	 * Option qui garde la version installée.
@@ -81,6 +81,7 @@ final class Schema {
 			"CREATE TABLE {$table} (
   id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   job_id varchar(64) NOT NULL,
+  kind varchar(20) NOT NULL DEFAULT 'backup',
   status varchar(20) NOT NULL,
   trigger_type varchar(20) NOT NULL,
   started_at bigint(20) unsigned NOT NULL DEFAULT 0,

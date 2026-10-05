@@ -16,6 +16,7 @@ import { fetchJob, fetchRuns, fetchStorages } from '../api';
 import { contentsLabel, formatDate } from '../format';
 import RunsTable from '../components/runs-table';
 import BackupNow from './backup-now';
+import { describeSchedule } from '../schedule/cron';
 
 const RECENT = 5;
 const ACTIVE = [ 'queued', 'running' ];
@@ -81,7 +82,7 @@ export default function DashboardScreen() {
 	const [ error, setError ] = useState( null );
 
 	const load = useCallback( () => {
-		fetchRuns( RECENT )
+		fetchRuns( RECENT, 1, 'backup' )
 			.then( ( result ) => setRuns( result.runs ) )
 			.catch( ( e ) => setError( e.message ) );
 	}, [] );
@@ -165,11 +166,20 @@ export default function DashboardScreen() {
 					<h2 id="oueb-when" className="oueb-card__title">
 						{ __( 'When', 'oueb-wp-backup' ) }
 					</h2>
+					<p>{ describeSchedule( job ) }</p>
+					{ job?.next_run && (
+						<p>
+							{ sprintf(
+								/* translators: %s: date and time. */
+								__( 'Next backup: %s.', 'oueb-wp-backup' ),
+								formatDate( job.next_run )
+							) }
+						</p>
+					) }
 					<p>
-						{ __(
-							'When you click “Back up now”.',
-							'oueb-wp-backup'
-						) }
+						<a href="#/schedule">
+							{ __( 'Change the schedule', 'oueb-wp-backup' ) }
+						</a>
 					</p>
 				</section>
 			</div>

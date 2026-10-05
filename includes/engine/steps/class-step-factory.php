@@ -12,6 +12,7 @@ namespace Oueb\WpBackup\Engine\Steps;
 
 use Oueb\WpBackup\Engine\Step;
 use Oueb\WpBackup\Job\Job;
+use Oueb\WpBackup\Security\Key_Ring;
 use Oueb\WpBackup\Settings\Settings;
 use Oueb\WpBackup\Storage\Storage_Repository;
 
@@ -33,14 +34,24 @@ class Step_Factory {
 	private Storage_Repository $storages;
 
 	/**
+	 * Clés de chiffrement.
+	 *
+	 * @since 0.1.0
+	 * @var Key_Ring
+	 */
+	private Key_Ring $keys;
+
+	/**
 	 * Crée la fabrique.
 	 *
 	 * @since 0.1.0
 	 *
 	 * @param Storage_Repository $storages Stockages.
+	 * @param Key_Ring           $keys     Clés de chiffrement.
 	 */
-	public function __construct( Storage_Repository $storages ) {
+	public function __construct( Storage_Repository $storages, Key_Ring $keys ) {
 		$this->storages = $storages;
+		$this->keys     = $keys;
 	}
 
 	/**
@@ -61,6 +72,9 @@ class Step_Factory {
 		}
 		$steps[] = new Manifest();
 		$steps[] = new Archive();
+		if ( $job->encrypt ) {
+			$steps[] = new Encrypt( $this->keys );
+		}
 		$steps[] = new Store( $this->storages, (int) Settings::get( 'step_retries' ) );
 		$steps[] = new Finish( $this->storages );
 
