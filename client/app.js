@@ -6,7 +6,7 @@
  * WordPress dependencies
  */
 import { useEffect, useState } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -20,7 +20,10 @@ import LogScreen from './log/log-screen';
 import StorageScreen from './storage/storage-screen';
 import ScheduleScreen from './schedule/schedule-screen';
 import RestoreScreen from './restore/restore-screen';
-import { getSections, paramFromHash, sectionFromHash } from './sections';
+import ContentScreen from './content/content-screen';
+import JobsScreen from './jobs/jobs-screen';
+import SetupScreen from './setup/setup-screen';
+import { findRoute, paramFromHash, sectionFromHash } from './sections';
 
 /**
  * Renvoie l'écran d'une section.
@@ -42,6 +45,12 @@ function Screen( { section, param } ) {
 			return <ScheduleScreen />;
 		case 'restore':
 			return <RestoreScreen runId={ param } />;
+		case 'content':
+			return <ContentScreen />;
+		case 'jobs':
+			return <JobsScreen jobId={ param } />;
+		case 'setup':
+			return <SetupScreen />;
 		case 'log':
 			return <LogScreen runId={ param } />;
 		case 'settings':
@@ -66,13 +75,13 @@ export default function App() {
 	}, [] );
 
 	const section = sectionFromHash( hash );
-	const current = getSections().find( ( item ) => item.id === section );
+	const current = findRoute( section );
 
 	return (
 		<div className="oueb-app">
 			<header className="oueb-app__header">
 				<p className="oueb-app__title">Oueb WP Backup</p>
-				<SectionNav current={ section } />
+				<SectionNav current={ current.parent || section } />
 			</header>
 			<main
 				className="oueb-app__main"
@@ -85,11 +94,21 @@ export default function App() {
 			</main>
 			<footer className="oueb-app__footer">
 				<p>
-					{ __(
-						'Oueb WP Backup, released under the GPL v2 or later.',
-						'oueb-wp-backup'
-					) }
+					{ sprintf(
+						/* translators: %s: version number. */
+						__(
+							'Oueb WP Backup %s, fork of BackWPup 4.1.7, released under the GPL v2 or later.',
+							'oueb-wp-backup'
+						),
+						( window.ouebWpBackup &&
+							window.ouebWpBackup.version ) ||
+							''
+					) }{ ' ' }
+					<a href="https://github.com/lagenceoueb/oueb-wp-backup">
+						{ __( 'Source code and origin', 'oueb-wp-backup' ) }
+					</a>
 				</p>
+				<p>{ __( 'Made by L’agence Oueb', 'oueb-wp-backup' ) }</p>
 			</footer>
 		</div>
 	);

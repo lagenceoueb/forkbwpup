@@ -64,7 +64,14 @@ export default function RunsTable( { runs, caption, onDelete } ) {
 						return (
 							<tr key={ run.id }>
 								<th scope="row">{ date }</th>
-								<td>{ contentsLabel( run.contents ) }</td>
+								<td>
+									{ contentsLabel( run.contents ) }
+									{ run.job_id !== 'main' && run.job_name && (
+										<span className="oueb-table__job">
+											{ run.job_name }
+										</span>
+									) }
+								</td>
 								<td>
 									{ run.archive_size
 										? formatSize( run.archive_size )
@@ -83,6 +90,32 @@ export default function RunsTable( { runs, caption, onDelete } ) {
 									>
 										{ statusLabel( run ) }
 									</span>
+									{ [ 'warning', 'failed' ].includes(
+										run.status
+									) && (
+										<a
+											className="oueb-status__why"
+											href={ `#/log/${ run.id }` }
+											aria-label={ sprintf(
+												/* translators: %s: backup date. */
+												__(
+													'Why: log of the backup of %s',
+													'oueb-wp-backup'
+												),
+												date
+											) }
+										>
+											{ run.status === 'failed'
+												? __(
+														'See the cause',
+														'oueb-wp-backup'
+												  )
+												: __(
+														'Understand',
+														'oueb-wp-backup'
+												  ) }
+										</a>
+									) }
 								</td>
 								<td className="oueb-table__actions">
 									{ run.download_url && (

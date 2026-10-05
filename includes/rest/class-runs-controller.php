@@ -19,6 +19,7 @@ use Oueb\WpBackup\Engine\Runner;
 use Oueb\WpBackup\Engine\Watchdog;
 use Oueb\WpBackup\Job\Job;
 use Oueb\WpBackup\Job\Job_Repository;
+use Oueb\WpBackup\Restore\Steps\Keep_Safety_Backup;
 use Oueb\WpBackup\Storage\Storage_Repository;
 use Oueb\WpBackup\Storage\Workspace;
 use Throwable;
@@ -352,6 +353,12 @@ final class Runs_Controller extends WP_REST_Controller {
 	 */
 	public function prepare_run( Run $run ): array {
 		$data = $run->to_public_array();
+
+		$job              = $this->jobs->get( $run->job_id );
+		$data['job_name'] = null === $job ? '' : $job->name;
+		if ( Keep_Safety_Backup::JOB_ID === $run->job_id ) {
+			$data['job_name'] = __( 'Before a restore', 'oueb-wp-backup' );
+		}
 
 		$data['storage_names'] = array();
 		foreach ( $data['stored'] as $storage_id ) {

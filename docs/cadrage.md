@@ -57,7 +57,7 @@ Chaque fiche fournisseur indique, avec sa source :
 
 ### Fournisseurs retenus
 
-Vérification du 3 octobre 2026, détaillée avec ses sources dans `inc/oueb-providers.php`.
+Vérification du 3 octobre 2026, détaillée avec ses sources dans `includes/storage/class-providers.php`.
 
 | Fournisseur | Pays | Régions proposées |
 |---|---|---|

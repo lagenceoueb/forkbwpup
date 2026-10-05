@@ -25,11 +25,13 @@ import { formatDate, formatSize } from '../format';
 import { cronFromPreset, presetFromCron, weekdays } from './cron';
 
 /**
- * Règle la fréquence et le déclencheur de la sauvegarde principale.
+ * Règle la fréquence et le déclencheur d'une tâche.
  *
+ * @param {Object} props       Propriétés.
+ * @param {string} props.jobId Tâche, la principale par défaut.
  * @return {Element} Écran.
  */
-export default function ScheduleScreen() {
+export default function ScheduleScreen( { jobId = 'main' } ) {
 	const [ job, setJob ] = useState( null );
 	const [ form, setForm ] = useState( null );
 	const [ trigger, setTrigger ] = useState( 'wpcron' );
@@ -49,14 +51,14 @@ export default function ScheduleScreen() {
 
 	useEffect( () => {
 		Promise.all( [
-			fetchJob(),
-			fetchRuns( 10, 1, 'backup' ),
+			fetchJob( jobId ),
+			fetchRuns( 30, 1, 'backup' ),
 			fetchSettings(),
 		] )
-			.then( ( [ main, recent, settings ] ) => {
-				load( main );
+			.then( ( [ saved, recent, settings ] ) => {
+				load( saved );
 				const done = recent.runs.find(
-					( run ) => run.archive_size > 0
+					( run ) => run.job_id === jobId && run.archive_size > 0
 				);
 				setLastSize( done ? done.archive_size : 0 );
 				setKeySet( Boolean( settings.cronjob_org_key_set ) );
@@ -64,7 +66,7 @@ export default function ScheduleScreen() {
 			.catch( ( e ) =>
 				setNotice( { status: 'error', message: e.message } )
 			);
-	}, [] );
+	}, [ jobId ] );
 
 	if ( ! job || ! form ) {
 		return notice ? (

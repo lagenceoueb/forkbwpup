@@ -2,7 +2,7 @@
 
 Extension WordPress de sauvegarde et de restauration, éditée par [L'agence Oueb](https://lagenceoueb.tech). Elle s'adresse aux administrateurs de site qui veulent gérer leurs sauvegardes seuls. Les archives partent chez des hébergeurs européens ou suisses, choisis sur des critères de souveraineté et d'énergie renouvelable, ou sur un serveur que vous administrez.
 
-L'extension est en développement (version 0.0.1). N'installez pas cette version sur un site en production.
+L'extension est en développement (version 0.1.0). N'installez pas cette version sur un site en production.
 
 ## Origine et licence
 
@@ -12,13 +12,15 @@ BackWPup est une marque de ses détenteurs. Oueb WP Backup n'est pas affilié à
 
 ## Différences avec BackWPup
 
-Le fork garde le moteur de BackWPup : sauvegarde de la base et des fichiers, restauration depuis l'administration, multisite, commandes WP-CLI, maintenance de la base. Il change le reste :
+Le fork est parti du code de BackWPup, puis l'a entièrement réécrit (voir [`docs/refonte.md`](docs/refonte.md)) :
 
-- les supports de stockage hors d'Europe, le code de la version Pro et les appels à des services externes sont retirés ;
-- un client S3 écrit pour l'extension remplace le SDK AWS ;
-- les destinations SFTP et Infomaniak kDrive sont ajoutées ;
-- les tâches peuvent être déclenchées par cron-job.org ;
-- l'archive d'installation pèse moins de 2 Mo, et la CI refuse toute modification qui dépasse ce budget.
+- un moteur par étapes, qui reprend après une coupure, avec un verrou contre les exécutions en double ;
+- des stockages européens seulement, un client S3 écrit pour l'extension, SFTP et Infomaniak kDrive ;
+- un chiffrement XChaCha20-Poly1305 des archives, avec un outil de déchiffrement hors de WordPress ;
+- une restauration depuis l'administration, précédée d'une sauvegarde de l'état actuel ;
+- une interface React, avec un assistant de première configuration ;
+- une seule dépendance embarquée, phpseclib, pour SFTP ;
+- une archive d'installation de moins de 1 Mo, pour un budget de 2 Mo que la CI fait respecter.
 
 Les décisions du projet, les critères de choix des fournisseurs et le découpage en lots sont dans [`docs/cadrage.md`](docs/cadrage.md). Ce fichier fait référence : une décision qui le contredit passe d'abord par sa mise à jour.
 
@@ -26,7 +28,7 @@ Les décisions du projet, les critères de choix des fournisseurs et le découpa
 
 ### Fournisseurs compatibles S3
 
-Un fournisseur entre dans la liste s'il a son siège et ses centres de données dans l'Union européenne ou en Suisse, s'il n'a pas de maison mère hors d'Europe et si une source publique prouve que son électricité est renouvelable. La vérification date du 3 octobre 2026. Ses sources sont dans [`inc/oueb-providers.php`](inc/oueb-providers.php).
+Un fournisseur entre dans la liste s'il a son siège et ses centres de données dans l'Union européenne ou en Suisse, s'il n'a pas de maison mère hors d'Europe et si une source publique prouve que son électricité est renouvelable. La vérification date du 3 octobre 2026. Ses sources sont dans [`includes/storage/class-providers.php`](includes/storage/class-providers.php).
 
 | Fournisseur | Pays | Régions proposées |
 |---|---|---|
@@ -45,7 +47,6 @@ Certains sites de fournisseurs étaient inaccessibles pendant la vérification. 
 
 - **Infomaniak kDrive**, par WebDAV. Il faut un mot de passe d'application kDrive.
 - **SFTP**, sur un serveur que vous administrez. L'extension enregistre l'empreinte de la clé du serveur à la première connexion, puis refuse tout serveur dont la clé a changé.
-- **FTP**, dans l'ancien code seulement. La nouvelle version ne le reprend pas : le FTP transmet le mot de passe en clair. Utilisez SFTP.
 - **Dossier sur le serveur du site.** Une copie sur le même serveur que le site disparaît avec lui : gardez ce support en complément d'un stockage externe.
 
 ## Déclenchement des sauvegardes
@@ -56,7 +57,7 @@ Trois modes au choix, tâche par tâche :
 - **URL de déclenchement**, à appeler depuis le service de votre choix. Elle contient une clé à garder secrète.
 - **cron-job.org**, service gratuit, au code ouvert, hébergé en Allemagne. L'extension crée et met à jour la tâche distante avec votre clé d'API.
 
-Dans la nouvelle version, la section Planification propose des fréquences avec leur cas d'usage (deux fois par jour, chaque jour, chaque semaine, chaque mois) ou une expression cron à cinq champs, dans le fuseau du site. Une sauvegarde ne part pas plus de quatre fois par heure. Le lien de déclenchement accepte GET et POST ; une mauvaise clé reçoit une erreur 403.
+La section Planification propose des fréquences avec leur cas d'usage (deux fois par jour, chaque jour, chaque semaine, chaque mois) ou une expression cron à cinq champs, dans le fuseau du site. Une sauvegarde ne part pas plus de quatre fois par heure. Le lien de déclenchement accepte GET et POST ; une mauvaise clé reçoit une erreur 403.
 
 ## Chiffrement
 
@@ -110,19 +111,23 @@ bin/build.sh
 
 Le script produit `build/oueb-wp-backup.zip` à partir du dernier commit. Dans WordPress, ouvrez **Extensions > Ajouter une extension > Téléverser une extension** et envoyez ce fichier.
 
-N'activez pas Oueb WP Backup sur un site où BackWPup est actif (voir les limites connues).
+Au premier affichage, un assistant règle le contenu, le stockage et la fréquence, puis lance une première sauvegarde.
+
+## Venir de BackWPup
+
+Si BackWPup est installé, ou l'a été, le tableau de bord propose d'importer ses tâches et ses réglages. L'import ne modifie ni ne supprime les données de BackWPup :
+
+- les tâches deviennent des sauvegardes supplémentaires, réglables dans **Réglages > Mode avancé** ;
+- les stockages S3, SFTP, kDrive et dossier sont recréés, avec leurs mots de passe ;
+- le FTP et les services retirés (Dropbox, Amazon S3, Google Drive…) sont signalés dans le rapport, tâche par tâche.
+
+Désactivez ensuite BackWPup : sinon, les deux extensions font les mêmes sauvegardes. Les archives chiffrées par BackWPup Pro ne se lisent pas avec le nouveau format : déchiffrez-les avec BackWPup avant de le désactiver.
 
 ## Développement
 
-L'extension est en cours de réécriture, lot par lot : le plan est dans [`docs/refonte.md`](docs/refonte.md). Le nouveau code vit dans `includes/` (PHP) et `client/` (React). L'ancien code, dans `inc/`, `src/` et `views/`, fonctionne jusqu'à la bascule du lot 6.
+Le code PHP vit dans `includes/`, l'interface React dans `client/`. Le plan de la réécriture et le découpage en lots sont dans [`docs/refonte.md`](docs/refonte.md).
 
-La nouvelle interface ne s'affiche que si `wp-config.php` contient :
-
-```php
-define( 'OUEB_WP_BACKUP_NEXT', true );
-```
-
-Avec cette constante, le tableau de bord lance aussi les sauvegardes du nouveau moteur. La section Stockage choisit où elles partent : S3 chez un fournisseur retenu, SFTP, kDrive, et une copie sur ce serveur dans `wp-content/uploads/oueb-wp-backup-<jeton>/archives/`. Un envoi interrompu reprend au dernier morceau confirmé, sauf vers kDrive : WebDAV n'envoie pas par morceaux, et l'envoi recommence. Après chaque sauvegarde, la rotation garde le nombre d'archives choisi dans chaque stockage, sans toucher aux archives des autres sites.
+Les archives locales sont rangées dans `wp-content/uploads/oueb-wp-backup-<jeton>/archives/`. Un envoi interrompu reprend au dernier morceau confirmé, sauf vers kDrive : WebDAV n'envoie pas par morceaux, et l'envoi recommence. Après chaque sauvegarde, la rotation garde le nombre d'archives choisi dans chaque stockage, sans toucher aux archives des autres sites.
 
 Le jeton aléatoire rend le nom du dossier local imprévisible. Apache et IIS appliquent les fichiers `.htaccess` et `web.config` que l'extension y dépose. Nginx les ignore : bloquez ce dossier dans la configuration du site.
 
@@ -160,8 +165,7 @@ La CI ([`.github/workflows/qualite.yml`](.github/workflows/qualite.yml)) tourne 
 |---|---|
 | Syntaxe PHP 8.1, 8.3 et 8.4 | oui |
 | Tests PHP 8.1 et 8.4 | oui |
-| WordPress Coding Standards, nouveau code (`includes/`, `tests/php/`) | oui |
-| WordPress Coding Standards, ancien code | non, jusqu'à la bascule |
+| WordPress Coding Standards, sur tout le dépôt | oui |
 | Interface React : style, tests, construction | oui |
 | Poids de l'archive | oui |
 
@@ -169,23 +173,22 @@ Le fichier [`.gitattributes`](.gitattributes) liste ce qui reste hors de l'archi
 
 ## Limites connues
 
-- Le code hérité ne respecte pas encore les WordPress Coding Standards. La CI comptait 36 373 erreurs et 1 443 avertissements PHPCS au 3 octobre 2026.
-- Les options gardent les noms de BackWPup (`backwpup_*`). Désinstaller Oueb WP Backup effacerait les réglages d'un BackWPup présent sur le même site.
-- Les textes ajoutés par le fork utilisent le domaine de traduction `oueb-wp-backup`, que l'extension ne charge pas encore. Ces textes s'affichent en anglais.
-- Les archives chiffrées par BackWPup Pro utilisent l'ancien format, que la nouvelle version ne lit pas. Déchiffrez-les avec BackWPup avant l'import du lot 6.
+- L'interface est en anglais : la traduction française arrive au lot 7.
+- Les archives chiffrées par BackWPup Pro utilisent l'ancien format, que la nouvelle version ne lit pas.
 - Le moteur de la nouvelle version ne sait pas encore traverser une protection par mot de passe HTTP du site (authentification Basic) : sa relance par le site et le lien de déclenchement seraient refusés.
-- Le FTP reste dans l'ancien code jusqu'à la bascule du lot 6. Le nouveau moteur ne le propose pas.
+- Le FTP n'est plus proposé : il transmet le mot de passe en clair. Utilisez SFTP.
+- Les commandes WP-CLI, le multisite et la maintenance de la base (vérification, réparation, optimisation) de BackWPup sont à réécrire (lot 7).
+- La désinstallation efface les réglages et les clés de chiffrement, mais laisse les archives du dossier local. Téléchargez les clés avant de désinstaller.
 - La restauration ne remplace pas les adresses dans le contenu. Une sauvegarde venue d'un autre domaine garde ses liens vers l'ancien.
 - La restauration refuse une base dont le préfixe des tables diffère de celui du site, et ne gère pas encore le multisite (lot 7).
-- La restauration ne lit que les archives d'Oueb WP Backup, qui portent un manifeste. Les archives de BackWPup attendent le module d'import du lot 6.
-- Les tâches BackWPup qui envoient vers Dropbox, Amazon S3, Google Cloud Storage, Azure, Rackspace, SugarSync ou par e-mail ne fonctionnent plus dans le fork.
+- La restauration ne lit que les archives d'Oueb WP Backup, qui portent un manifeste. Une archive de BackWPup se restaure à la main.
 
 ## Feuille de route
 
-Le travail avance par lots, sans échéance :
+Le travail avance par lots, sans échéance (détail dans [`docs/refonte.md`](docs/refonte.md)) :
 
-1. **Sobriété** : outillage qualité, retrait du code inutile, client S3 léger. Terminé.
-2. **Supports** : fournisseurs vérifiés, SFTP, kDrive, cron-job.org, écran de choix du stockage. En cours.
-3. **Accessibilité** : nouvelle interface conforme RGAA 4.1 et WCAG 2.2 AA, d'après les maquettes validées.
+1. Socle, moteur, stockages, déclenchement et chiffrement, restauration : terminés.
+2. Interface complète, import de BackWPup et bascule : lot 6, en cours.
+3. WP-CLI, multisite, audit RGAA, traductions et version 0.1.0 publiée : lot 7.
 
 La version 1.0 sera prête quand PHPCS passera sans erreur, quand les écrans n'auront plus de non-conformité RGAA bloquante, et quand une sauvegarde suivie d'une restauration aura réussi sur chaque support.

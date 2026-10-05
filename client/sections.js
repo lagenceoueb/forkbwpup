@@ -25,6 +25,43 @@ export function getSections() {
 }
 
 /**
+ * Renvoie les pages hors du menu, rattachées à une section du menu.
+ *
+ * @return {Array<{id: string, label: string, parent: string}>} Pages : identifiant, titre, section du menu.
+ */
+export function getPages() {
+	return [
+		{
+			id: 'content',
+			label: __( 'Content of the backup', 'oueb-wp-backup' ),
+			parent: 'dashboard',
+		},
+		{
+			id: 'setup',
+			label: __( 'Setup', 'oueb-wp-backup' ),
+			parent: 'dashboard',
+		},
+		{
+			id: 'jobs',
+			label: __( 'Additional backups', 'oueb-wp-backup' ),
+			parent: 'settings',
+		},
+	];
+}
+
+/**
+ * Renvoie une section ou une page par son identifiant.
+ *
+ * @param {string} id Identifiant.
+ * @return {{id: string, label: string, parent?: string}|undefined} Section ou page.
+ */
+export function findRoute( id ) {
+	return [ ...getSections(), ...getPages() ].find(
+		( item ) => item.id === id
+	);
+}
+
+/**
  * Lit la section demandée dans l'ancre de l'adresse.
  *
  * L'ancre « #/settings » ouvre les réglages. Une ancre absente ou inconnue
@@ -37,9 +74,7 @@ export function sectionFromHash( hash ) {
 	const id = String( hash || '' )
 		.replace( /^#\/?/, '' )
 		.split( '/' )[ 0 ];
-	return getSections().some( ( section ) => section.id === id )
-		? id
-		: 'dashboard';
+	return findRoute( id ) ? id : 'dashboard';
 }
 
 /**
