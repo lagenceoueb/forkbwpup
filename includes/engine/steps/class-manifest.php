@@ -101,6 +101,7 @@ final class Manifest implements Step {
 			'files'      => array(
 				'count' => (int) ( $files['files'] ?? 0 ),
 				'bytes' => (int) ( $files['bytes'] ?? 0 ),
+				'roots' => File_List::archive_prefixes(),
 			),
 			'job'        => array(
 				'id'       => $context->job->id,

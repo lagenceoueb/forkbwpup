@@ -48,7 +48,11 @@ export default function ScheduleScreen() {
 	};
 
 	useEffect( () => {
-		Promise.all( [ fetchJob(), fetchRuns( 10 ), fetchSettings() ] )
+		Promise.all( [
+			fetchJob(),
+			fetchRuns( 10, 1, 'backup' ),
+			fetchSettings(),
+		] )
 			.then( ( [ main, recent, settings ] ) => {
 				load( main );
 				const done = recent.runs.find(

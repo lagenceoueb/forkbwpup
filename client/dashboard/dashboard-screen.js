@@ -82,7 +82,7 @@ export default function DashboardScreen() {
 	const [ error, setError ] = useState( null );
 
 	const load = useCallback( () => {
-		fetchRuns( RECENT )
+		fetchRuns( RECENT, 1, 'backup' )
 			.then( ( result ) => setRuns( result.runs ) )
 			.catch( ( e ) => setError( e.message ) );
 	}, [] );

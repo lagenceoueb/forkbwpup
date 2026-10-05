@@ -124,6 +124,17 @@ final class Workspace {
 	}
 
 	/**
+	 * Renvoie le dossier des archives envoyées pour une restauration.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return string Chemin absolu.
+	 */
+	public function uploads(): string {
+		return $this->ensure( 'uploads' );
+	}
+
+	/**
 	 * Renvoie le dossier des archives gardées sur le serveur, créé au besoin.
 	 *
 	 * @since 0.1.0

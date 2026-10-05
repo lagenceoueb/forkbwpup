@@ -132,8 +132,33 @@ final class Archive_Cipher {
 	 * @throws RuntimeException Si la clé manque, ou si l'archive est abîmée ou modifiée.
 	 */
 	public static function decrypt( callable $read, callable $write, callable $key ): void {
-		$header = self::read_exactly( $read, self::HEADER_BYTES );
-		$id     = self::key_id( $header );
+		$state = self::open( self::read_exactly( $read, self::HEADER_BYTES ), $key );
+		while ( true ) {
+			list( $plain, $last ) = self::unseal( $state, self::read_exactly( $read, self::sealed_chunk() ) );
+			call_user_func( $write, $plain );
+
+			if ( $last ) {
+				if ( '' !== self::read_exactly( $read, 1 ) ) {
+					throw new RuntimeException( esc_html__( 'The encrypted backup has extra data after its end.', 'oueb-wp-backup' ) );
+				}
+				return;
+			}
+		}
+	}
+
+	/**
+	 * Ouvre le flux de déchiffrement d'une archive à partir de son en-tête.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param string   $header En-tête de HEADER_BYTES octets.
+	 * @param callable $key    Reçoit l'identifiant de clé, renvoie la clé brute ou null.
+	 * @return string État du flux, à passer à unseal().
+	 *
+	 * @throws RuntimeException Si ce n'est pas une archive chiffrée ou si la clé manque.
+	 */
+	public static function open( string $header, callable $key ): string {
+		$id = self::key_id( $header );
 		if ( null === $id ) {
 			throw new RuntimeException( esc_html__( 'This file is not an encrypted backup.', 'oueb-wp-backup' ) );
 		}
@@ -144,28 +169,31 @@ final class Archive_Cipher {
 			throw new RuntimeException( esc_html( sprintf( __( 'The key %s is missing. Add it in the encryption settings.', 'oueb-wp-backup' ), $id ) ) );
 		}
 
-		$state = sodium_crypto_secretstream_xchacha20poly1305_init_pull( substr( $header, 16, 24 ), $secret );
-		while ( true ) {
-			$sealed = self::read_exactly( $read, self::sealed_chunk() );
-			if ( '' === $sealed ) {
-				throw new RuntimeException( esc_html__( 'The encrypted backup is truncated.', 'oueb-wp-backup' ) );
-			}
+		return sodium_crypto_secretstream_xchacha20poly1305_init_pull( substr( $header, 16, 24 ), $secret );
+	}
 
-			$result = sodium_crypto_secretstream_xchacha20poly1305_pull( $state, $sealed );
-			if ( false === $result ) {
-				throw new RuntimeException( esc_html__( 'The encrypted backup is damaged, or the key is wrong.', 'oueb-wp-backup' ) );
-			}
-
-			list( $plain, $tag ) = $result;
-			call_user_func( $write, $plain );
-
-			if ( SODIUM_CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_TAG_FINAL === $tag ) {
-				if ( '' !== self::read_exactly( $read, 1 ) ) {
-					throw new RuntimeException( esc_html__( 'The encrypted backup has extra data after its end.', 'oueb-wp-backup' ) );
-				}
-				return;
-			}
+	/**
+	 * Déchiffre un bloc.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param string $state  État du flux, mis à jour.
+	 * @param string $sealed Bloc chiffré, de sealed_chunk() octets au plus.
+	 * @return array{0: string, 1: bool} Bloc en clair, et vrai pour le dernier bloc.
+	 *
+	 * @throws RuntimeException Si le bloc manque, est modifié ou si la clé est fausse.
+	 */
+	public static function unseal( string &$state, string $sealed ): array {
+		if ( '' === $sealed ) {
+			throw new RuntimeException( esc_html__( 'The encrypted backup is truncated.', 'oueb-wp-backup' ) );
 		}
+
+		$result = sodium_crypto_secretstream_xchacha20poly1305_pull( $state, $sealed );
+		if ( false === $result ) {
+			throw new RuntimeException( esc_html__( 'The encrypted backup is damaged, or the key is wrong.', 'oueb-wp-backup' ) );
+		}
+
+		return array( (string) $result[0], SODIUM_CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_TAG_FINAL === $result[1] );
 	}
 
 	/**

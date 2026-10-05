@@ -70,6 +70,26 @@ Depuis l'écran des sauvegardes, une archive chiffrée se télécharge telle que
 php oueb-decrypt.php site_main_2026-10-04_030000.zip.enc cle.txt
 ```
 
+## Restauration
+
+La nouvelle version restaure une sauvegarde depuis la section « Restaurer ». L'archive vient de la liste des sauvegardes, d'un stockage (utile après la réinstallation d'un site) ou de l'ordinateur ; un envoi coupé reprend où il s'est arrêté. Les archives zip, tar.gz et tar se lisent, chiffrées ou non.
+
+La restauration suit cet ordre :
+
+1. L'archive est récupérée, déchiffrée, puis vérifiée d'après son manifeste. Un refus à ce stade laisse le site intact.
+2. Le site actuel est sauvegardé dans le dossier local, si la case est cochée (elle l'est par défaut). Cette sauvegarde apparaît dans la liste et se restaure comme les autres.
+3. Le site passe en maintenance. L'administrateur qui restaure garde l'accès pour suivre la progression.
+4. La base est importée instruction par instruction, puis les fichiers sont remis en place.
+
+Chaque étape reprend après une coupure. Quelques éléments ne changent jamais :
+
+- les réglages d'Oueb WP Backup (stockages, clés, tâches) et l'historique des sauvegardes ;
+- l'adresse du site (`siteurl`, `home`) ;
+- la session de l'administrateur qui restaure, si son compte existe dans la sauvegarde ;
+- `wp-config.php`, l'extension elle-même et son dossier de travail.
+
+Les fichiers ajoutés depuis la sauvegarde restent en place.
+
 ## Prérequis
 
 - WordPress 6.6 ou plus récent
@@ -155,6 +175,9 @@ Le fichier [`.gitattributes`](.gitattributes) liste ce qui reste hors de l'archi
 - Les archives chiffrées par BackWPup Pro utilisent l'ancien format, que la nouvelle version ne lit pas. Déchiffrez-les avec BackWPup avant l'import du lot 6.
 - Le moteur de la nouvelle version ne sait pas encore traverser une protection par mot de passe HTTP du site (authentification Basic) : sa relance par le site et le lien de déclenchement seraient refusés.
 - Le FTP reste dans l'ancien code jusqu'à la bascule du lot 6. Le nouveau moteur ne le propose pas.
+- La restauration ne remplace pas les adresses dans le contenu. Une sauvegarde venue d'un autre domaine garde ses liens vers l'ancien.
+- La restauration refuse une base dont le préfixe des tables diffère de celui du site, et ne gère pas encore le multisite (lot 7).
+- La restauration ne lit que les archives d'Oueb WP Backup, qui portent un manifeste. Les archives de BackWPup attendent le module d'import du lot 6.
 - Les tâches BackWPup qui envoient vers Dropbox, Amazon S3, Google Cloud Storage, Azure, Rackspace, SugarSync ou par e-mail ne fonctionnent plus dans le fork.
 
 ## Feuille de route

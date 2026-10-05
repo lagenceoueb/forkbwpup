@@ -241,6 +241,42 @@ final class File_List implements Step {
 	}
 
 	/**
+	 * Renvoie les emplacements du site, par nature de contenu.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return array<string, string> Chemins absolus, sans barre oblique finale : core, content, plugins, themes, uploads.
+	 */
+	public static function locations(): array {
+		return array(
+			'core'    => untrailingslashit( wp_normalize_path( ABSPATH ) ),
+			'content' => untrailingslashit( wp_normalize_path( WP_CONTENT_DIR ) ),
+			'plugins' => untrailingslashit( wp_normalize_path( WP_PLUGIN_DIR ) ),
+			'themes'  => untrailingslashit( wp_normalize_path( get_theme_root() ) ),
+			'uploads' => self::uploads_dir(),
+		);
+	}
+
+	/**
+	 * Renvoie le préfixe des noms dans l'archive pour chaque emplacement du site.
+	 *
+	 * La restauration s'en sert pour remettre chaque fichier à sa place, même
+	 * si le site de destination range wp-content ailleurs.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return array<string, string> Préfixes, par nature de contenu ; chaîne vide pour la racine.
+	 */
+	public static function archive_prefixes(): array {
+		$prefixes = array();
+		foreach ( self::locations() as $kind => $path ) {
+			$prefixes[ $kind ] = self::relative( $path, self::base_for( $path ) );
+		}
+
+		return $prefixes;
+	}
+
+	/**
 	 * Calcule les dossiers et fichiers exclus, en chemins absolus.
 	 *
 	 * @since 0.1.0

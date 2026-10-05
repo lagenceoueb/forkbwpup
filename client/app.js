@@ -19,6 +19,7 @@ import BackupsScreen from './backups/backups-screen';
 import LogScreen from './log/log-screen';
 import StorageScreen from './storage/storage-screen';
 import ScheduleScreen from './schedule/schedule-screen';
+import RestoreScreen from './restore/restore-screen';
 import { getSections, paramFromHash, sectionFromHash } from './sections';
 
 /**
@@ -39,6 +40,8 @@ function Screen( { section, param } ) {
 			return <StorageScreen />;
 		case 'schedule':
 			return <ScheduleScreen />;
+		case 'restore':
+			return <RestoreScreen runId={ param } />;
 		case 'log':
 			return <LogScreen runId={ param } />;
 		case 'settings':

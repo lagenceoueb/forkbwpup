@@ -31,13 +31,15 @@ final class Run_Repository {
 	 * @param string               $job_id  Tâche exécutée.
 	 * @param string               $trigger Origine : manual, schedule, link ou cli.
 	 * @param array<string, mixed> $state   État initial.
+	 * @param string               $kind    Nature : sauvegarde ou restauration.
 	 * @return Run Exécution enregistrée.
 	 */
-	public function create( string $job_id, string $trigger, array $state ): Run {
+	public function create( string $job_id, string $trigger, array $state, string $kind = Run::KIND_BACKUP ): Run {
 		global $wpdb;
 
 		$run             = new Run();
 		$run->job_id     = $job_id;
+		$run->kind       = $kind;
 		$run->trigger    = $trigger;
 		$run->status     = Run::QUEUED;
 		$run->started_at = time();
@@ -98,14 +100,20 @@ final class Run_Repository {
 	 * @param int    $limit  Nombre maximal.
 	 * @param int    $offset Nombre d'exécutions à sauter.
 	 * @param string $job_id Tâche, ou chaîne vide pour toutes.
+	 * @param string $kind   Nature, ou chaîne vide pour toutes.
 	 * @return Run[] Exécutions.
 	 */
-	public function latest( int $limit = 20, int $offset = 0, string $job_id = '' ): array {
+	public function latest( int $limit = 20, int $offset = 0, string $job_id = '', string $kind = '' ): array {
 		global $wpdb;
 
-		$rows = '' === $job_id
-			? $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i ORDER BY id DESC LIMIT %d OFFSET %d', Schema::table(), $limit, $offset ), ARRAY_A )
-			: $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i WHERE job_id = %s ORDER BY id DESC LIMIT %d OFFSET %d', Schema::table(), $job_id, $limit, $offset ), ARRAY_A );
+		list( $where, $args ) = self::filters( $job_id, $kind );
+		$rows                 = $wpdb->get_results(
+			$wpdb->prepare(
+				'SELECT * FROM %i WHERE ' . $where . ' ORDER BY id DESC LIMIT %d OFFSET %d', // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Conditions fixes, valeurs préparées.
+				array_merge( array( Schema::table() ), $args, array( $limit, $offset ) )
+			),
+			ARRAY_A
+		);
 
 		return array_map( array( $this, 'from_row' ), (array) $rows );
 	}
@@ -115,12 +123,44 @@ final class Run_Repository {
 	 *
 	 * @since 0.1.0
 	 *
+	 * @param string $kind Nature, ou chaîne vide pour toutes.
 	 * @return int Nombre d'exécutions.
 	 */
-	public function count(): int {
+	public function count( string $kind = '' ): int {
 		global $wpdb;
 
-		return (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i', Schema::table() ) );
+		list( $where, $args ) = self::filters( '', $kind );
+
+		return (int) $wpdb->get_var(
+			$wpdb->prepare(
+				'SELECT COUNT(*) FROM %i WHERE ' . $where, // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Conditions fixes, valeurs préparées.
+				array_merge( array( Schema::table() ), $args )
+			)
+		);
+	}
+
+	/**
+	 * Construit les conditions d'une liste d'exécutions.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param string $job_id Tâche, ou chaîne vide pour toutes.
+	 * @param string $kind   Nature, ou chaîne vide pour toutes.
+	 * @return array{0: string, 1: string[]} Conditions avec marqueurs, et leurs valeurs.
+	 */
+	private static function filters( string $job_id, string $kind ): array {
+		$where = array( '1 = 1' );
+		$args  = array();
+		if ( '' !== $job_id ) {
+			$where[] = 'job_id = %s';
+			$args[]  = $job_id;
+		}
+		if ( '' !== $kind ) {
+			$where[] = 'kind = %s';
+			$args[]  = $kind;
+		}
+
+		return array( implode( ' AND ', $where ), $args );
 	}
 
 	/**
@@ -280,6 +320,7 @@ final class Run_Repository {
 	private function to_row( Run $run ): array {
 		return array(
 			'job_id'         => $run->job_id,
+			'kind'           => $run->kind,
 			'status'         => $run->status,
 			'trigger_type'   => $run->trigger,
 			'started_at'     => $run->started_at,
@@ -309,6 +350,7 @@ final class Run_Repository {
 		$run                 = new Run();
 		$run->id             = (int) $row['id'];
 		$run->job_id         = (string) $row['job_id'];
+		$run->kind           = (string) ( $row['kind'] ?? Run::KIND_BACKUP );
 		$run->status         = (string) $row['status'];
 		$run->trigger        = (string) $row['trigger_type'];
 		$run->started_at     = (int) $row['started_at'];

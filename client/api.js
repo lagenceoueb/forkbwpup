@@ -14,11 +14,12 @@ const BASE = '/oueb-wp-backup/v1';
  *
  * @param {number} perPage Nombre par page.
  * @param {number} page    Page, à partir de 1.
+ * @param {string} kind    Nature : backup, restore, ou vide pour toutes.
  * @return {Promise<{runs: Array, total: number}>} Exécutions et total.
  */
-export async function fetchRuns( perPage = 20, page = 1 ) {
+export async function fetchRuns( perPage = 20, page = 1, kind = '' ) {
 	const response = await apiFetch( {
-		path: `${ BASE }/runs?per_page=${ perPage }&page=${ page }`,
+		path: `${ BASE }/runs?per_page=${ perPage }&page=${ page }&kind=${ kind }`,
 		parse: false,
 	} );
 	const runs = await response.json();
@@ -216,4 +217,77 @@ export function exportKey( id ) {
  */
 export function fetchSettings() {
 	return apiFetch( { path: `${ BASE }/settings` } );
+}
+
+/**
+ * Lance une restauration.
+ *
+ * @param {Object}  payload          Réglages.
+ * @param {Object}  payload.source   Source : { type: 'run', run_id }, { type: 'storage', storage_id, name } ou { type: 'upload', upload_id }.
+ * @param {boolean} payload.database Restaurer la base.
+ * @param {boolean} payload.files    Restaurer les fichiers.
+ * @param {boolean} payload.safety   Sauvegarder le site actuel avant.
+ * @return {Promise<Object>} Exécution créée.
+ */
+export function startRestore( payload ) {
+	return apiFetch( {
+		path: `${ BASE }/restore`,
+		method: 'POST',
+		data: payload,
+	} );
+}
+
+/**
+ * Commence l'envoi d'une archive.
+ *
+ * @param {string} name Nom du fichier.
+ * @param {number} size Taille en octets.
+ * @return {Promise<Object>} Envoi : id, received, chunk_size.
+ */
+export function createUpload( name, size ) {
+	return apiFetch( {
+		path: `${ BASE }/restore/uploads`,
+		method: 'POST',
+		data: { name, size },
+	} );
+}
+
+/**
+ * Renvoie l'état d'un envoi.
+ *
+ * @param {string} id Envoi.
+ * @return {Promise<Object>} Envoi.
+ */
+export function fetchUpload( id ) {
+	return apiFetch( { path: `${ BASE }/restore/uploads/${ id }` } );
+}
+
+/**
+ * Envoie un morceau d'archive.
+ *
+ * @param {string} id     Envoi.
+ * @param {number} offset Position du morceau.
+ * @param {Blob}   chunk  Octets.
+ * @return {Promise<Object>} Envoi mis à jour.
+ */
+export function sendUploadChunk( id, offset, chunk ) {
+	return apiFetch( {
+		path: `${ BASE }/restore/uploads/${ id }?offset=${ offset }`,
+		method: 'PUT',
+		body: chunk,
+		headers: { 'Content-Type': 'application/octet-stream' },
+	} );
+}
+
+/**
+ * Abandonne un envoi.
+ *
+ * @param {string} id Envoi.
+ * @return {Promise<Object>} Accusé.
+ */
+export function deleteUpload( id ) {
+	return apiFetch( {
+		path: `${ BASE }/restore/uploads/${ id }`,
+		method: 'DELETE',
+	} );
 }

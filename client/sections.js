@@ -18,6 +18,7 @@ export function getSections() {
 		{ id: 'backups', label: __( 'Backups', 'oueb-wp-backup' ) },
 		{ id: 'storage', label: __( 'Storage', 'oueb-wp-backup' ) },
 		{ id: 'schedule', label: __( 'Schedule', 'oueb-wp-backup' ) },
+		{ id: 'restore', label: __( 'Restore', 'oueb-wp-backup' ) },
 		{ id: 'log', label: __( 'Log', 'oueb-wp-backup' ) },
 		{ id: 'settings', label: __( 'Settings', 'oueb-wp-backup' ) },
 	];

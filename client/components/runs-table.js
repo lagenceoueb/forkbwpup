@@ -134,6 +134,24 @@ export default function RunsTable( { runs, caption, onDelete } ) {
 											) }
 										</a>
 									) }
+									{ run.download_url && (
+										<a
+											href={ `#/restore/${ run.id }` }
+											aria-label={ sprintf(
+												/* translators: %s: backup date. */
+												__(
+													'Restore the backup of %s',
+													'oueb-wp-backup'
+												),
+												date
+											) }
+										>
+											{ __(
+												'Restore',
+												'oueb-wp-backup'
+											) }
+										</a>
+									) }
 									{ onDelete && run.download_url && (
 										<Button
 											variant="link"

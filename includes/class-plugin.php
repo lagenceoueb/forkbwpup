@@ -19,8 +19,11 @@ use Oueb\WpBackup\Engine\Schema;
 use Oueb\WpBackup\Engine\Steps\Step_Factory;
 use Oueb\WpBackup\Engine\Watchdog;
 use Oueb\WpBackup\Job\Job_Repository;
+use Oueb\WpBackup\Restore\Restore_Plan;
+use Oueb\WpBackup\Restore\Upload_Repository;
 use Oueb\WpBackup\Rest\Encryption_Controller;
 use Oueb\WpBackup\Rest\Jobs_Controller;
+use Oueb\WpBackup\Rest\Restore_Controller;
 use Oueb\WpBackup\Rest\Runs_Controller;
 use Oueb\WpBackup\Rest\Settings_Controller;
 use Oueb\WpBackup\Rest\Storages_Controller;
@@ -106,6 +109,7 @@ final class Plugin {
 		( new Encryption_Controller( self::keys() ) )->register_routes();
 		( new Runs_Controller( self::runs(), self::jobs(), self::runner(), self::continuation(), self::workspace(), self::storages() ) )->register_routes();
 		( new Storages_Controller( self::storages(), self::jobs() ) )->register_routes();
+		( new Restore_Controller( self::runs(), self::jobs(), self::runner(), self::storages(), self::workspace(), new Upload_Repository( self::workspace() ) ) )->register_routes();
 	}
 
 	/**
@@ -226,7 +230,14 @@ final class Plugin {
 	public static function runner(): Runner {
 		return self::service(
 			Runner::class,
-			static fn(): Runner => new Runner( self::runs(), self::jobs(), self::workspace(), new Step_Factory( self::storages(), self::keys() ), self::continuation() )
+			static fn(): Runner => new Runner(
+				self::runs(),
+				self::jobs(),
+				self::workspace(),
+				new Step_Factory( self::storages(), self::keys() ),
+				self::continuation(),
+				new Restore_Plan( self::storages(), self::keys(), self::runs() )
+			)
 		);
 	}
 
@@ -256,6 +267,17 @@ final class Plugin {
 	 */
 	public static function is_next_enabled(): bool {
 		return defined( 'OUEB_WP_BACKUP_NEXT' ) && true === OUEB_WP_BACKUP_NEXT;
+	}
+
+	/**
+	 * Renvoie le nom de l'extension pour WordPress, tel qu'il figure dans active_plugins.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return string Nom, par exemple « oueb-wp-backup/backwpup.php ».
+	 */
+	public static function basename(): string {
+		return plugin_basename( self::$file );
 	}
 
 	/**
