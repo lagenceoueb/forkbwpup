@@ -32,3 +32,5 @@ Oueb WP Backup is a fork of BackWPup 4.1.7 by Inpsyde and WP Media, released und
 * New engine, interface, storages, encryption and restore, written from scratch.
 * Import of BackWPup jobs and settings.
 * Multisite, database maintenance and WP-CLI commands.
+* French translation.
+* Accessibility audit against RGAA 4.1 and WCAG 2.2 AA.

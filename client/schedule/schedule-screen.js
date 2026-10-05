@@ -255,8 +255,10 @@ export default function ScheduleScreen( { jobId = 'main' } ) {
 						__nextHasNoMarginBottom
 						__next40pxDefaultSize
 						label={ __( 'Cron expression', 'oueb-wp-backup' ) }
+						// 1-5 est de la syntaxe cron, à recopier telle quelle : un tiret demi-cadratin la casserait.
+						// eslint-disable-next-line @wordpress/i18n-hyphenated-range
 						help={ __(
-							'Five fields: minute, hour, day of the month, month, day of the week. Example: 0 3 * * 1–5 runs at 3 am from Monday to Friday. At most four backups an hour.',
+							'Five fields: minute, hour, day of the month, month, day of the week. Example: 0 3 * * 1-5 runs at 3 am from Monday to Friday. At most four backups an hour.',
 							'oueb-wp-backup'
 						) }
 						className="oueb-field--code"

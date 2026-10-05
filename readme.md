@@ -175,10 +175,15 @@ npm run lint:js              # style du JavaScript
 npm run lint:css             # style des feuilles de style
 npm test                     # tests JavaScript
 npm run build                # interface construite dans dist/
+bin/i18n.sh                  # modèle .pot, .po mis à jour, .mo et .json (demande WP-CLI)
 bin/build.sh                 # archive build/oueb-wp-backup.zip et contrôle du poids
 ```
 
 Les tests PHP tournent avec PHPUnit 9.6, comme ceux de WordPress : PHPUnit 10 exige des noms de fichiers incompatibles avec les WordPress Coding Standards.
+
+Les chaînes sources sont en anglais. La traduction française vit dans `languages/oueb-wp-backup-fr_FR.po` ; `bin/i18n.sh` produit le `.mo` pour le PHP et le `.json` pour l'interface React, tous deux livrés dans l'archive.
+
+L'audit d'accessibilité et sa grille RGAA 4.1 sont dans [`docs/rgaa.md`](docs/rgaa.md).
 
 Le budget de l'archive est de 2 048 Ko. La variable `OUEB_BUDGET_KB` permet de le changer pour un essai local.
 
@@ -206,7 +211,7 @@ Pour wordpress.org, retirez ce fichier et l'en-tête `Update URI` : le répertoi
 
 ## Limites connues
 
-- L'interface est en anglais : la traduction française arrive au lot 7.
+- Les dates suivent les réglages et la langue de WordPress : sans le pack de langue français de WordPress, les mois restent en anglais.
 - La maintenance de la base vérifie, répare et optimise les tables du site. InnoDB, le moteur par défaut, ne se répare pas de cette façon : la réparation le signale sans erreur.
 - Les archives chiffrées par BackWPup Pro utilisent l'ancien format, que la nouvelle version ne lit pas.
 - Le moteur de la nouvelle version ne sait pas encore traverser une protection par mot de passe HTTP du site (authentification Basic) : sa relance par le site et le lien de déclenchement seraient refusés.

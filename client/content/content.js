@@ -5,7 +5,7 @@
 /**
  * WordPress dependencies
  */
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 
 /**
  * Parties du site qu'une tâche peut sauvegarder, dans l'ordre d'affichage.
@@ -104,8 +104,10 @@ export function contentSummary( job ) {
 		count > 0
 			? sprintf(
 					/* translators: %d: number of exclusion rules. */
-					__(
+					_n(
 						'Excluded: cache, backups of other extensions and %d rule of yours',
+						'Excluded: cache, backups of other extensions and %d rules of yours',
+						count,
 						'oueb-wp-backup'
 					),
 					count

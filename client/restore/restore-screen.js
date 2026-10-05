@@ -128,7 +128,7 @@ function StoragePicker( { storages, value, onChange } ) {
 function runLabel( run ) {
 	return sprintf(
 		/* translators: 1: backup date, 2: content, such as Full site, 3: size. */
-		__( '%1$s – %2$s – %3$s', 'oueb-wp-backup' ),
+		__( '%1$s, %2$s, %3$s', 'oueb-wp-backup' ),
 		formatDate( run.started_at ),
 		run.job_id === 'pre-restore'
 			? __( 'Before a restore', 'oueb-wp-backup' )

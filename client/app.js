@@ -5,14 +5,13 @@
 /**
  * WordPress dependencies
  */
-import { useEffect, useState } from '@wordpress/element';
+import { useEffect, useRef, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
 import SectionNav from './components/section-nav';
-import Placeholder from './components/placeholder';
 import SettingsScreen from './settings/settings-screen';
 import DashboardScreen from './dashboard/dashboard-screen';
 import BackupsScreen from './backups/backups-screen';
@@ -56,7 +55,7 @@ function Screen( { section, param } ) {
 		case 'settings':
 			return <SettingsScreen />;
 		default:
-			return <Placeholder />;
+			return <DashboardScreen />;
 	}
 }
 
@@ -76,23 +75,47 @@ export default function App() {
 
 	const section = sectionFromHash( hash );
 	const current = findRoute( section );
+	const heading = useRef( null );
+	const baseTitle = useRef( document.title );
+	const firstRender = useRef( true );
+
+	// Chaque écran a son titre de page. Après un changement d'écran, le focus
+	// va sur son titre : un lecteur d'écran annonce la nouvelle page.
+	useEffect( () => {
+		document.title = sprintf(
+			/* translators: 1: screen name, 2: title of the admin page. */
+			__( '%1$s ‹ %2$s', 'oueb-wp-backup' ),
+			current.label,
+			baseTitle.current
+		);
+		if ( firstRender.current ) {
+			firstRender.current = false;
+			return;
+		}
+		if ( heading.current ) {
+			heading.current.focus();
+		}
+	}, [ hash, current.label ] );
 
 	return (
 		<div className="oueb-app">
-			<header className="oueb-app__header">
+			{ /* L'administration de WordPress porte déjà les régions : main, en-tête et pied. */ }
+			<div className="oueb-app__header">
 				<p className="oueb-app__title">Oueb WP Backup</p>
 				<SectionNav current={ current.parent || section } />
-			</header>
-			<main
-				className="oueb-app__main"
-				aria-labelledby="oueb-section-title"
-			>
-				<h1 id="oueb-section-title" className="oueb-app__heading">
+			</div>
+			<div className="oueb-app__main">
+				<h1
+					id="oueb-section-title"
+					className="oueb-app__heading"
+					ref={ heading }
+					tabIndex={ -1 }
+				>
 					{ current.label }
 				</h1>
 				<Screen section={ section } param={ paramFromHash( hash ) } />
-			</main>
-			<footer className="oueb-app__footer">
+			</div>
+			<div className="oueb-app__footer">
 				<p>
 					{ sprintf(
 						/* translators: %s: version number. */
@@ -104,12 +127,12 @@ export default function App() {
 							window.ouebWpBackup.version ) ||
 							''
 					) }{ ' ' }
-					<a href="https://github.com/lagenceoueb/oueb-wp-backup">
+					<a href="https://github.com/lagenceoueb/forkbwpup">
 						{ __( 'Source code and origin', 'oueb-wp-backup' ) }
 					</a>
 				</p>
 				<p>{ __( 'Made by L’agence Oueb', 'oueb-wp-backup' ) }</p>
-			</footer>
+			</div>
 		</div>
 	);
 }

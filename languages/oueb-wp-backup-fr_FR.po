@@ -1,0 +1,3466 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Oueb WP Backup\n"
+"Report-Msgid-Bugs-To: https://github.com/lagenceoueb/forkbwpup/issues\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-10-05T13:04:35+00:00\n"
+"PO-Revision-Date: 2026-10-05T13:04:35+00:00\n"
+"Language: fr_FR\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Domain: oueb-wp-backup\n"
+
+#. Plugin Name of the plugin
+#: oueb-wp-backup.php
+msgid "Oueb WP Backup"
+msgstr "Oueb WP Backup"
+
+#. Description of the plugin
+#: oueb-wp-backup.php
+msgid "Back up and restore WordPress to European hosting providers. Fork of BackWPup 4.1.7."
+msgstr "Sauvegarde et restauration de WordPress vers des hébergeurs européens. Fork de BackWPup 4.1.7."
+
+#. Author of the plugin
+#: oueb-wp-backup.php
+msgid "L'agence Oueb"
+msgstr "L’agence Oueb"
+
+#. Author URI of the plugin
+#: oueb-wp-backup.php
+msgid "https://lagenceoueb.tech"
+msgstr "https://lagenceoueb.tech"
+
+#: includes/admin/class-admin-page.php:70
+#: includes/admin/class-admin-page.php:71
+#: client/sections.js:18
+msgid "Backups"
+msgstr "Sauvegardes"
+
+#: includes/admin/class-admin-page.php:131
+msgid "The backup interface needs JavaScript."
+msgstr "L’interface des sauvegardes a besoin de JavaScript."
+
+#: includes/admin/class-download.php:90
+msgid "Sorry, you are not allowed to download backups."
+msgstr "Vous n’avez pas le droit de télécharger les sauvegardes."
+
+#: includes/admin/class-download.php:96
+msgid "This archive no longer exists."
+msgstr "Cette archive n’existe plus."
+
+#: includes/admin/class-download.php:102
+msgid "This archive is no longer available in any storage."
+msgstr "Cette archive n’est plus disponible dans aucun stockage."
+
+#: includes/admin/class-download.php:177
+#: includes/security/class-archive-cipher.php:163
+msgid "This file is not an encrypted backup."
+msgstr "Ce fichier n’est pas une sauvegarde chiffrée."
+
+#. translators: %s: key identifier.
+#: includes/admin/class-download.php:181
+#, php-format
+msgid "The key %s is missing. Add it in the encryption settings, or decrypt the archive with the offline tool."
+msgstr "La clé %s manque. Ajoutez-la dans les réglages du chiffrement, ou déchiffrez l’archive avec l’outil hors ligne."
+
+#. translators: %s: file path.
+#. translators: %s: file name.
+#: includes/archive/class-tar-gz-writer.php:110
+#: includes/archive/class-tar-reader.php:181
+#: includes/archive/class-zip-writer.php:112
+#: includes/cli/class-command.php:665
+#: includes/database/class-sql-reader.php:93
+#: includes/remote/class-webdav-client.php:135
+#: includes/storage/class-folder-storage.php:148
+#: includes/storage/class-folder-storage.php:215
+#: includes/storage/class-s3-storage.php:291
+#: includes/storage/class-sftp-storage.php:209
+#, php-format
+msgid "Cannot read %s."
+msgstr "Impossible de lire %s."
+
+#: includes/archive/class-tar-gz-writer.php:281
+msgid "Cannot compress the archive."
+msgstr "Impossible de compresser l’archive."
+
+#: includes/archive/class-tar-reader.php:224
+#: includes/archive/class-tar-reader.php:297
+#: includes/archive/class-tar-reader.php:393
+#: includes/archive/class-tar-reader.php:427
+msgid "The archive is truncated."
+msgstr "L’archive est tronquée."
+
+#: includes/archive/class-tar-reader.php:227
+msgid "The archive is damaged: a file header is invalid."
+msgstr "L’archive est endommagée : un en-tête de fichier est invalide."
+
+#: includes/archive/class-tar-reader.php:445
+msgid "The archive is damaged: it cannot be decompressed."
+msgstr "L’archive est endommagée : impossible de la décompresser."
+
+#: includes/archive/class-zip-reader.php:79
+msgid "The PHP zip extension is missing: zip archives cannot be read."
+msgstr "L’extension PHP zip manque : les archives zip ne peuvent pas être lues."
+
+#: includes/archive/class-zip-reader.php:84
+msgid "The archive is damaged: it cannot be opened as a zip file."
+msgstr "L’archive est endommagée : impossible de l’ouvrir comme fichier zip."
+
+#: includes/archive/class-zip-reader.php:111
+msgid "The archive is damaged: a file entry cannot be read."
+msgstr "L’archive est endommagée : une entrée de fichier est illisible."
+
+#. translators: %s: file name in the archive.
+#: includes/archive/class-zip-reader.php:143
+#, php-format
+msgid "The archive is damaged: %s cannot be read."
+msgstr "L’archive est endommagée : %s est illisible."
+
+#: includes/archive/class-zip-reader.php:153
+msgid "The archive is damaged: a file cannot be decompressed."
+msgstr "L’archive est endommagée : un fichier ne se décompresse pas."
+
+#. translators: %s: file path.
+#: includes/archive/class-zip-writer.php:155
+#, php-format
+msgid "The file %s grew past 4 GB while it was archived."
+msgstr "Le fichier %s a dépassé 4 Go pendant son archivage."
+
+#: includes/cli/class-command.php:79
+#: includes/job/class-job-repository.php:130
+#: includes/rest/class-jobs-controller.php:316
+#: includes/rest/class-runs-controller.php:259
+#: client/jobs/jobs-screen.js:77
+msgid "This backup job does not exist."
+msgstr "Cette tâche de sauvegarde n’existe pas."
+
+#: includes/cli/class-command.php:218
+msgid "No backup or restore is running."
+msgstr "Aucune sauvegarde ni restauration en cours."
+
+#. translators: 1: run ID, 2: kind, backup or restore, 3: step, 4: progress in percent.
+#: includes/cli/class-command.php:225
+#, php-format
+msgid "Run %1$d (%2$s) in progress: step %3$s, %4$d %%."
+msgstr "Exécution %1$d (%2$s) en cours : étape %3$s, %4$d %%."
+
+#: includes/cli/class-command.php:277
+msgid "Stopped."
+msgstr "Arrêtée."
+
+#: includes/cli/class-command.php:278
+msgid "Stop requested: the run stops at the end of its current step."
+msgstr "Arrêt demandé : l’exécution s’arrête à la fin de son étape en cours."
+
+#: includes/cli/class-command.php:348
+msgid "Give the ID of a backup, a --file, or a --storage with an --archive."
+msgstr "Indiquez l’identifiant d’une sauvegarde, un --file, ou un --storage avec un --archive."
+
+#: includes/cli/class-command.php:354
+msgid "the database"
+msgstr "la base de données"
+
+#: includes/cli/class-command.php:357
+msgid "the files"
+msgstr "les fichiers"
+
+#. translators: %s: "the database and the files", or one of them.
+#: includes/cli/class-command.php:362
+#, php-format
+msgid "Replace %s of this site? The changes made since the backup will be lost."
+msgstr "Remplacer %s de ce site ? Les modifications faites depuis la sauvegarde seront perdues."
+
+#: includes/cli/class-command.php:363
+msgid " and "
+msgstr " et "
+
+#: includes/cli/class-command.php:365
+msgid "The current site will not be backed up first."
+msgstr "Le site actuel ne sera pas sauvegardé avant."
+
+#: includes/cli/class-command.php:421
+msgid "No BackWPup job found on this site."
+msgstr "Aucune tâche BackWPup sur ce site."
+
+#: includes/cli/class-command.php:424
+msgid "The jobs were already imported. Import them a second time?"
+msgstr "Les tâches sont déjà importées. Les importer une deuxième fois ?"
+
+#. translators: %d: number of imported jobs.
+#: includes/cli/class-command.php:444
+#, php-format
+msgid "%d job imported from BackWPup."
+msgid_plural "%d jobs imported from BackWPup."
+msgstr[0] "%d tâche importée de BackWPup."
+msgstr[1] "%d tâches importées de BackWPup."
+
+#: includes/cli/class-command.php:449
+msgid "BackWPup is still active: both extensions would make the same backups. Deactivate it with `wp plugin deactivate backwpup`."
+msgstr "BackWPup est encore actif : les deux extensions feraient les mêmes sauvegardes. Désactivez-le avec `wp plugin deactivate backwpup`."
+
+#. translators: %d: number of tables.
+#: includes/cli/class-command.php:512
+#, php-format
+msgid "%d table has an error."
+msgid_plural "%d tables have an error."
+msgstr[0] "%d table a une erreur."
+msgstr[1] "%d tables ont une erreur."
+
+#: includes/cli/class-command.php:517
+msgid "Done."
+msgstr "Terminé."
+
+#: includes/cli/class-command.php:552
+#: includes/engine/class-runner.php:274
+#: includes/rest/class-runs-controller.php:442
+msgid "This backup does not exist."
+msgstr "Cette sauvegarde n’existe pas."
+
+#: includes/cli/class-command.php:607
+#: includes/engine/class-runner.php:451
+#: client/restore/restore-progress.js:76
+msgid "Restore finished."
+msgstr "Restauration terminée."
+
+#. translators: 1: archive name, 2: size, like "12 MB".
+#: includes/cli/class-command.php:610
+#, php-format
+msgid "Backup finished: %1$s, %2$s."
+msgstr "Sauvegarde terminée : %1$s, %2$s."
+
+#: includes/cli/class-command.php:619
+msgid "Restore finished with warnings. Read them above."
+msgstr "Restauration terminée avec des avertissements. Lisez-les plus haut."
+
+#: includes/cli/class-command.php:620
+msgid "Backup finished with warnings. Read them above."
+msgstr "Sauvegarde terminée avec des avertissements. Lisez-les plus haut."
+
+#: includes/cli/class-command.php:624
+msgid "Restore stopped."
+msgstr "Restauration arrêtée."
+
+#: includes/cli/class-command.php:624
+msgid "Backup stopped."
+msgstr "Sauvegarde arrêtée."
+
+#: includes/cli/class-command.php:627
+msgid "Restore failed. Read the errors above."
+msgstr "Échec de la restauration. Lisez les erreurs plus haut."
+
+#: includes/cli/class-command.php:627
+msgid "Backup failed. Read the errors above."
+msgstr "Échec de la sauvegarde. Lisez les erreurs plus haut."
+
+#: includes/cli/class-command.php:749
+msgid "This user cannot manage backups. Choose an administrator with --user."
+msgstr "Cet utilisateur ne peut pas gérer les sauvegardes. Choisissez un administrateur avec --user."
+
+#: includes/cli/class-command.php:768
+msgid "No administrator can manage backups on this site. Choose one with --user."
+msgstr "Aucun administrateur ne peut gérer les sauvegardes sur ce site. Choisissez-en un avec --user."
+
+#: includes/database/class-sql-reader.php:152
+msgid "The SQL file contains a statement that is too large to import."
+msgstr "Le fichier SQL contient une instruction trop grande pour être importée."
+
+#: includes/database/class-table-maintenance.php:101
+msgid "This database does not support this operation."
+msgstr "Cette base de données ne gère pas cette opération."
+
+#: includes/engine/class-runner.php:120
+msgid "A backup is already running. Wait until it ends, or stop it."
+msgstr "Une sauvegarde est déjà en cours. Attendez sa fin, ou arrêtez-la."
+
+#. translators: 1: job name, 2: trigger, such as manual.
+#: includes/engine/class-runner.php:144
+#, php-format
+msgid "Backup “%1$s” started (%2$s)."
+msgstr "Sauvegarde « %1$s » lancée (%2$s)."
+
+#: includes/engine/class-runner.php:171
+msgid "A restore is already running."
+msgstr "Une restauration est déjà en cours."
+
+#: includes/engine/class-runner.php:172
+msgid "A backup is running. Wait until it ends, or stop it, then start the restore."
+msgstr "Une sauvegarde est en cours. Attendez sa fin, ou arrêtez-la, puis lancez la restauration."
+
+#: includes/engine/class-runner.php:180
+msgid "Restoring is not available."
+msgstr "La restauration n’est pas disponible."
+
+#. translators: %s: archive name.
+#: includes/engine/class-runner.php:205
+#, php-format
+msgid "Restore of %s started."
+msgstr "Restauration de %s lancée."
+
+#: includes/engine/class-runner.php:277
+msgid "This backup is already finished."
+msgstr "Cette sauvegarde est déjà terminée."
+
+#: includes/engine/class-runner.php:282
+msgid "The restore is changing the site and cannot be stopped now: the site would be left half restored."
+msgstr "La restauration modifie le site et ne peut plus s’arrêter : le site resterait à moitié restauré."
+
+#: includes/engine/class-runner.php:320
+msgid "The backup job was deleted while it was running."
+msgstr "La tâche de sauvegarde a été supprimée pendant son exécution."
+
+#: includes/engine/class-runner.php:350
+msgid "The plan changed while it was running. Start again."
+msgstr "Le déroulé a changé en cours d’exécution. Relancez."
+
+#. translators: 1: step label, 2: attempt number, 3: maximum attempts, 4: error message.
+#: includes/engine/class-runner.php:412
+#, php-format
+msgid "%1$s failed (attempt %2$d of %3$d): %4$s"
+msgstr "Échec de l’étape « %1$s » (essai %2$d sur %3$d) : %4$s"
+
+#. translators: %s: step label.
+#: includes/engine/class-runner.php:426
+#, php-format
+msgid "The restore stopped: %s kept failing."
+msgstr "La restauration s’est arrêtée : l’étape « %s » échouait à chaque essai."
+
+#. translators: %s: step label.
+#: includes/engine/class-runner.php:428
+#, php-format
+msgid "The backup stopped: %s kept failing."
+msgstr "La sauvegarde s’est arrêtée : l’étape « %s » échouait à chaque essai."
+
+#. translators: %d: number of warnings.
+#: includes/engine/class-runner.php:453
+#, php-format
+msgid "Restore finished with %d warning."
+msgid_plural "Restore finished with %d warnings."
+msgstr[0] "Restauration terminée avec %d avertissement."
+msgstr[1] "Restauration terminée avec %d avertissements."
+
+#: includes/engine/class-runner.php:460
+msgid "Backup finished."
+msgstr "Sauvegarde terminée."
+
+#. translators: %d: number of warnings.
+#: includes/engine/class-runner.php:462
+#, php-format
+msgid "Backup finished with %d warning."
+msgid_plural "Backup finished with %d warnings."
+msgstr[0] "Sauvegarde terminée avec %d avertissement."
+msgstr[1] "Sauvegarde terminée avec %d avertissements."
+
+#. translators: %d: backup number.
+#: includes/engine/class-runner.php:483
+#, php-format
+msgid "The site may be half restored. Restore the backup made just before (#%d), or start this restore again."
+msgstr "Le site est peut-être à moitié restauré. Restaurez la sauvegarde faite juste avant (n° %d), ou relancez cette restauration."
+
+#: includes/engine/class-runner.php:484
+msgid "The site may be half restored. Start this restore again, or restore another backup."
+msgstr "Le site est peut-être à moitié restauré. Relancez cette restauration, ou restaurez une autre sauvegarde."
+
+#: includes/engine/class-runner.php:502
+msgid "Restore stopped by an administrator. The site was not changed."
+msgstr "Restauration arrêtée par un administrateur. Le site n’a pas changé."
+
+#: includes/engine/class-runner.php:503
+msgid "Backup stopped by an administrator."
+msgstr "Sauvegarde arrêtée par un administrateur."
+
+#: includes/engine/class-watchdog.php:87
+msgid "The backup was idle: the watchdog resumes it."
+msgstr "La sauvegarde était à l’arrêt : la surveillance la relance."
+
+#: includes/engine/steps/class-archive.php:72
+msgid "Archive creation"
+msgstr "Création de l’archive"
+
+#: includes/engine/steps/class-archive.php:122
+msgid "Cannot read the list of files."
+msgstr "Impossible de lire la liste des fichiers."
+
+#. translators: %s: file path.
+#: includes/engine/steps/class-archive.php:156
+#, php-format
+msgid "File skipped, it disappeared or cannot be read anymore: %s"
+msgstr "Fichier ignoré, il a disparu ou n’est plus lisible : %s"
+
+#. translators: %s: archive size.
+#: includes/engine/steps/class-archive.php:184
+#, php-format
+msgid "Archive created: %s."
+msgstr "Archive créée : %s."
+
+#: includes/engine/steps/class-database-dump.php:65
+msgid "Database export"
+msgstr "Export de la base de données"
+
+#. translators: %d: number of tables.
+#: includes/engine/steps/class-database-dump.php:88
+#, php-format
+msgid "Exporting %d table."
+msgid_plural "Exporting %d tables."
+msgstr[0] "Export de %d table."
+msgstr[1] "Export de %d tables."
+
+#. translators: 1: number of rows, 2: file size.
+#: includes/engine/steps/class-database-dump.php:145
+#, php-format
+msgid "Database exported: %1$s rows, %2$s."
+msgstr "Base de données exportée : %1$s lignes, %2$s."
+
+#. translators: 1: table name, 2: database error.
+#: includes/engine/steps/class-database-dump.php:203
+#, php-format
+msgid "Cannot read the table %1$s: %2$s"
+msgstr "Impossible de lire la table %1$s : %2$s"
+
+#. translators: %s: table name.
+#: includes/engine/steps/class-database-dump.php:299
+#, php-format
+msgid "Cannot read the structure of the table %s."
+msgstr "Impossible de lire la structure de la table %s."
+
+#: includes/engine/steps/class-encrypt.php:68
+msgid "Encrypting the archive"
+msgstr "Chiffrement de l’archive"
+
+#: includes/engine/steps/class-encrypt.php:101
+msgid "Encryption is on, but there is no encryption key. Create one in the settings."
+msgstr "Le chiffrement est activé, mais aucune clé n’existe. Créez-en une dans les réglages."
+
+#. translators: %s: key identifier.
+#: includes/engine/steps/class-encrypt.php:117
+#, php-format
+msgid "Encrypting the archive with the key %s."
+msgstr "Chiffrement de l’archive avec la clé %s."
+
+#: includes/engine/steps/class-encrypt.php:133
+msgid "The archive to encrypt is missing."
+msgstr "L’archive à chiffrer manque."
+
+#. translators: %s: archive size.
+#: includes/engine/steps/class-encrypt.php:168
+#, php-format
+msgid "Archive encrypted: %s."
+msgstr "Archive chiffrée : %s."
+
+#: includes/engine/steps/class-file-list.php:65
+msgid "List of files"
+msgstr "Liste des fichiers"
+
+#. translators: %s: folder path.
+#: includes/engine/steps/class-file-list.php:101
+#, php-format
+msgid "Folder skipped, it cannot be read: %s"
+msgstr "Dossier ignoré, il est illisible : %s"
+
+#. translators: %s: file path.
+#: includes/engine/steps/class-file-list.php:136
+#, php-format
+msgid "File skipped, its name contains a tab or a line break: %s"
+msgstr "Fichier ignoré, son nom contient une tabulation ou un retour à la ligne : %s"
+
+#. translators: %s: file path.
+#: includes/engine/steps/class-file-list.php:144
+#, php-format
+msgid "File skipped, it cannot be read: %s"
+msgstr "Fichier ignoré, il est illisible : %s"
+
+#. translators: %d: number of symbolic links.
+#: includes/engine/steps/class-file-list.php:179
+#, php-format
+msgid "%d symbolic link was not followed."
+msgid_plural "%d symbolic links were not followed."
+msgstr[0] "%d lien symbolique n’a pas été suivi."
+msgstr[1] "%d liens symboliques n’ont pas été suivis."
+
+#. translators: 1: number of files, 2: total size.
+#: includes/engine/steps/class-file-list.php:188
+#, php-format
+msgid "Files to back up: %1$s, %2$s."
+msgstr "Fichiers à sauvegarder : %1$s, %2$s."
+
+#: includes/engine/steps/class-finish.php:66
+#: client/format.js:130
+msgid "Deleting old backups"
+msgstr "Suppression des anciennes sauvegardes"
+
+#. translators: 1: storage name, 2: error message.
+#: includes/engine/steps/class-finish.php:105
+#, php-format
+msgid "Old backups were not deleted from %1$s: %2$s"
+msgstr "Les anciennes sauvegardes n’ont pas été supprimées de %1$s : %2$s"
+
+#. translators: 1: number of backups, 2: storage name.
+#: includes/engine/steps/class-finish.php:116
+#, php-format
+msgid "%1$d old backup deleted from %2$s."
+msgid_plural "%1$d old backups deleted from %2$s."
+msgstr[0] "%1$d ancienne sauvegarde supprimée de %2$s."
+msgstr[1] "%1$d anciennes sauvegardes supprimées de %2$s."
+
+#: includes/engine/steps/class-manifest.php:60
+msgid "Backup description"
+msgstr "Description de la sauvegarde"
+
+#: includes/engine/steps/class-manifest.php:116
+msgid "Cannot write the backup description."
+msgstr "Impossible d’écrire la description de la sauvegarde."
+
+#: includes/engine/steps/class-store.php:78
+#: client/format.js:129
+msgid "Sending the archive"
+msgstr "Envoi de l’archive"
+
+#: includes/engine/steps/class-store.php:95
+msgid "The archive is missing."
+msgstr "L’archive manque."
+
+#. translators: %s: storage identifier.
+#: includes/engine/steps/class-store.php:118
+#, php-format
+msgid "The storage %s no longer exists. The archive was not sent there."
+msgstr "Le stockage %s n’existe plus. L’archive n’y a pas été envoyée."
+
+#. translators: 1: storage name, 2: attempt number, 3: maximum attempts, 4: error message.
+#: includes/engine/steps/class-store.php:136
+#, php-format
+msgid "Sending to %1$s failed (attempt %2$d of %3$d): %4$s"
+msgstr "Échec de l’envoi vers %1$s (essai %2$d sur %3$d) : %4$s"
+
+#. translators: 1: storage name, 2: error message.
+#: includes/engine/steps/class-store.php:149
+#, php-format
+msgid "The archive was not sent to %1$s: %2$s"
+msgstr "L’archive n’a pas été envoyée vers %1$s : %2$s"
+
+#. translators: %s: storage name.
+#: includes/engine/steps/class-store.php:168
+#, php-format
+msgid "Archive sent to %s."
+msgstr "Archive envoyée vers %s."
+
+#: includes/engine/steps/class-store.php:179
+msgid "No storage received the archive."
+msgstr "Aucun stockage n’a reçu l’archive."
+
+#: includes/job/class-job-repository.php:121
+msgid "The main backup cannot be deleted."
+msgstr "La sauvegarde principale ne peut pas être supprimée."
+
+#: includes/job/class-job.php:201
+msgid "Main backup"
+msgstr "Sauvegarde principale"
+
+#: includes/job/class-job.php:355
+#: client/jobs/job-storages.js:91
+msgid "Choose at least one storage."
+msgstr "Choisissez au moins un stockage."
+
+#: includes/job/class-job.php:380
+msgid "Choose at least the database or one folder to back up."
+msgstr "Choisissez au moins la base de données ou un dossier à sauvegarder."
+
+#. translators: %s: field name.
+#: includes/job/class-job.php:430
+#: includes/storage/class-storage-repository.php:335
+#, php-format
+msgid "The value of %s is not valid."
+msgstr "La valeur de %s n’est pas valide."
+
+#: includes/legacy/class-legacy-import.php:253
+msgid "Imported backup"
+msgstr "Sauvegarde importée"
+
+#: includes/legacy/class-legacy-import.php:265
+msgid "Not imported: this job neither backs up the database nor the files (database check or XML export only)."
+msgstr "Non importée : cette tâche ne sauvegarde ni la base de données ni les fichiers (vérification de la base ou export XML seulement)."
+
+#: includes/legacy/class-legacy-import.php:283
+msgid "No storage of this job could be imported. It starts by hand only, and keeps its backups on this server, until you choose a storage and a schedule for it."
+msgstr "Aucun stockage de cette tâche n’a pu être importé. Elle se lance à la main seulement, et garde ses sauvegardes sur ce serveur, jusqu’à ce que vous lui choisissiez un stockage et une planification."
+
+#. translators: %s: error message.
+#: includes/legacy/class-legacy-import.php:312
+#, php-format
+msgid "Not imported: %s"
+msgstr "Non importée : %s"
+
+#. translators: %s: folder name.
+#: includes/legacy/class-legacy-import.php:344
+#, php-format
+msgid "Folder %s"
+msgstr "Dossier %s"
+
+#. translators: %s: server name.
+#: includes/legacy/class-legacy-import.php:366
+#, php-format
+msgid "SFTP %s"
+msgstr "SFTP %s"
+
+#. translators: %s: kDrive identifier.
+#: includes/legacy/class-legacy-import.php:388
+#, php-format
+msgid "kDrive %s"
+msgstr "kDrive %s"
+
+#: includes/legacy/class-legacy-import.php:399
+msgid "FTP not imported: it sends the password in clear text. Create an SFTP storage on the same server instead."
+msgstr "FTP non importé : il transmet le mot de passe en clair. Créez plutôt un stockage SFTP sur le même serveur."
+
+#. translators: %s: name of a removed service, such as DROPBOX.
+#: includes/legacy/class-legacy-import.php:405
+#, php-format
+msgid "%s not imported: this service is no longer offered. Choose a European storage."
+msgstr "%s non importé : ce service n’est plus proposé. Choisissez un stockage européen."
+
+#. translators: %s: bucket name.
+#: includes/legacy/class-legacy-import.php:447
+#, php-format
+msgid "S3 %s"
+msgstr "S3 %s"
+
+#. translators: 1: destination name, such as S3, 2: error message.
+#: includes/legacy/class-legacy-import.php:487
+#, php-format
+msgid "%1$s not imported: %2$s"
+msgstr "%1$s non importé : %2$s"
+
+#: includes/legacy/class-legacy-import.php:571
+msgid "General settings"
+msgstr "Réglages généraux"
+
+#: includes/legacy/class-legacy-import.php:597
+msgid "EasyCron is no longer offered: this job now starts by hand. Choose WP-Cron, the trigger link or cron-job.org."
+msgstr "EasyCron n’est plus proposé : cette tâche se lance désormais à la main. Choisissez WP-Cron, le lien de déclenchement ou cron-job.org."
+
+#. translators: %s: cron expression.
+#: includes/legacy/class-legacy-import.php:605
+#, php-format
+msgid "The schedule %s cannot be kept: check the schedule of this job."
+msgstr "La planification %s ne peut pas être gardée : vérifiez la planification de cette tâche."
+
+#. translators: %s: archive format, such as .tar.bz2.
+#: includes/legacy/class-legacy-import.php:634
+#, php-format
+msgid "The %s format is not offered: the archives are now in tar.gz."
+msgstr "Le format %s n’est pas proposé : les archives sont désormais en tar.gz."
+
+#. translators: %s: destination name, such as SFTP.
+#: includes/legacy/class-legacy-import.php:731
+#, php-format
+msgid "%s not imported: its password cannot be read. It was encrypted with the database access or the BACKWPUP_ENC_KEY constant of another configuration. Create this storage again."
+msgstr "%s non importé : son mot de passe est illisible. Il a été chiffré avec les accès à la base de données ou la constante BACKWPUP_ENC_KEY d’une autre configuration. Créez de nouveau ce stockage."
+
+#: includes/remote/class-cronjob-org-client.php:93
+msgid "cron-job.org did not return a job ID."
+msgstr "cron-job.org n’a pas renvoyé d’identifiant de tâche."
+
+#: includes/remote/class-cronjob-org-client.php:155
+#: includes/remote/class-cronjob-org-client.php:156
+msgid "cron-job.org refused the API key."
+msgstr "cron-job.org a refusé la clé d’API."
+
+#: includes/remote/class-cronjob-org-client.php:157
+msgid "The job no longer exists on cron-job.org."
+msgstr "La tâche n’existe plus sur cron-job.org."
+
+#: includes/remote/class-cronjob-org-client.php:158
+msgid "Too many requests to cron-job.org. Try again in a few minutes."
+msgstr "Trop de requêtes vers cron-job.org. Réessayez dans quelques minutes."
+
+#. translators: %d: HTTP status code.
+#: includes/remote/class-cronjob-org-client.php:164
+#, php-format
+msgid "cron-job.org answered with the HTTP error %d."
+msgstr "cron-job.org a répondu par l’erreur HTTP %d."
+
+#: includes/remote/class-s3-client.php:115
+msgid "The S3 address is not valid."
+msgstr "L’adresse S3 n’est pas valide."
+
+#: includes/remote/class-s3-client.php:174
+msgid "The S3 service returned an unreadable list."
+msgstr "Le service S3 a renvoyé une liste illisible."
+
+#: includes/remote/class-s3-client.php:246
+msgid "The S3 service did not start the upload."
+msgstr "Le service S3 n’a pas commencé l’envoi."
+
+#: includes/remote/class-s3-client.php:280
+msgid "The S3 service did not confirm a part of the upload."
+msgstr "Le service S3 n’a pas confirmé une partie de l’envoi."
+
+#. translators: %d: HTTP status code.
+#: includes/remote/class-s3-client.php:410
+#, php-format
+msgid "The S3 service answered with the HTTP error %d."
+msgstr "Le service S3 a répondu par l’erreur HTTP %d."
+
+#: includes/remote/class-sftp-client.php:89
+msgid "The SFTP server does not answer."
+msgstr "Le serveur SFTP ne répond pas."
+
+#. translators: 1: expected fingerprint, 2: received fingerprint.
+#: includes/remote/class-sftp-client.php:98
+#, php-format
+msgid "The key of the SFTP server has changed: %1$s was expected, %2$s was received. If the server was reinstalled, forget the saved key in the storage settings."
+msgstr "La clé du serveur SFTP a changé : %1$s était attendue, %2$s a été reçue. Si le serveur a été réinstallé, oubliez la clé enregistrée dans les réglages du stockage."
+
+#: includes/remote/class-sftp-client.php:116
+msgid "The SFTP server refused the username, the password or the key."
+msgstr "Le serveur SFTP a refusé l’identifiant, le mot de passe ou la clé."
+
+#. translators: %s: folder path.
+#: includes/remote/class-sftp-client.php:161
+#, php-format
+msgid "Cannot create the folder %s on the SFTP server."
+msgstr "Impossible de créer le dossier %s sur le serveur SFTP."
+
+#. translators: %s: file path.
+#: includes/remote/class-sftp-client.php:177
+#: includes/remote/class-sftp-client.php:195
+#, php-format
+msgid "Cannot write %s on the SFTP server."
+msgstr "Impossible d’écrire %s sur le serveur SFTP."
+
+#. translators: %s: file path.
+#: includes/remote/class-sftp-client.php:215
+#, php-format
+msgid "Cannot read %s on the SFTP server."
+msgstr "Impossible de lire %s sur le serveur SFTP."
+
+#. translators: %s: file path.
+#: includes/remote/class-sftp-client.php:249
+#, php-format
+msgid "Cannot rename %s on the SFTP server."
+msgstr "Impossible de renommer %s sur le serveur SFTP."
+
+#. translators: %s: folder path.
+#: includes/remote/class-sftp-client.php:267
+#, php-format
+msgid "Cannot read the folder %s on the SFTP server."
+msgstr "Impossible de lire le dossier %s sur le serveur SFTP."
+
+#. translators: %s: file path.
+#: includes/remote/class-sftp-client.php:296
+#, php-format
+msgid "Cannot delete %s on the SFTP server."
+msgstr "Impossible de supprimer %s sur le serveur SFTP."
+
+#. translators: %s: technical error message.
+#: includes/remote/class-sftp-client.php:317
+#, php-format
+msgid "The SFTP connection failed: %s"
+msgstr "Échec de la connexion SFTP : %s"
+
+#: includes/remote/class-webdav-client.php:249
+msgid "The WebDAV server returned an unreadable list."
+msgstr "Le serveur WebDAV a renvoyé une liste illisible."
+
+#: includes/remote/class-webdav-client.php:358
+msgid "The server refused the email address or the password. With kDrive, use an application password."
+msgstr "Le serveur a refusé l’adresse email ou le mot de passe. Avec kDrive, utilisez un mot de passe d’application."
+
+#: includes/remote/class-webdav-client.php:359
+msgid "The server refused access to this folder."
+msgstr "Le serveur a refusé l’accès à ce dossier."
+
+#: includes/remote/class-webdav-client.php:360
+msgid "The folder does not exist on the server."
+msgstr "Le dossier n’existe pas sur le serveur."
+
+#: includes/remote/class-webdav-client.php:361
+msgid "The storage space is full."
+msgstr "L’espace de stockage est plein."
+
+#. translators: %d: HTTP status code.
+#: includes/remote/class-webdav-client.php:368
+#, php-format
+msgid "The WebDAV server answered with the HTTP error %d."
+msgstr "Le serveur WebDAV a répondu par l’erreur HTTP %d."
+
+#: includes/rest/class-database-controller.php:116
+msgid "A backup or a restore is in progress. Wait for it to end, then try again."
+msgstr "Une sauvegarde ou une restauration est en cours. Attendez sa fin, puis réessayez."
+
+#: includes/rest/class-encryption-controller.php:122
+msgid "This is not an encryption key. Paste the key exactly as it was saved."
+msgstr "Ce n’est pas une clé de chiffrement. Collez la clé telle qu’elle a été enregistrée."
+
+#: includes/rest/class-encryption-controller.php:149
+msgid "This key does not exist."
+msgstr "Cette clé n’existe pas."
+
+#: includes/rest/class-jobs-controller.php:161
+#: includes/rest/class-jobs-controller.php:194
+#: includes/rest/class-settings-controller.php:126
+#: includes/rest/class-storages-controller.php:386
+msgid "The request body must be a JSON object."
+msgstr "Le corps de la requête doit être un objet JSON."
+
+#: includes/rest/class-jobs-controller.php:266
+#: includes/rest/class-storages-controller.php:397
+#: includes/storage/class-storage-repository.php:486
+msgid "This storage does not exist."
+msgstr "Ce stockage n’existe pas."
+
+#: includes/rest/class-restore-controller.php:214
+#: client/restore/restore-screen.js:360
+msgid "Choose the database, the files, or both."
+msgstr "Choisissez la base de données, les fichiers, ou les deux."
+
+#: includes/rest/class-restore-controller.php:403
+msgid "The archive is not fully uploaded yet."
+msgstr "L’archive n’est pas encore entièrement envoyée."
+
+#: includes/rest/class-restore-controller.php:415
+msgid "Choose a backup to restore."
+msgstr "Choisissez une sauvegarde à restaurer."
+
+#: includes/rest/class-restore-controller.php:446
+msgid "This file ends with .enc but is not an encrypted backup."
+msgstr "Ce fichier finit par .enc mais n’est pas une sauvegarde chiffrée."
+
+#. translators: %s: key identifier.
+#: includes/rest/class-restore-controller.php:452
+#, php-format
+msgid "The key %s that encrypted this archive is missing. Import it in Settings, Encryption, then start again."
+msgstr "La clé %s qui a chiffré cette archive manque. Importez-la dans Réglages, Chiffrement, puis relancez."
+
+#: includes/rest/class-restore-controller.php:482
+msgid "This archive is no longer available."
+msgstr "Cette archive n’est plus disponible."
+
+#: includes/rest/class-restore-controller.php:493
+#: includes/restore/class-upload-repository.php:150
+msgid "This upload no longer exists. Start it again."
+msgstr "Cet envoi n’existe plus. Relancez-le."
+
+#: includes/rest/class-runs-controller.php:338
+msgid "Invalid or expired token."
+msgstr "Jeton invalide ou expiré."
+
+#: includes/rest/class-runs-controller.php:360
+#: client/restore/restore-screen.js:134
+msgid "Before a restore"
+msgstr "Avant une restauration"
+
+#: includes/rest/class-runs-controller.php:398
+msgid "This backup has no archive to delete."
+msgstr "Cette sauvegarde n’a pas d’archive à supprimer."
+
+#. translators: %s: list of storages with their error.
+#: includes/rest/class-runs-controller.php:422
+#, php-format
+msgid "The archive could not be deleted from: %s."
+msgstr "L’archive n’a pas pu être supprimée de : %s."
+
+#: includes/rest/class-settings-controller.php:181
+msgid "Sorry, you are not allowed to manage backups."
+msgstr "Vous n’avez pas le droit de gérer les sauvegardes."
+
+#. translators: %s: list of backup job names.
+#: includes/rest/class-storages-controller.php:298
+#, php-format
+msgid "This storage is used by: %s. Remove it from these backups first."
+msgstr "Ce stockage sert à : %s. Retirez-le d’abord de ces sauvegardes."
+
+#: includes/rest/class-trigger-controller.php:102
+msgid "Invalid key, or this backup is not started by a link."
+msgstr "Clé invalide, ou cette sauvegarde ne se lance pas par un lien."
+
+#: includes/restore/class-extractor.php:88
+msgid "This archive format is not supported. Use a zip, tar.gz or tar archive."
+msgstr "Ce format d’archive n’est pas pris en charge. Utilisez une archive zip, tar.gz ou tar."
+
+#. translators: %s: file path.
+#: includes/restore/class-extractor.php:225
+#, php-format
+msgid "File skipped, a folder has the same name: %s"
+msgstr "Fichier ignoré, un dossier porte le même nom : %s"
+
+#. translators: %s: folder path.
+#: includes/restore/class-extractor.php:233
+#, php-format
+msgid "Cannot create the folder %s. Check its permissions."
+msgstr "Impossible de créer le dossier %s. Vérifiez ses droits."
+
+#. translators: %s: file name in the archive.
+#: includes/restore/class-extractor.php:278
+#, php-format
+msgid "The archive is damaged: %s is incomplete."
+msgstr "L’archive est endommagée : %s est incomplet."
+
+#. translators: %s: file path.
+#: includes/restore/class-extractor.php:284
+#, php-format
+msgid "Cannot write %s. Check its permissions."
+msgstr "Impossible d’écrire %s. Vérifiez ses droits."
+
+#: includes/restore/class-maintenance.php:86
+msgid "Cannot put the site in maintenance mode: the WordPress folder is not writable."
+msgstr "Impossible de mettre le site en maintenance : le dossier de WordPress n’est pas accessible en écriture."
+
+#: includes/restore/class-restore-plan.php:145
+msgid "Before restore"
+msgstr "Avant restauration"
+
+#: includes/restore/class-upload-repository.php:98
+#: client/restore/archive-upload.js:53
+msgid "Choose a zip, tar.gz or tar archive, encrypted or not."
+msgstr "Choisissez une archive zip, tar.gz ou tar, chiffrée ou non."
+
+#: includes/restore/class-upload-repository.php:103
+msgid "This file is empty."
+msgstr "Ce fichier est vide."
+
+#: includes/restore/class-upload-repository.php:155
+msgid "This part does not follow the previous one."
+msgstr "Ce morceau ne suit pas le précédent."
+
+#: includes/restore/class-upload-repository.php:163
+msgid "This part is larger than expected."
+msgstr "Ce morceau est plus grand que prévu."
+
+#: includes/restore/class-upload-repository.php:167
+msgid "The server refused to write the file. Check the free space."
+msgstr "Le serveur a refusé d’écrire le fichier. Vérifiez l’espace libre."
+
+#: includes/restore/steps/class-check.php:58
+#: client/restore/restore.js:38
+msgid "Checking the archive"
+msgstr "Vérification de l’archive"
+
+#: includes/restore/steps/class-check.php:117
+msgid "This archive was not made by Oueb WP Backup: it has no backup description. Nothing was changed."
+msgstr "Cette archive ne vient pas d’Oueb WP Backup : elle n’a pas de description de sauvegarde. Rien n’a été modifié."
+
+#: includes/restore/steps/class-check.php:120
+msgid "This archive was made by a newer version of Oueb WP Backup. Update the extension, then start again. Nothing was changed."
+msgstr "Cette archive vient d’une version plus récente d’Oueb WP Backup. Mettez l’extension à jour, puis relancez. Rien n’a été modifié."
+
+#: includes/restore/steps/class-check.php:140
+msgid "This archive contains no database: the database stays as it is."
+msgstr "Cette archive ne contient pas de base de données : la base reste telle quelle."
+
+#. translators: 1: table prefix in the archive, 2: table prefix of this site.
+#: includes/restore/steps/class-check.php:147
+#, php-format
+msgid "The tables of this archive start with %1$s, those of this site with %2$s. Restore the files only, or change the prefix in wp-config.php. Nothing was changed."
+msgstr "Les tables de cette archive commencent par %1$s, celles de ce site par %2$s. Restaurez les fichiers seuls, ou changez le préfixe dans wp-config.php. Rien n’a été modifié."
+
+#: includes/restore/steps/class-check.php:156
+msgid "This archive contains no files: the files stay as they are."
+msgstr "Cette archive ne contient pas de fichiers : les fichiers restent tels quels."
+
+#: includes/restore/steps/class-check.php:159
+msgid "There is nothing to restore from this archive. Nothing was changed."
+msgstr "Cette archive n’a rien à restaurer. Rien n’a été modifié."
+
+#. translators: 1: address of the backed up site, 2: address of this site.
+#: includes/restore/steps/class-check.php:167
+#, php-format
+msgid "This backup comes from %1$s. The site keeps its address, %2$s, but links inside the content still point to the old address."
+msgstr "Cette sauvegarde vient de %1$s. Le site garde son adresse, %2$s, mais les liens dans le contenu pointent encore vers l’ancienne."
+
+#. translators: 1: WordPress version of the backup, 2: WordPress version of this site.
+#: includes/restore/steps/class-check.php:178
+#, php-format
+msgid "This backup was made with WordPress %1$s, newer than this site (%2$s). Restore the WordPress files too, or update WordPress after the restore."
+msgstr "Cette sauvegarde a été faite avec WordPress %1$s, plus récent que ce site (%2$s). Restaurez aussi les fichiers de WordPress, ou mettez WordPress à jour après la restauration."
+
+#. translators: 1: backup date, 2: what is restored.
+#: includes/restore/steps/class-check.php:211
+#, php-format
+msgid "Backup of %1$s checked. Restoring: %2$s."
+msgstr "Sauvegarde du %1$s vérifiée. Restauration : %2$s."
+
+#: includes/restore/steps/class-check.php:217
+msgid "database"
+msgstr "base de données"
+
+#: includes/restore/steps/class-check.php:218
+msgid "files"
+msgstr "fichiers"
+
+#: includes/restore/steps/class-check.php:247
+msgid "This backup comes from a multisite network, and this site is a single site. Restore the files only, or restore it onto its network. Nothing was changed."
+msgstr "Cette sauvegarde vient d’un réseau multisite, et ce site est un site seul. Restaurez les fichiers seuls, ou restaurez-la sur son réseau. Rien n’a été modifié."
+
+#: includes/restore/steps/class-check.php:250
+msgid "This backup comes from a single site, and this site is a multisite network. Restore the files only. Nothing was changed."
+msgstr "Cette sauvegarde vient d’un site seul, et ce site est un réseau multisite. Restaurez les fichiers seuls. Rien n’a été modifié."
+
+#. translators: 1: address of the backed up network, 2: address of this network.
+#: includes/restore/steps/class-check.php:261
+#, php-format
+msgid "This backup comes from the network %1$s, and this network is %2$s. A network database restores only onto the same address. Restore the files only. Nothing was changed."
+msgstr "Cette sauvegarde vient du réseau %1$s, et ce réseau est %2$s. La base d’un réseau se restaure seulement à la même adresse. Restaurez les fichiers seuls. Rien n’a été modifié."
+
+#: includes/restore/steps/class-complete.php:45
+#: client/restore/restore.js:43
+msgid "Ending the restore"
+msgstr "Fin de la restauration"
+
+#: includes/restore/steps/class-complete.php:66
+msgid "The site is out of maintenance mode."
+msgstr "Le site est sorti de maintenance."
+
+#: includes/restore/steps/class-decrypt.php:68
+#: client/restore/restore.js:37
+msgid "Decrypting the archive"
+msgstr "Déchiffrement de l’archive"
+
+#: includes/restore/steps/class-decrypt.php:92
+msgid "The archive to decrypt is missing."
+msgstr "L’archive à déchiffrer manque."
+
+#: includes/restore/steps/class-decrypt.php:134
+#: includes/security/class-archive-cipher.php:142
+msgid "The encrypted backup has extra data after its end."
+msgstr "La sauvegarde chiffrée contient des données en trop après sa fin."
+
+#. translators: %s: archive size.
+#: includes/restore/steps/class-decrypt.php:161
+#, php-format
+msgid "Archive decrypted: %s."
+msgstr "Archive déchiffrée : %s."
+
+#: includes/restore/steps/class-enter-maintenance.php:45
+#: client/restore/restore.js:40
+msgid "Maintenance mode"
+msgstr "Mode maintenance"
+
+#: includes/restore/steps/class-enter-maintenance.php:59
+msgid "The site is in maintenance mode until the end of the restore."
+msgstr "Le site est en maintenance jusqu’à la fin de la restauration."
+
+#: includes/restore/steps/class-fetch.php:76
+#: client/restore/restore.js:36
+msgid "Getting the archive"
+msgstr "Récupération de l’archive"
+
+#: includes/restore/steps/class-fetch.php:98
+msgid "The archive to restore no longer exists on the server."
+msgstr "L’archive à restaurer n’existe plus sur le serveur."
+
+#. translators: %s: archive name.
+#: includes/restore/steps/class-fetch.php:103
+#, php-format
+msgid "Archive to restore: %s, found on the server."
+msgstr "Archive à restaurer : %s, trouvée sur le serveur."
+
+#. translators: 1: bytes received, 2: bytes expected.
+#: includes/restore/steps/class-fetch.php:161
+#, php-format
+msgid "The download stopped early: %1$s bytes received out of %2$s."
+msgstr "Le téléchargement s’est arrêté avant la fin : %1$s octets reçus sur %2$s."
+
+#. translators: 1: archive name, 2: size.
+#: includes/restore/steps/class-fetch.php:169
+#, php-format
+msgid "Archive %1$s downloaded: %2$s."
+msgstr "Archive %1$s téléchargée : %2$s."
+
+#. translators: 1: storage name, 2: error message.
+#: includes/restore/steps/class-fetch.php:200
+#, php-format
+msgid "The archive cannot be read from %1$s: %2$s"
+msgstr "Impossible de lire l’archive depuis %1$s : %2$s"
+
+#: includes/restore/steps/class-fetch.php:208
+msgid "The archive to restore is no longer available in any storage."
+msgstr "L’archive à restaurer n’est plus disponible dans aucun stockage."
+
+#: includes/restore/steps/class-import-database.php:85
+#: client/restore/restore.js:41
+msgid "Restoring the database"
+msgstr "Restauration de la base de données"
+
+#. translators: %s: table name.
+#: includes/restore/steps/class-import-database.php:132
+#, php-format
+msgid "Import interrupted: the table %s is imported again from its start."
+msgstr "Import interrompu : la table %s est de nouveau importée depuis son début."
+
+#. translators: 1: number of tables, 2: number of SQL statements.
+#: includes/restore/steps/class-import-database.php:207
+#, php-format
+msgid "Database restored: %1$s tables, %2$s statements."
+msgstr "Base de données restaurée : %1$s tables, %2$s instructions."
+
+#. translators: %s: database error.
+#: includes/restore/steps/class-import-database.php:252
+#, php-format
+msgid "Database error: %s"
+msgstr "Erreur de base de données : %s"
+
+#. translators: 1: table name, 2: database error.
+#: includes/restore/steps/class-import-database.php:254
+#, php-format
+msgid "Database error in the table %1$s: %2$s"
+msgstr "Erreur de base de données dans la table %1$s : %2$s"
+
+#: includes/restore/steps/class-import-database.php:460
+msgid "Your account does not exist in this backup: log in again with an account of the restored site."
+msgstr "Votre compte n’existe pas dans cette sauvegarde : reconnectez-vous avec un compte du site restauré."
+
+#: includes/restore/steps/class-keep-safety-backup.php:87
+msgid "Saving the backup of the current site"
+msgstr "Enregistrement de la sauvegarde du site actuel"
+
+#: includes/restore/steps/class-keep-safety-backup.php:111
+msgid "Cannot move the backup of the current site to the archives folder."
+msgstr "Impossible de déplacer la sauvegarde du site actuel dans le dossier des archives."
+
+#: includes/restore/steps/class-keep-safety-backup.php:114
+msgid "The backup of the current site is missing."
+msgstr "La sauvegarde du site actuel manque."
+
+#. translators: %d: restore number.
+#: includes/restore/steps/class-keep-safety-backup.php:143
+#, php-format
+msgid "Backup of the site made before the restore #%d."
+msgstr "Sauvegarde du site faite avant la restauration n° %d."
+
+#. translators: 1: archive name, 2: size.
+#: includes/restore/steps/class-keep-safety-backup.php:162
+#, php-format
+msgid "Backup of the current site saved: %1$s, %2$s. It appears in the list of backups."
+msgstr "Sauvegarde du site actuel enregistrée : %1$s, %2$s. Elle figure dans la liste des sauvegardes."
+
+#: includes/restore/steps/class-restore-files.php:56
+#: client/restore/restore.js:42
+msgid "Restoring the files"
+msgstr "Restauration des fichiers"
+
+#. translators: %s: file name in the archive.
+#: includes/restore/steps/class-restore-files.php:88
+#, php-format
+msgid "File skipped, its name is not safe: %s"
+msgstr "Fichier ignoré, son nom n’est pas sûr : %s"
+
+#. translators: %s: file or folder path.
+#: includes/restore/steps/class-restore-files.php:115
+#, php-format
+msgid "Kept as it is on this site: %s"
+msgstr "Gardé tel quel sur ce site : %s"
+
+#. translators: 1: number of files, 2: total size.
+#: includes/restore/steps/class-restore-files.php:121
+#, php-format
+msgid "Files restored: %1$s, %2$s."
+msgstr "Fichiers restaurés : %1$s, %2$s."
+
+#: includes/schedule/class-cron-expression.php:75
+msgid "The schedule needs five fields: minute, hour, day of the month, month, day of the week."
+msgstr "La planification demande cinq champs : minute, heure, jour du mois, mois, jour de la semaine."
+
+#: includes/schedule/class-cron-expression.php:86
+msgid "A backup cannot start more than four times an hour."
+msgstr "Une sauvegarde ne peut pas se lancer plus de quatre fois par heure."
+
+#. translators: %s: part of the schedule.
+#: includes/schedule/class-cron-expression.php:201
+#, php-format
+msgid "This part of the schedule is not valid: %s"
+msgstr "Cette partie de la planification n’est pas valide : %s"
+
+#. translators: %s: part of the schedule.
+#: includes/schedule/class-cron-expression.php:215
+#, php-format
+msgid "This part of the schedule is out of range: %s"
+msgstr "Cette partie de la planification sort des limites : %s"
+
+#: includes/schedule/class-scheduler.php:217
+msgid "Enter your cron-job.org API key in the settings, then save the schedule again."
+msgstr "Saisissez votre clé d’API cron-job.org dans les réglages, puis enregistrez de nouveau la planification."
+
+#. translators: %s: key identifier.
+#: includes/security/class-archive-cipher.php:169
+#, php-format
+msgid "The key %s is missing. Add it in the encryption settings."
+msgstr "La clé %s manque. Ajoutez-la dans les réglages du chiffrement."
+
+#: includes/security/class-archive-cipher.php:188
+msgid "The encrypted backup is truncated."
+msgstr "La sauvegarde chiffrée est tronquée."
+
+#: includes/security/class-archive-cipher.php:193
+msgid "The encrypted backup is damaged, or the key is wrong."
+msgstr "La sauvegarde chiffrée est endommagée, ou la clé ne correspond pas."
+
+#: includes/settings/class-settings.php:62
+msgid "Maximum duration of a backup step, in seconds, before the job restarts."
+msgstr "Durée maximale d’une étape de sauvegarde, en secondes, avant la relance de la tâche."
+
+#: includes/settings/class-settings.php:69
+msgid "Number of attempts for a step that fails."
+msgstr "Nombre d’essais pour une étape qui échoue."
+
+#: includes/settings/class-settings.php:76
+msgid "Number of job logs to keep."
+msgstr "Nombre de journaux à garder."
+
+#: includes/settings/class-settings.php:81
+msgid "Show the agency card on the dashboard."
+msgstr "Afficher l’encart de l’agence sur le tableau de bord."
+
+#: includes/settings/class-settings.php:86
+msgid "The setup assistant was completed or skipped."
+msgstr "L’assistant de configuration a été terminé ou passé."
+
+#: includes/settings/class-settings.php:92
+msgid "Key of the trigger link, at least 32 letters and digits."
+msgstr "Clé du lien de déclenchement, au moins 32 lettres et chiffres."
+
+#: includes/settings/class-settings.php:98
+msgid "cron-job.org API key."
+msgstr "Clé d’API cron-job.org."
+
+#. translators: %s: setting name.
+#: includes/settings/class-settings.php:194
+#, php-format
+msgid "Unknown setting: %s."
+msgstr "Réglage inconnu : %s."
+
+#. translators: 1: setting name, 2: minimum value, 3: maximum value.
+#: includes/settings/class-settings.php:255
+#, php-format
+msgid "The setting %1$s must be between %2$d and %3$d."
+msgstr "Le réglage %1$s doit être compris entre %2$d et %3$d."
+
+#. translators: %s: setting name.
+#: includes/settings/class-settings.php:294
+#, php-format
+msgid "The value of the setting %s is not valid."
+msgstr "La valeur du réglage %s n’est pas valide."
+
+#: includes/storage/class-folder-storage.php:62
+msgid "Folder on this server"
+msgstr "Dossier sur ce serveur"
+
+#: includes/storage/class-folder-storage.php:93
+#: client/storage/fields.js:265
+msgid "Enter an absolute path, such as /home/site/backups."
+msgstr "Saisissez un chemin absolu, comme /home/site/sauvegardes."
+
+#. translators: %s: file path.
+#: includes/storage/class-folder-storage.php:173
+#, php-format
+msgid "Cannot create %s."
+msgstr "Impossible de créer %s."
+
+#. translators: %s: folder path.
+#: includes/storage/class-folder-storage.php:244
+#, php-format
+msgid "The folder %s is not writable."
+msgstr "Le dossier %s n’est pas accessible en écriture."
+
+#. translators: %s: free disk space, such as 12 GB.
+#: includes/storage/class-folder-storage.php:250
+#, php-format
+msgid "The folder is writable. Free space: %s."
+msgstr "Le dossier est accessible en écriture. Espace libre : %s."
+
+#. translators: %s: folder path.
+#: includes/storage/class-folder-storage.php:277
+#, php-format
+msgid "Cannot create the folder %s."
+msgstr "Impossible de créer le dossier %s."
+
+#: includes/storage/class-kdrive-storage.php:85
+msgid "Infomaniak kDrive"
+msgstr "Infomaniak kDrive"
+
+#: includes/storage/class-kdrive-storage.php:131
+msgid "Enter the email address of your Infomaniak account."
+msgstr "Saisissez l’adresse email de votre compte Infomaniak."
+
+#: includes/storage/class-kdrive-storage.php:134
+#: includes/storage/class-s3-storage.php:162
+#: includes/storage/class-sftp-storage.php:158
+#: client/storage/fields.js:203
+msgid "The folder cannot contain “..”."
+msgstr "Le dossier ne peut pas contenir « .. »."
+
+#: includes/storage/class-kdrive-storage.php:221
+msgid "The kDrive folder is reachable."
+msgstr "Le dossier kDrive est joignable."
+
+#. translators: %s: file path.
+#: includes/storage/class-resumable-file.php:43
+#, php-format
+msgid "Cannot write to %s."
+msgstr "Impossible d’écrire dans %s."
+
+#: includes/storage/class-resumable-file.php:69
+msgid "The disk refused to write. Check the free space on the server."
+msgstr "Le disque a refusé l’écriture. Vérifiez l’espace libre sur le serveur."
+
+#: includes/storage/class-s3-storage.php:99
+msgid "S3 object storage"
+msgstr "Stockage objet S3"
+
+#: includes/storage/class-s3-storage.php:168
+#: client/storage/fields.js:210
+msgid "Enter the HTTPS address of the S3 service."
+msgstr "Saisissez l’adresse HTTPS du service S3."
+
+#: includes/storage/class-s3-storage.php:174
+msgid "Choose a region of this provider."
+msgstr "Choisissez une région de ce fournisseur."
+
+#: includes/storage/class-s3-storage.php:220
+msgid "This S3 region is no longer offered. Choose another one in the storage settings."
+msgstr "Cette région S3 n’est plus proposée. Choisissez-en une autre dans les réglages du stockage."
+
+#: includes/storage/class-s3-storage.php:395
+msgid "The bucket is reachable and writable."
+msgstr "Le bucket est joignable et accessible en écriture."
+
+#: includes/storage/class-sftp-storage.php:81
+msgid "SFTP server"
+msgstr "Serveur SFTP"
+
+#: includes/storage/class-sftp-storage.php:152
+#: client/storage/fields.js:243
+msgid "Paste the private key."
+msgstr "Collez la clé privée."
+
+#: includes/storage/class-sftp-storage.php:155
+#: client/storage/fields.js:236
+msgid "Enter the password."
+msgstr "Saisissez le mot de passe."
+
+#: includes/storage/class-sftp-storage.php:237
+msgid "The size of the file on the SFTP server does not match the archive. The upload starts again."
+msgstr "La taille du fichier sur le serveur SFTP ne correspond pas à l’archive. L’envoi recommence."
+
+#. translators: %s: server key fingerprint.
+#: includes/storage/class-sftp-storage.php:291
+#, php-format
+msgid "The folder is writable. Server key: %s."
+msgstr "Le dossier est accessible en écriture. Clé du serveur : %s."
+
+#: includes/storage/class-storage-repository.php:88
+msgid "This server"
+msgstr "Ce serveur"
+
+#: includes/storage/class-storage-repository.php:131
+msgid "This type of storage does not exist."
+msgstr "Ce type de stockage n’existe pas."
+
+#: includes/storage/class-storage-repository.php:314
+#: includes/storage/class-storage-repository.php:318
+msgid "Give the storage a name of 100 characters at most."
+msgstr "Donnez au stockage un nom de 100 caractères au plus."
+
+#. translators: %s: field name.
+#: includes/storage/class-storage-repository.php:353
+#, php-format
+msgid "The field %s is required."
+msgstr "Le champ %s est obligatoire."
+
+#: includes/storage/class-storage-repository.php:483
+msgid "The storage on this server cannot be changed or deleted."
+msgstr "Le stockage sur ce serveur ne peut être ni modifié ni supprimé."
+
+#. translators: %s: folder path.
+#: includes/storage/class-workspace.php:176
+#: includes/storage/class-workspace.php:199
+#, php-format
+msgid "Cannot create the folder %s. Check the permissions of the uploads folder."
+msgstr "Impossible de créer le dossier %s. Vérifiez les droits du dossier uploads."
+
+#. translators: %s: version number.
+#: client/app.js:122
+#, php-format,js-format
+msgid "Oueb WP Backup %s, fork of BackWPup 4.1.7, released under the GPL v2 or later."
+msgstr "Oueb WP Backup %s, fork de BackWPup 4.1.7, distribué sous licence GPL v2 ou ultérieure."
+
+#: client/app.js:131
+msgid "Source code and origin"
+msgstr "Code source et origine"
+
+#: client/app.js:134
+msgid "Made by L’agence Oueb"
+msgstr "Conçu par L’agence Oueb"
+
+#: client/backups/backups-screen.js:47
+msgid "Backup deleted from all its storages."
+msgstr "Sauvegarde supprimée de tous ses stockages."
+
+#: client/backups/backups-screen.js:68
+#: client/content/content-screen.js:67
+#: client/dashboard/dashboard-screen.js:186
+#: client/jobs/jobs-screen.js:101
+#: client/jobs/jobs-screen.js:288
+#: client/log/log-screen.js:64
+#: client/log/log-screen.js:107
+#: client/restore/restore-screen.js:196
+#: client/schedule/schedule-screen.js:79
+#: client/settings/encryption-card.js:86
+#: client/setup/setup-screen.js:155
+#: client/storage/storage-screen.js:81
+msgid "Loading…"
+msgstr "Chargement…"
+
+#. translators: %s: backup date.
+#: client/backups/backups-screen.js:89
+#, php-format,js-format
+msgid "Delete the backup of %s?"
+msgstr "Supprimer la sauvegarde du %s ?"
+
+#. translators: %s: list of storage names.
+#: client/backups/backups-screen.js:97
+#, php-format,js-format
+msgid "The archive will be deleted from: %s. This cannot be undone."
+msgstr "L’archive sera supprimée de : %s. Cette action est définitive."
+
+#: client/backups/backups-screen.js:110
+msgid "Delete the backup"
+msgstr "Supprimer la sauvegarde"
+
+#: client/backups/backups-screen.js:116
+#: client/jobs/jobs-screen.js:231
+#: client/restore/restore-screen.js:465
+#: client/storage/storage-form.js:361
+#: client/storage/storage-screen.js:401
+msgid "Cancel"
+msgstr "Annuler"
+
+#: client/backups/backups-screen.js:124
+msgid "All backups"
+msgstr "Toutes les sauvegardes"
+
+#: client/backups/backups-screen.js:129
+msgid "Pages"
+msgstr "Pages"
+
+#: client/backups/backups-screen.js:136
+msgid "Previous page"
+msgstr "Page précédente"
+
+#. translators: 1: current page, 2: number of pages.
+#: client/backups/backups-screen.js:141
+#, php-format,js-format
+msgid "Page %1$d of %2$d"
+msgstr "Page %1$d sur %2$d"
+
+#: client/backups/backups-screen.js:151
+msgid "Next page"
+msgstr "Page suivante"
+
+#: client/components/runs-table.js:29
+msgid "No backup yet. Start the first one with the “Back up now” button."
+msgstr "Aucune sauvegarde pour l’instant. Lancez la première avec le bouton « Sauvegarder maintenant »."
+
+#: client/components/runs-table.js:43
+#: client/storage/storage-files.js:67
+msgid "Date"
+msgstr "Date"
+
+#: client/components/runs-table.js:45
+#: client/jobs/jobs-screen.js:362
+#: client/setup/setup-screen.js:47
+#: client/setup/setup-screen.js:407
+msgid "Content"
+msgstr "Contenu"
+
+#: client/components/runs-table.js:47
+#: client/storage/storage-files.js:68
+msgid "Size"
+msgstr "Taille"
+
+#: client/components/runs-table.js:49
+#: client/jobs/jobs-screen.js:365
+msgid "Stored in"
+msgstr "Stockée dans"
+
+#: client/components/runs-table.js:52
+msgid "Status"
+msgstr "État"
+
+#: client/components/runs-table.js:56
+#: client/jobs/jobs-screen.js:378
+#: client/settings/encryption-card.js:274
+msgid "Actions"
+msgstr "Actions"
+
+#. translators: %s: backup date.
+#: client/components/runs-table.js:101
+#, php-format,js-format
+msgid "Why: log of the backup of %s"
+msgstr "Pourquoi : journal de la sauvegarde du %s"
+
+#: client/components/runs-table.js:109
+msgid "See the cause"
+msgstr "Voir la cause"
+
+#: client/components/runs-table.js:113
+msgid "Understand"
+msgstr "Comprendre"
+
+#. translators: %s: backup date.
+#: client/components/runs-table.js:126
+#, php-format,js-format
+msgid "Download the backup of %s"
+msgstr "Télécharger la sauvegarde du %s"
+
+#: client/components/runs-table.js:133
+msgid "Download"
+msgstr "Télécharger"
+
+#. translators: %s: backup date.
+#: client/components/runs-table.js:143
+#, php-format,js-format
+msgid "Log of the backup of %s"
+msgstr "Journal de la sauvegarde du %s"
+
+#: client/components/runs-table.js:150
+#: client/sections.js:25
+msgid "Log"
+msgstr "Journal"
+
+#. translators: %s: backup date.
+#: client/components/runs-table.js:157
+#, php-format,js-format
+msgid "Download the decrypted backup of %s"
+msgstr "Télécharger la sauvegarde déchiffrée du %s"
+
+#: client/components/runs-table.js:164
+msgid "Decrypted"
+msgstr "Déchiffrée"
+
+#. translators: %s: backup date.
+#: client/components/runs-table.js:175
+#, php-format,js-format
+msgid "Restore the backup of %s"
+msgstr "Restaurer la sauvegarde du %s"
+
+#: client/components/runs-table.js:182
+msgid "Restore"
+msgstr "Restaurer"
+
+#. translators: %s: backup date.
+#: client/components/runs-table.js:194
+#, php-format,js-format
+msgid "Delete the backup of %s"
+msgstr "Supprimer la sauvegarde du %s"
+
+#: client/components/runs-table.js:202
+#: client/storage/storage-screen.js:308
+msgid "Delete"
+msgstr "Supprimer"
+
+#: client/components/section-nav.js:24
+msgid "Oueb WP Backup sections"
+msgstr "Sections d’Oueb WP Backup"
+
+#: client/content/content-fields.js:37
+msgid "What to back up"
+msgstr "Quoi sauvegarder"
+
+#: client/content/content-fields.js:51
+msgid "Choose the database or at least one folder."
+msgstr "Choisissez la base de données ou au moins un dossier."
+
+#: client/content/content-fields.js:63
+msgid "Files and folders to leave out"
+msgstr "Fichiers et dossiers à exclure"
+
+#: client/content/content-fields.js:67
+msgid "One rule per line, from the root of the site. * stands for any text: wp-content/uploads/videos, *.log."
+msgstr "Une règle par ligne, depuis la racine du site. * remplace n’importe quel texte : wp-content/uploads/videos, *.log."
+
+#: client/content/content-fields.js:77
+msgid "Archive format"
+msgstr "Format d’archive"
+
+#: client/content/content-fields.js:82
+msgid "zip: opens on any computer"
+msgstr "zip : s’ouvre sur tout ordinateur"
+
+#: client/content/content-fields.js:89
+msgid "tar.gz: smaller, for servers"
+msgstr "tar.gz : plus léger, pour les serveurs"
+
+#: client/content/content-screen.js:79
+msgid "Content saved."
+msgstr "Contenu enregistré."
+
+#: client/content/content-screen.js:96
+#: client/sections.js:39
+msgid "Content of the backup"
+msgstr "Contenu de la sauvegarde"
+
+#: client/content/content-screen.js:114
+msgid "Save the content"
+msgstr "Enregistrer le contenu"
+
+#: client/content/content.js:19
+#: client/restore/restore-screen.js:327
+msgid "Database"
+msgstr "Base de données"
+
+#: client/content/content.js:20
+msgid "Content, comments, users and settings."
+msgstr "Contenu, commentaires, utilisateurs et réglages."
+
+#: client/content/content.js:27
+msgid "Media"
+msgstr "Médias"
+
+#: client/content/content.js:28
+msgid "Images and files added to the site."
+msgstr "Images et fichiers ajoutés au site."
+
+#: client/content/content.js:32
+msgid "Themes"
+msgstr "Thèmes"
+
+#: client/content/content.js:37
+msgid "Extensions"
+msgstr "Extensions"
+
+#: client/content/content.js:42
+msgid "Other files of wp-content"
+msgstr "Autres fichiers de wp-content"
+
+#: client/content/content.js:43
+msgid "Translations, extension data and files outside the folders above."
+msgstr "Traductions, données des extensions et fichiers hors des dossiers ci-dessus."
+
+#: client/content/content.js:50
+msgid "WordPress files"
+msgstr "Fichiers de WordPress"
+
+#: client/content/content.js:51
+msgid "Rarely useful: WordPress can be downloaded again. wp-config.php is included."
+msgstr "Rarement utile : WordPress se télécharge de nouveau. wp-config.php est inclus."
+
+#. translators: 1: comma-separated items, 2: last item.
+#: client/content/content.js:71
+#, php-format,js-format
+msgid "%1$s and %2$s"
+msgstr "%1$s et %2$s"
+
+#. translators: %d: number of exclusion rules.
+#: client/content/content.js:107
+#, php-format,js-format
+msgid "Excluded: cache, backups of other extensions and %d rule of yours"
+msgid_plural "Excluded: cache, backups of other extensions and %d rules of yours"
+msgstr[0] "Exclus : cache, sauvegardes des autres extensions et %d règle à vous"
+msgstr[1] "Exclus : cache, sauvegardes des autres extensions et %d règles à vous"
+
+#: client/content/content.js:115
+msgid "Excluded: cache and backups of other extensions"
+msgstr "Exclus : cache et sauvegardes des autres extensions"
+
+#: client/dashboard/agency-card.js:27
+msgid "Need a hand?"
+msgstr "Besoin d’un coup de main ?"
+
+#: client/dashboard/agency-card.js:30
+msgid "Oueb WP Backup is made by L’agence Oueb. For help with your backups or your site, contact the agency."
+msgstr "Oueb WP Backup est conçu par L’agence Oueb. Pour de l’aide sur vos sauvegardes ou votre site, contactez l’agence."
+
+#: client/dashboard/agency-card.js:36
+msgid "Discover L’agence Oueb"
+msgstr "Découvrir L’agence Oueb"
+
+#: client/dashboard/agency-card.js:39
+msgid "(lagenceoueb.tech)"
+msgstr "(lagenceoueb.tech)"
+
+#: client/dashboard/agency-card.js:48
+msgid "Hide this card"
+msgstr "Masquer cet encart"
+
+#. translators: %s: backup status, such as Successful.
+#: client/dashboard/backup-now.js:49
+#, php-format,js-format
+msgid "Backup finished: %s."
+msgstr "Sauvegarde terminée : %s."
+
+#: client/dashboard/backup-now.js:67
+msgid "Backup started."
+msgstr "Sauvegarde lancée."
+
+#. translators: 1: step label, 2: percentage.
+#: client/dashboard/backup-now.js:98
+#: client/restore/restore-progress.js:216
+#, php-format,js-format
+msgid "%1$s: %2$d %%"
+msgstr "%1$s : %2$d %%"
+
+#: client/dashboard/backup-now.js:117
+msgid "You can leave this page: the backup goes on."
+msgstr "Vous pouvez quitter cette page : la sauvegarde continue."
+
+#: client/dashboard/backup-now.js:128
+msgid "Stop the backup"
+msgstr "Arrêter la sauvegarde"
+
+#: client/dashboard/backup-now.js:139
+#: client/jobs/jobs-screen.js:428
+msgid "Back up now"
+msgstr "Sauvegarder maintenant"
+
+#: client/dashboard/dashboard-screen.js:53
+msgid "Your site has no backup yet"
+msgstr "Votre site n’a pas encore de sauvegarde"
+
+#: client/dashboard/dashboard-screen.js:54
+msgid "Start a first backup now. It takes a few minutes."
+msgstr "Lancez une première sauvegarde maintenant. Elle prend quelques minutes."
+
+#: client/dashboard/dashboard-screen.js:68
+msgid "The last backup failed"
+msgstr "La dernière sauvegarde a échoué"
+
+#. translators: %s: date of the last good backup.
+#: client/dashboard/dashboard-screen.js:71
+#, php-format,js-format
+msgid "The last good backup dates from %s. Open the log to see what went wrong."
+msgstr "La dernière sauvegarde réussie date du %s. Ouvrez le journal pour voir ce qui a échoué."
+
+#: client/dashboard/dashboard-screen.js:83
+msgid "Your site is protected"
+msgstr "Votre site est sauvegardé"
+
+#. translators: 1: date of the last good backup, 2: storage names.
+#: client/dashboard/dashboard-screen.js:88
+#, php-format,js-format
+msgid "Last backup: %1$s, sent to %2$s."
+msgstr "Dernière sauvegarde : %1$s, envoyée vers %2$s."
+
+#. translators: %s: date of the last good backup.
+#: client/dashboard/dashboard-screen.js:97
+#, php-format,js-format
+msgid "Last backup: %s."
+msgstr "Dernière sauvegarde : %s."
+
+#: client/dashboard/dashboard-screen.js:209
+msgid "Card hidden. You can show it again in the settings."
+msgstr "Encart masqué. Vous pouvez le réafficher dans les réglages."
+
+#: client/dashboard/dashboard-screen.js:228
+msgid "Set up your backups in four steps"
+msgstr "Réglez vos sauvegardes en quatre étapes"
+
+#: client/dashboard/dashboard-screen.js:234
+msgid "Content, storage, frequency, then a first backup to check that everything works. It takes about five minutes."
+msgstr "Contenu, stockage, fréquence, puis une première sauvegarde pour vérifier que tout fonctionne. Comptez cinq minutes environ."
+
+#: client/dashboard/dashboard-screen.js:244
+msgid "Start the setup"
+msgstr "Commencer le réglage"
+
+#: client/dashboard/dashboard-screen.js:247
+msgid "I will set it up myself"
+msgstr "Je règle moi-même"
+
+#. translators: %s: date and time.
+#: client/dashboard/dashboard-screen.js:270
+#: client/schedule/schedule-screen.js:274
+#, php-format,js-format
+msgid "Next backup: %s."
+msgstr "Prochaine sauvegarde : %s."
+
+#: client/dashboard/dashboard-screen.js:283
+msgid "See the log of the last backup"
+msgstr "Voir le journal de la dernière sauvegarde"
+
+#: client/dashboard/dashboard-screen.js:298
+msgid "What is backed up"
+msgstr "Ce qui est sauvegardé"
+
+#: client/dashboard/dashboard-screen.js:309
+msgid "Change the content"
+msgstr "Modifier le contenu"
+
+#: client/dashboard/dashboard-screen.js:318
+#: client/jobs/job-storages.js:66
+msgid "Where"
+msgstr "Où"
+
+#: client/dashboard/dashboard-screen.js:323
+msgid "Nowhere yet"
+msgstr "Nulle part pour l’instant"
+
+#: client/dashboard/dashboard-screen.js:333
+msgid "Europe"
+msgstr "Europe"
+
+#: client/dashboard/dashboard-screen.js:336
+#: client/storage/provider-criteria.js:21
+msgid "Renewable electricity"
+msgstr "Électricité renouvelable"
+
+#. translators: %s: storage names.
+#: client/dashboard/dashboard-screen.js:347
+#, php-format,js-format
+msgid "Additional copy: %s"
+msgid_plural "Additional copies: %s"
+msgstr[0] "Copie supplémentaire : %s"
+msgstr[1] "Copies supplémentaires : %s"
+
+#: client/dashboard/dashboard-screen.js:357
+msgid "Additional copy: none"
+msgstr "Copie supplémentaire : aucune"
+
+#: client/dashboard/dashboard-screen.js:360
+msgid "Change the storage"
+msgstr "Modifier le stockage"
+
+#: client/dashboard/dashboard-screen.js:369
+#: client/jobs/jobs-screen.js:368
+msgid "When"
+msgstr "Quand"
+
+#: client/dashboard/dashboard-screen.js:376
+msgid "Only the last backup is kept. Older ones are deleted automatically."
+msgstr "Seule la dernière sauvegarde est gardée. Les plus anciennes sont supprimées au fur et à mesure."
+
+#. translators: %d: number of backups kept.
+#: client/dashboard/dashboard-screen.js:382
+#, php-format,js-format
+msgid "The last %d backups are kept. Older ones are deleted automatically."
+msgstr "Les %d dernières sauvegardes sont gardées. Les plus anciennes sont supprimées au fur et à mesure."
+
+#: client/dashboard/dashboard-screen.js:390
+msgid "Change the schedule"
+msgstr "Modifier la planification"
+
+#: client/dashboard/dashboard-screen.js:398
+#: client/dashboard/dashboard-screen.js:408
+msgid "Recent backups"
+msgstr "Sauvegardes récentes"
+
+#: client/dashboard/dashboard-screen.js:402
+msgid "See all backups"
+msgstr "Voir toutes les sauvegardes"
+
+#: client/dashboard/import-notice.js:38
+msgid "maximum duration of a step"
+msgstr "durée maximale d’une étape"
+
+#: client/dashboard/import-notice.js:42
+msgid "number of logs kept"
+msgstr "nombre de journaux gardés"
+
+#: client/dashboard/import-notice.js:43
+msgid "attempts per step"
+msgstr "essais par étape"
+
+#: client/dashboard/import-notice.js:44
+msgid "key of the trigger link"
+msgstr "clé du lien de déclenchement"
+
+#: client/dashboard/import-notice.js:45
+#: client/settings/settings-screen.js:193
+msgid "cron-job.org API key"
+msgstr "clé d’API cron-job.org"
+
+#. translators: %d: number of imported jobs.
+#: client/dashboard/import-notice.js:68
+#, php-format,js-format
+msgid "%d job imported from BackWPup"
+msgid_plural "%d jobs imported from BackWPup"
+msgstr[0] "%d tâche importée de BackWPup"
+msgstr[1] "%d tâches importées de BackWPup"
+
+#. translators: %s: list of settings.
+#: client/dashboard/import-notice.js:91
+#, php-format,js-format
+msgid "Imported: %s."
+msgstr "Importé : %s."
+
+#: client/dashboard/import-notice.js:112
+msgid "The imported jobs are additional backups: the main backup did not change. The data of BackWPup was neither changed nor deleted."
+msgstr "Les tâches importées sont des sauvegardes supplémentaires : la sauvegarde principale n’a pas changé. Les données de BackWPup n’ont été ni modifiées ni supprimées."
+
+#: client/dashboard/import-notice.js:119
+msgid "BackWPup is still active: both extensions would make the same backups. Deactivate BackWPup in the Plugins page."
+msgstr "BackWPup est encore actif : les deux extensions feraient les mêmes sauvegardes. Désactivez BackWPup dans la page Extensions."
+
+#: client/dashboard/import-notice.js:127
+msgid "See the additional backups"
+msgstr "Voir les sauvegardes supplémentaires"
+
+#: client/dashboard/import-notice.js:130
+msgid "Hide this report"
+msgstr "Masquer ce rapport"
+
+#: client/dashboard/import-notice.js:175
+msgid "Import finished."
+msgstr "Import terminé."
+
+#: client/dashboard/import-notice.js:193
+msgid "BackWPup is installed on this site"
+msgstr "BackWPup est installé sur ce site"
+
+#: client/dashboard/import-notice.js:197
+msgid "BackWPup settings found on this site"
+msgstr "Réglages de BackWPup trouvés sur ce site"
+
+#. translators: %d: number of BackWPup jobs.
+#: client/dashboard/import-notice.js:205
+#, php-format,js-format
+msgid "You can import your %d job and your settings. Your BackWPup data will be neither changed nor deleted."
+msgid_plural "You can import your %d jobs and your settings. Your BackWPup data will be neither changed nor deleted."
+msgstr[0] "Vous pouvez importer votre tâche et vos réglages. Vos données BackWPup ne seront ni modifiées ni supprimées."
+msgstr[1] "Vous pouvez importer vos %d tâches et vos réglages. Vos données BackWPup ne seront ni modifiées ni supprimées."
+
+#: client/dashboard/import-notice.js:226
+msgid "Import my jobs"
+msgstr "Importer mes tâches"
+
+#: client/dashboard/import-notice.js:229
+msgid "Ignore"
+msgstr "Ignorer"
+
+#: client/database/database-card.js:68
+msgid "Check the tables"
+msgstr "Vérifier les tables"
+
+#: client/database/database-card.js:69
+msgid "Reads each table and reports the damaged ones. Changes nothing."
+msgstr "Lit chaque table et signale celles qui sont endommagées. Ne modifie rien."
+
+#: client/database/database-card.js:76
+msgid "Repair the tables"
+msgstr "Réparer les tables"
+
+#: client/database/database-card.js:77
+msgid "Repairs the damaged tables. Back up the site first."
+msgstr "Répare les tables endommagées. Sauvegardez d’abord le site."
+
+#: client/database/database-card.js:84
+msgid "Optimize the tables"
+msgstr "Optimiser les tables"
+
+#: client/database/database-card.js:85
+msgid "Frees the space left by deleted content. The site can slow down for a few seconds."
+msgstr "Libère la place laissée par le contenu supprimé. Le site peut ralentir quelques secondes."
+
+#: client/database/database-card.js:95
+msgid "Database maintenance"
+msgstr "Maintenance de la base de données"
+
+#. translators: 1: number of tables, 2: size, like "12 MB".
+#: client/database/database-card.js:102
+#, php-format,js-format
+msgid "%1$d table, %2$s."
+msgid_plural "%1$d tables, %2$s."
+msgstr[0] "%1$d table, %2$s."
+msgstr[1] "%1$d tables, %2$s."
+
+#. translators: %d: number of tables.
+#: client/database/database-card.js:113
+#, php-format,js-format
+msgid "%d table."
+msgid_plural "%d tables."
+msgstr[0] "%d table."
+msgstr[1] "%d tables."
+
+#: client/database/database-card.js:153
+#: client/database/database-card.js:162
+msgid "Tables with a problem"
+msgstr "Tables en défaut"
+
+#: client/database/database-card.js:167
+msgid "Table"
+msgstr "Table"
+
+#: client/database/database-card.js:170
+msgid "Result"
+msgstr "Résultat"
+
+#: client/database/database-card.js:173
+msgid "Message"
+msgstr "Message"
+
+#: client/database/database.js:19
+msgid "OK"
+msgstr "OK"
+
+#: client/database/database.js:21
+msgid "Not needed"
+msgstr "Inutile"
+
+#: client/database/database.js:23
+#: client/log/log-screen.js:20
+msgid "Warning"
+msgstr "Avertissement"
+
+#: client/database/database.js:25
+#: client/log/log-screen.js:21
+msgid "Error"
+msgstr "Erreur"
+
+#. translators: 1: number of tables with an error, 2: number of tables.
+#: client/database/database.js:49
+#, php-format,js-format
+msgid "%1$d table out of %2$d has an error. Try to repair the tables, then check them again."
+msgid_plural "%1$d tables out of %2$d have an error. Try to repair the tables, then check them again."
+msgstr[0] "%1$d table sur %2$d a une erreur. Réparez les tables, puis vérifiez-les de nouveau."
+msgstr[1] "%1$d tables sur %2$d ont une erreur. Réparez les tables, puis vérifiez-les de nouveau."
+
+#. translators: 1: number of tables with a warning, 2: number of tables.
+#: client/database/database.js:65
+#, php-format,js-format
+msgid "%1$d table out of %2$d has a warning. Read the message below."
+msgid_plural "%1$d tables out of %2$d have a warning. Read the messages below."
+msgstr[0] "%1$d table sur %2$d a un avertissement. Lisez le message ci-dessous."
+msgstr[1] "%1$d tables sur %2$d ont un avertissement. Lisez les messages ci-dessous."
+
+#: client/database/database.js:79
+msgid "Nothing to repair: the database engine of these tables repairs them by itself."
+msgstr "Rien à réparer : le moteur de ces tables les répare lui-même."
+
+#. translators: %d: number of tables.
+#: client/database/database.js:93
+#, php-format,js-format
+msgid "%d table repaired."
+msgid_plural "%d tables repaired."
+msgstr[0] "%d table réparée."
+msgstr[1] "%d tables réparées."
+
+#. translators: %d: number of tables.
+#: client/database/database.js:108
+#, php-format,js-format
+msgid "%d table optimized."
+msgid_plural "%d tables optimized."
+msgstr[0] "%d table optimisée."
+msgstr[1] "%d tables optimisées."
+
+#. translators: %d: number of tables.
+#: client/database/database.js:122
+#, php-format,js-format
+msgid "%d table checked: no problem found."
+msgid_plural "%d tables checked: no problem found."
+msgstr[0] "%d table vérifiée : aucun problème."
+msgstr[1] "%d tables vérifiées : aucun problème."
+
+#. translators: %s: size in bytes.
+#: client/format.js:32
+#, php-format,js-format
+msgid "%s B"
+msgstr "%s o"
+
+#. translators: %s: size in kilobytes.
+#: client/format.js:35
+#, php-format,js-format
+msgid "%s KB"
+msgstr "%s Ko"
+
+#. translators: %s: size in megabytes.
+#: client/format.js:38
+#, php-format,js-format
+msgid "%s MB"
+msgstr "%s Mo"
+
+#. translators: %s: size in gigabytes.
+#: client/format.js:41
+#, php-format,js-format
+msgid "%s GB"
+msgstr "%s Go"
+
+#: client/format.js:68
+msgid "Waiting"
+msgstr "En attente"
+
+#: client/format.js:70
+msgid "Running"
+msgstr "En cours"
+
+#: client/format.js:72
+msgid "Successful"
+msgstr "Réussie"
+
+#. translators: %d: number of warnings.
+#: client/format.js:76
+#, php-format,js-format
+msgid "%d warning"
+msgid_plural "%d warnings"
+msgstr[0] "%d avertissement"
+msgstr[1] "%d avertissements"
+
+#: client/format.js:85
+msgid "Stopped"
+msgstr "Arrêtée"
+
+#: client/format.js:87
+msgid "Failed"
+msgstr "Échec"
+
+#: client/format.js:106
+msgid "Full site"
+msgstr "Site complet"
+
+#: client/format.js:109
+msgid "Database only"
+msgstr "Base de données seule"
+
+#: client/format.js:112
+msgid "Files only"
+msgstr "Fichiers seuls"
+
+#: client/format.js:114
+msgid "Database and some files"
+msgstr "Base de données et une partie des fichiers"
+
+#: client/format.js:125
+msgid "Exporting the database"
+msgstr "Export de la base de données"
+
+#: client/format.js:126
+msgid "Listing the files"
+msgstr "Liste des fichiers"
+
+#: client/format.js:127
+msgid "Describing the backup"
+msgstr "Description de la sauvegarde"
+
+#: client/format.js:128
+msgid "Creating the archive"
+msgstr "Création de l’archive"
+
+#: client/format.js:132
+#: client/restore/restore.js:51
+msgid "Preparing"
+msgstr "Préparation"
+
+#: client/jobs/job-storages.js:51
+msgid "Storages saved."
+msgstr "Stockages enregistrés."
+
+#: client/jobs/job-storages.js:78
+msgid "Send the archive to"
+msgstr "Envoyer l’archive vers"
+
+#: client/jobs/job-storages.js:103
+#: client/storage/storage-screen.js:351
+msgid "Backups to keep in each storage"
+msgstr "Sauvegardes à garder dans chaque stockage"
+
+#: client/jobs/job-storages.js:117
+msgid "Save the storages"
+msgstr "Enregistrer les stockages"
+
+#: client/jobs/jobs-screen.js:112
+msgid "Name saved."
+msgstr "Nom enregistré."
+
+#: client/jobs/jobs-screen.js:128
+msgid "Encryption on."
+msgstr "Chiffrement activé."
+
+#: client/jobs/jobs-screen.js:129
+msgid "Encryption off."
+msgstr "Chiffrement désactivé."
+
+#: client/jobs/jobs-screen.js:152
+msgid "All additional backups"
+msgstr "Toutes les sauvegardes supplémentaires"
+
+#: client/jobs/jobs-screen.js:167
+#: client/jobs/jobs-screen.js:359
+#: client/jobs/jobs-screen.js:449
+#: client/storage/storage-form.js:282
+msgid "Name"
+msgstr "Nom"
+
+#: client/jobs/jobs-screen.js:173
+msgid "Encrypt the archives"
+msgstr "Chiffrer les archives"
+
+#: client/jobs/jobs-screen.js:174
+msgid "With the active key of the settings. Without the key, an encrypted archive is lost."
+msgstr "Avec la clé active des réglages. Sans la clé, une archive chiffrée est perdue."
+
+#: client/jobs/jobs-screen.js:188
+msgid "Save the name"
+msgstr "Enregistrer le nom"
+
+#: client/jobs/jobs-screen.js:195
+msgid "Delete this job"
+msgstr "Supprimer cette tâche"
+
+#: client/jobs/jobs-screen.js:206
+msgid "Delete this job?"
+msgstr "Supprimer cette tâche ?"
+
+#. translators: %s: job name.
+#: client/jobs/jobs-screen.js:212
+#, php-format,js-format
+msgid "“%s” will no longer run. Its backups stay in their storages and in the list."
+msgstr "« %s » ne se lancera plus. Ses sauvegardes restent dans leurs stockages et dans la liste."
+
+#: client/jobs/jobs-screen.js:225
+msgid "Delete the job"
+msgstr "Supprimer la tâche"
+
+#. translators: %s: job name.
+#: client/jobs/jobs-screen.js:312
+#, php-format,js-format
+msgid "Backup “%s” started."
+msgstr "Sauvegarde « %s » lancée."
+
+#: client/jobs/jobs-screen.js:333
+msgid "The main backup covers most sites. Add a job here for another rhythm or another storage, such as the database every hour. Jobs imported from BackWPup land here too."
+msgstr "La sauvegarde principale suffit à la plupart des sites. Ajoutez ici une tâche pour un autre rythme ou un autre stockage, comme la base de données toutes les heures. Les tâches importées de BackWPup arrivent ici aussi."
+
+#: client/jobs/jobs-screen.js:348
+msgid "No additional backup yet."
+msgstr "Aucune sauvegarde supplémentaire pour l’instant."
+
+#: client/jobs/jobs-screen.js:354
+#: client/sections.js:49
+msgid "Additional backups"
+msgstr "Sauvegardes supplémentaires"
+
+#: client/jobs/jobs-screen.js:371
+msgid "Last backup"
+msgstr "Dernière sauvegarde"
+
+#: client/jobs/jobs-screen.js:410
+msgid "Never"
+msgstr "Jamais"
+
+#. translators: %s: job name.
+#: client/jobs/jobs-screen.js:421
+#, php-format,js-format
+msgid "Back up now with “%s”"
+msgstr "Sauvegarder maintenant avec « %s »"
+
+#: client/jobs/jobs-screen.js:445
+msgid "Add a backup job"
+msgstr "Ajouter une tâche de sauvegarde"
+
+#: client/jobs/jobs-screen.js:450
+msgid "For instance: Database every hour."
+msgstr "Par exemple : Base toutes les heures."
+
+#: client/jobs/jobs-screen.js:464
+msgid "Create the job"
+msgstr "Créer la tâche"
+
+#: client/log/log-screen.js:19
+msgid "Information"
+msgstr "Information"
+
+#: client/log/log-screen.js:71
+msgid "No backup yet, so no log."
+msgstr "Aucune sauvegarde pour l’instant, donc aucun journal."
+
+#. translators: 1: date, 2: status.
+#: client/log/log-screen.js:82
+#, php-format,js-format
+msgid "Restore of %1$s (%2$s)"
+msgstr "Restauration du %1$s (%2$s)"
+
+#: client/log/log-screen.js:97
+#: client/restore/restore-screen.js:291
+msgid "Backup"
+msgstr "Sauvegarde"
+
+#: client/log/log-screen.js:112
+msgid "This log is empty."
+msgstr "Ce journal est vide."
+
+#: client/restore/archive-upload.js:85
+msgid "Archive uploaded."
+msgstr "Archive envoyée."
+
+#. translators: %s: error message.
+#: client/restore/archive-upload.js:90
+#, php-format,js-format
+msgid "The upload stopped: %s Resume it when the connection is back."
+msgstr "L’envoi s’est arrêté : %s Reprenez-le quand la connexion revient."
+
+#: client/restore/archive-upload.js:121
+msgid "Archive on your computer"
+msgstr "Archive sur votre ordinateur"
+
+#: client/restore/archive-upload.js:133
+msgid "zip, tar.gz or tar, encrypted (.enc) or not. Large files go in several parts: an interrupted upload resumes where it stopped."
+msgstr "zip, tar.gz ou tar, chiffrée (.enc) ou non. Un gros fichier part en plusieurs morceaux : un envoi interrompu reprend là où il s’est arrêté."
+
+#. translators: 1: bytes sent, 2: file size, 3: percentage.
+#: client/restore/archive-upload.js:155
+#, php-format,js-format
+msgid "Uploaded: %1$s of %2$s (%3$d %%)"
+msgstr "Envoyé : %1$s sur %2$s (%3$d %%)"
+
+#: client/restore/archive-upload.js:186
+msgid "Resume the upload"
+msgstr "Reprendre l’envoi"
+
+#. translators: %s: file size.
+#: client/restore/archive-upload.js:189
+#, php-format,js-format
+msgid "Upload (%s)"
+msgstr "Envoyer (%s)"
+
+#. translators: 1: file name, 2: file size.
+#: client/restore/archive-upload.js:200
+#, php-format,js-format
+msgid "%1$s uploaded, %2$s."
+msgstr "%1$s envoyé, %2$s."
+
+#: client/restore/archive-upload.js:205
+msgid "Choose another archive"
+msgstr "Choisir une autre archive"
+
+#: client/restore/restore-progress.js:77
+msgid "The restore failed."
+msgstr "La restauration a échoué."
+
+#: client/restore/restore-progress.js:112
+msgid "Your session ended with the restore of the database. The restore goes on without you."
+msgstr "Votre session a pris fin avec la restauration de la base de données. La restauration continue sans vous."
+
+#: client/restore/restore-progress.js:119
+msgid "Log in with an account of the restored site"
+msgstr "Se connecter avec un compte du site restauré"
+
+#: client/restore/restore-progress.js:140
+msgid "Restore finished. The site is out of maintenance mode."
+msgstr "Restauration terminée. Le site est sorti de maintenance."
+
+#: client/restore/restore-progress.js:146
+msgid "Restore stopped before any change to the site."
+msgstr "Restauration arrêtée avant toute modification du site."
+
+#: client/restore/restore-progress.js:153
+msgid "The restore failed while it was changing the site. The site may be half restored."
+msgstr "La restauration a échoué pendant la modification du site. Le site est peut-être à moitié restauré."
+
+#: client/restore/restore-progress.js:157
+msgid "The restore failed before any change to the site."
+msgstr "La restauration a échoué avant toute modification du site."
+
+#: client/restore/restore-progress.js:164
+msgid "Some points need your attention: read the log."
+msgstr "Certains points demandent votre attention : lisez le journal."
+
+#: client/restore/restore-progress.js:173
+msgid "Read the log of the restore"
+msgstr "Lire le journal de la restauration"
+
+#: client/restore/restore-progress.js:181
+msgid "Go back to the site as it was before"
+msgstr "Revenir au site tel qu’il était avant"
+
+#: client/restore/restore-progress.js:185
+msgid "Restore the backup made just before"
+msgstr "Restaurer la sauvegarde faite juste avant"
+
+#: client/restore/restore-progress.js:193
+msgid "Restore another backup"
+msgstr "Restaurer une autre sauvegarde"
+
+#. translators: %s: error message.
+#: client/restore/restore-progress.js:205
+#, php-format,js-format
+msgid "The progress cannot be read right now (%s). The page tries again."
+msgstr "La progression est illisible pour l’instant (%s). La page réessaie."
+
+#: client/restore/restore-progress.js:236
+msgid "The site is in maintenance mode. Visitors see a short message until the end. You can leave this page: the restore goes on."
+msgstr "Le site est en maintenance. Les visiteurs voient un court message jusqu’à la fin. Vous pouvez quitter cette page : la restauration continue."
+
+#: client/restore/restore-progress.js:240
+msgid "Nothing is changed yet. You can leave this page: the restore goes on."
+msgstr "Rien n’est encore modifié. Vous pouvez quitter cette page : la restauration continue."
+
+#: client/restore/restore-progress.js:269
+msgid "Stop the restore"
+msgstr "Arrêter la restauration"
+
+#: client/restore/restore-screen.js:68
+#: client/sections.js:19
+#: client/setup/setup-screen.js:48
+#: client/setup/setup-screen.js:300
+#: client/setup/setup-screen.js:411
+msgid "Storage"
+msgstr "Stockage"
+
+#: client/restore/restore-screen.js:84
+#: client/storage/storage-files.js:46
+msgid "Reading the storage…"
+msgstr "Lecture du stockage…"
+
+#: client/restore/restore-screen.js:89
+msgid "No archive in this storage."
+msgstr "Aucune archive dans ce stockage."
+
+#: client/restore/restore-screen.js:95
+msgid "Archive"
+msgstr "Archive"
+
+#: client/restore/restore-screen.js:100
+msgid "Choose an archive"
+msgstr "Choisissez une archive"
+
+#. translators: 1: file name, 2: size.
+#: client/restore/restore-screen.js:107
+#, php-format,js-format
+msgid "%1$s (%2$s)"
+msgstr "%1$s (%2$s)"
+
+#. translators: 1: backup date, 2: content, such as Full site, 3: size.
+#: client/restore/restore-screen.js:131
+#, php-format,js-format
+msgid "%1$s, %2$s, %3$s"
+msgstr "%1$s, %2$s, %3$s"
+
+#. translators: %s: archive name.
+#: client/restore/restore-screen.js:207
+#, php-format,js-format
+msgid "Restoring %s"
+msgstr "Restauration de %s"
+
+#: client/restore/restore-screen.js:252
+msgid "Restore started."
+msgstr "Restauration lancée."
+
+#: client/restore/restore-screen.js:262
+msgid "A backup from the list"
+msgstr "Une sauvegarde de la liste"
+
+#: client/restore/restore-screen.js:266
+msgid "An archive in a storage"
+msgstr "Une archive dans un stockage"
+
+#: client/restore/restore-screen.js:270
+msgid "An archive from your computer"
+msgstr "Une archive de votre ordinateur"
+
+#: client/restore/restore-screen.js:278
+msgid "1. Choose the backup"
+msgstr "1. Choisir la sauvegarde"
+
+#: client/restore/restore-screen.js:281
+msgid "Where is the backup?"
+msgstr "Où se trouve la sauvegarde ?"
+
+#: client/restore/restore-screen.js:301
+msgid "No backup with an available archive in the list."
+msgstr "Aucune sauvegarde de la liste n’a d’archive disponible."
+
+#: client/restore/restore-screen.js:323
+msgid "2. Choose what to restore"
+msgstr "2. Choisir quoi restaurer"
+
+#: client/restore/restore-screen.js:328
+msgid "Content, comments, users and settings. The settings of Oueb WP Backup and the address of the site stay as they are now."
+msgstr "Contenu, commentaires, utilisateurs et réglages. Les réglages d’Oueb WP Backup et l’adresse du site restent tels qu’ils sont."
+
+#: client/restore/restore-screen.js:337
+msgid "Files"
+msgstr "Fichiers"
+
+#: client/restore/restore-screen.js:338
+msgid "Media, themes, extensions and other files of the backup. Files added since then stay. wp-config.php and Oueb WP Backup are never replaced."
+msgstr "Médias, thèmes, extensions et autres fichiers de la sauvegarde. Les fichiers ajoutés depuis restent. wp-config.php et Oueb WP Backup ne sont jamais remplacés."
+
+#: client/restore/restore-screen.js:347
+msgid "Back up the current site first (recommended)"
+msgstr "Sauvegarder d’abord le site actuel (conseillé)"
+
+#: client/restore/restore-screen.js:351
+msgid "If the restore does not give the expected result, you can go back to the site as it is now. The backup stays on this server and appears in the list."
+msgstr "Si la restauration ne donne pas le résultat attendu, vous pourrez revenir au site tel qu’il est maintenant. La sauvegarde reste sur ce serveur et figure dans la liste."
+
+#: client/restore/restore-screen.js:370
+msgid "3. Restore"
+msgstr "3. Restaurer"
+
+#: client/restore/restore-screen.js:373
+msgid "The site goes into maintenance mode while it is changed: visitors see a short message. Your session stays open if your account exists in the backup."
+msgstr "Le site passe en maintenance pendant sa modification : les visiteurs voient un court message. Votre session reste ouverte si votre compte existe dans la sauvegarde."
+
+#: client/restore/restore-screen.js:387
+msgid "Restore…"
+msgstr "Restaurer…"
+
+#: client/restore/restore-screen.js:393
+msgid "Restore this backup?"
+msgstr "Restaurer cette sauvegarde ?"
+
+#: client/restore/restore-screen.js:400
+msgid "The database of the site is replaced."
+msgstr "La base de données du site est remplacée."
+
+#: client/restore/restore-screen.js:408
+msgid "The files of the backup replace those of the site."
+msgstr "Les fichiers de la sauvegarde remplacent ceux du site."
+
+#: client/restore/restore-screen.js:416
+msgid "The current site is backed up first."
+msgstr "Le site actuel est d’abord sauvegardé."
+
+#: client/restore/restore-screen.js:420
+msgid "The current site is not backed up first: changes since the backup are lost."
+msgstr "Le site actuel n’est pas sauvegardé avant : les modifications faites depuis la sauvegarde sont perdues."
+
+#. translators: %s: backup date.
+#: client/restore/restore-screen.js:432
+#, php-format,js-format
+msgid "I understand that the changes made after %s will be replaced."
+msgstr "Je comprends que les modifications faites après le %s seront remplacées."
+
+#: client/restore/restore-screen.js:438
+msgid "I understand that the changes made since this backup will be replaced."
+msgstr "Je comprends que les modifications faites depuis cette sauvegarde seront remplacées."
+
+#: client/restore/restore-screen.js:459
+msgid "Restore now"
+msgstr "Restaurer maintenant"
+
+#: client/restore/restore.js:39
+msgid "Backing up the current site"
+msgstr "Sauvegarde du site actuel"
+
+#: client/schedule/cron.js:128
+msgid "Monday"
+msgstr "lundi"
+
+#: client/schedule/cron.js:129
+msgid "Tuesday"
+msgstr "mardi"
+
+#: client/schedule/cron.js:130
+msgid "Wednesday"
+msgstr "mercredi"
+
+#: client/schedule/cron.js:131
+msgid "Thursday"
+msgstr "jeudi"
+
+#: client/schedule/cron.js:132
+msgid "Friday"
+msgstr "vendredi"
+
+#: client/schedule/cron.js:133
+msgid "Saturday"
+msgstr "samedi"
+
+#: client/schedule/cron.js:134
+msgid "Sunday"
+msgstr "dimanche"
+
+#: client/schedule/cron.js:146
+msgid "Only when you click “Back up now”."
+msgstr "Seulement quand vous cliquez sur « Sauvegarder maintenant »."
+
+#. translators: %s: time, such as 03:00.
+#: client/schedule/cron.js:153
+#, php-format,js-format
+msgid "Every day at %s."
+msgstr "Tous les jours à %s."
+
+#. translators: %s: time, such as 03:00.
+#: client/schedule/cron.js:159
+#, php-format,js-format
+msgid "Twice a day, at %s and 12 hours later."
+msgstr "Deux fois par jour, à %s et 12 heures plus tard."
+
+#. translators: 1: day of the week, 2: time.
+#: client/schedule/cron.js:168
+#, php-format,js-format
+msgid "Every %1$s at %2$s."
+msgstr "Chaque %1$s à %2$s."
+
+#. translators: 1: day of the month, 2: time.
+#: client/schedule/cron.js:175
+#, php-format,js-format
+msgid "Every month, on day %1$s at %2$s."
+msgstr "Chaque mois, le %1$s à %2$s."
+
+#. translators: %s: cron expression.
+#: client/schedule/cron.js:182
+#, php-format,js-format
+msgid "Custom schedule: %s."
+msgstr "Planification personnalisée : %s."
+
+#: client/schedule/schedule-screen.js:98
+msgid "Schedule saved, but cron-job.org was not updated:"
+msgstr "Planification enregistrée, mais cron-job.org n’a pas été mis à jour :"
+
+#: client/schedule/schedule-screen.js:104
+msgid "Schedule saved."
+msgstr "Planification enregistrée."
+
+#: client/schedule/schedule-screen.js:121
+msgid "Link copied."
+msgstr "Lien copié."
+
+#: client/schedule/schedule-screen.js:141
+#: client/setup/setup-screen.js:49
+#: client/setup/setup-screen.js:413
+msgid "Frequency"
+msgstr "Fréquence"
+
+#: client/schedule/schedule-screen.js:144
+#: client/setup/setup-screen.js:365
+msgid "Back up the site"
+msgstr "Sauvegarder le site"
+
+#: client/schedule/schedule-screen.js:150
+msgid "Only when I click “Back up now”"
+msgstr "Seulement quand je clique sur « Sauvegarder maintenant »"
+
+#: client/schedule/schedule-screen.js:157
+#: client/setup/setup-screen.js:63
+msgid "Twice a day: a shop or a site with many orders or comments"
+msgstr "Deux fois par jour : une boutique ou un site avec beaucoup de commandes ou de commentaires"
+
+#: client/schedule/schedule-screen.js:164
+#: client/setup/setup-screen.js:70
+msgid "Every day: a site updated every day"
+msgstr "Tous les jours : un site mis à jour chaque jour"
+
+#: client/schedule/schedule-screen.js:171
+#: client/setup/setup-screen.js:77
+msgid "Every week: a site updated now and then"
+msgstr "Toutes les semaines : un site mis à jour de temps en temps"
+
+#: client/schedule/schedule-screen.js:178
+#: client/setup/setup-screen.js:84
+msgid "Every month: a showcase site that rarely changes"
+msgstr "Tous les mois : un site vitrine qui change rarement"
+
+#: client/schedule/schedule-screen.js:185
+msgid "Custom schedule, as a cron expression"
+msgstr "Planification personnalisée, en expression cron"
+
+#: client/schedule/schedule-screen.js:209
+msgid "Day"
+msgstr "Jour"
+
+#: client/schedule/schedule-screen.js:219
+msgid "Day of the month"
+msgstr "Jour du mois"
+
+#: client/schedule/schedule-screen.js:240
+msgid "First backup at"
+msgstr "Première sauvegarde à"
+
+#: client/schedule/schedule-screen.js:241
+#: client/setup/setup-screen.js:375
+msgid "Time"
+msgstr "Heure"
+
+#: client/schedule/schedule-screen.js:243
+msgid "Time of the site. Choose a quiet hour, such as at night."
+msgstr "Heure du site. Choisissez une heure calme, la nuit par exemple."
+
+#: client/schedule/schedule-screen.js:257
+msgid "Cron expression"
+msgstr "Expression cron"
+
+#. translators: 1: size of one backup, 2: number of backups kept, 3: total size, 4: number of storages.
+#: client/schedule/schedule-screen.js:283
+#, php-format,js-format
+msgid "The last backup weighs %1$s. With %2$d backups kept, plan about %3$s in each of the %4$d storages."
+msgstr "La dernière sauvegarde pèse %1$s. Avec %2$d sauvegardes gardées, prévoyez environ %3$s dans chacun des %4$d stockages."
+
+#: client/schedule/schedule-screen.js:299
+#: client/schedule/schedule-screen.js:302
+msgid "Who starts the backup"
+msgstr "Qui lance la sauvegarde"
+
+#: client/schedule/schedule-screen.js:311
+msgid "WordPress, with its scheduler (WP-Cron)"
+msgstr "WordPress, avec son planificateur (WP-Cron)"
+
+#: client/schedule/schedule-screen.js:318
+msgid "cron-job.org, a free service hosted in Germany"
+msgstr "cron-job.org, un service gratuit hébergé en Allemagne"
+
+#: client/schedule/schedule-screen.js:325
+msgid "My own service, with the trigger link"
+msgstr "Mon propre service, avec le lien de déclenchement"
+
+#: client/schedule/schedule-screen.js:335
+msgid "Nothing to set up. WP-Cron only runs when the site gets visits: on a quiet site, the backup can start late."
+msgstr "Rien à régler. WP-Cron ne tourne que quand le site reçoit des visites : sur un site calme, la sauvegarde peut partir en retard."
+
+#: client/schedule/schedule-screen.js:343
+msgid "cron-job.org calls the site at the planned time, even without visits. The site creates and updates the job on cron-job.org with your API key."
+msgstr "cron-job.org appelle le site à l’heure prévue, même sans visites. Le site crée et met à jour la tâche sur cron-job.org avec votre clé d’API."
+
+#: client/schedule/schedule-screen.js:351
+msgid "Enter your cron-job.org API key in the settings first."
+msgstr "Saisissez d’abord votre clé d’API cron-job.org dans les réglages."
+
+#: client/schedule/schedule-screen.js:356
+msgid "Open the settings"
+msgstr "Ouvrir les réglages"
+
+#: client/schedule/schedule-screen.js:365
+msgid "Trigger link"
+msgstr "Lien de déclenchement"
+
+#: client/schedule/schedule-screen.js:366
+msgid "Call this link at the planned time, with GET or POST. It contains a key: keep it secret. Changing the key in the settings changes the link."
+msgstr "Appelez ce lien à l’heure prévue, en GET ou en POST. Il contient une clé : gardez-le secret. Changer la clé dans les réglages change le lien."
+
+#: client/schedule/schedule-screen.js:377
+msgid "Copied"
+msgstr "Copié"
+
+#: client/schedule/schedule-screen.js:378
+msgid "Copy the link"
+msgstr "Copier le lien"
+
+#: client/schedule/schedule-screen.js:392
+msgid "Save the schedule"
+msgstr "Enregistrer la planification"
+
+#: client/sections.js:17
+msgid "Dashboard"
+msgstr "Tableau de bord"
+
+#: client/sections.js:20
+msgid "Schedule"
+msgstr "Planification"
+
+#: client/sections.js:26
+msgid "Settings"
+msgstr "Réglages"
+
+#: client/sections.js:44
+msgid "Setup"
+msgstr "Configuration"
+
+#. translators: %d: number of imported jobs.
+#: client/settings/advanced-card.js:46
+#, php-format,js-format
+msgid "%d job imported. Check it in the additional backups."
+msgid_plural "%d jobs imported. Check them in the additional backups."
+msgstr[0] "%d tâche importée. Vérifiez-la dans les sauvegardes supplémentaires."
+msgstr[1] "%d tâches importées. Vérifiez-les dans les sauvegardes supplémentaires."
+
+#: client/settings/advanced-card.js:66
+msgid "Advanced mode"
+msgstr "Mode avancé"
+
+#: client/settings/advanced-card.js:69
+msgid "Add backup jobs beside the main backup, with their own content, storages and schedule."
+msgstr "Ajoutez des tâches de sauvegarde à côté de la sauvegarde principale, avec leurs propres contenu, stockages et planification."
+
+#: client/settings/advanced-card.js:76
+msgid "Manage the additional backups"
+msgstr "Gérer les sauvegardes supplémentaires"
+
+#: client/settings/advanced-card.js:90
+msgid "BackWPup"
+msgstr "BackWPup"
+
+#. translators: %s: date of the import.
+#: client/settings/advanced-card.js:96
+#, php-format,js-format
+msgid "Jobs imported on %s. Importing again creates them a second time."
+msgstr "Tâches importées le %s. Un nouvel import les crée une deuxième fois."
+
+#. translators: %d: number of BackWPup jobs.
+#: client/settings/advanced-card.js:104
+#, php-format,js-format
+msgid "%d BackWPup job can be imported. Your BackWPup data will be neither changed nor deleted."
+msgid_plural "%d BackWPup jobs can be imported. Your BackWPup data will be neither changed nor deleted."
+msgstr[0] "%d tâche BackWPup peut être importée. Vos données BackWPup ne seront ni modifiées ni supprimées."
+msgstr[1] "%d tâches BackWPup peuvent être importées. Vos données BackWPup ne seront ni modifiées ni supprimées."
+
+#: client/settings/advanced-card.js:120
+msgid "Import again"
+msgstr "Importer de nouveau"
+
+#: client/settings/advanced-card.js:121
+msgid "Import the BackWPup jobs"
+msgstr "Importer les tâches BackWPup"
+
+#: client/settings/encryption-card.js:33
+msgid "Encryption key"
+msgstr "Clé de chiffrement"
+
+#: client/settings/encryption-card.js:99
+msgid "New key created. Save it now outside the site."
+msgstr "Nouvelle clé créée. Enregistrez-la maintenant hors du site."
+
+#: client/settings/encryption-card.js:122
+msgid "The next backups will be encrypted."
+msgstr "Les prochaines sauvegardes seront chiffrées."
+
+#: client/settings/encryption-card.js:126
+msgid "The next backups will not be encrypted."
+msgstr "Les prochaines sauvegardes ne seront pas chiffrées."
+
+#. translators: %s: key identifier.
+#: client/settings/encryption-card.js:155
+#, php-format,js-format
+msgid "Key %s added. It now encrypts the new backups."
+msgstr "Clé %s ajoutée. Elle chiffre désormais les nouvelles sauvegardes."
+
+#: client/settings/encryption-card.js:174
+msgid "Encryption"
+msgstr "Chiffrement"
+
+#: client/settings/encryption-card.js:186
+msgid "Encrypt the archives of the main backup"
+msgstr "Chiffrer les archives de la sauvegarde principale"
+
+#: client/settings/encryption-card.js:190
+msgid "Archives are encrypted on this server before leaving it: the storage providers cannot read them. Without the key, nobody can restore them, not even the agency."
+msgstr "Les archives sont chiffrées sur ce serveur avant de le quitter : les fournisseurs de stockage ne peuvent pas les lire. Sans la clé, personne ne peut les restaurer, pas même l’agence."
+
+#. translators: %s: key identifier.
+#: client/settings/encryption-card.js:209
+#, php-format,js-format
+msgid "Key %s"
+msgstr "Clé %s"
+
+#: client/settings/encryption-card.js:215
+msgid "Keep this key outside the site, for example in a password manager. If the site is lost, the key is the only way to decrypt the backups."
+msgstr "Gardez cette clé hors du site, par exemple dans un gestionnaire de mots de passe. Si le site est perdu, seule la clé permet de déchiffrer les sauvegardes."
+
+#: client/settings/encryption-card.js:226
+msgid "Download the key"
+msgstr "Télécharger la clé"
+
+#: client/settings/encryption-card.js:235
+msgid "Key copied."
+msgstr "Clé copiée."
+
+#: client/settings/encryption-card.js:243
+msgid "Copy the key"
+msgstr "Copier la clé"
+
+#: client/settings/encryption-card.js:249
+msgid "Hide the key"
+msgstr "Masquer la clé"
+
+#: client/settings/encryption-card.js:259
+msgid "Encryption keys"
+msgstr "Clés de chiffrement"
+
+#: client/settings/encryption-card.js:264
+msgid "Key"
+msgstr "Clé"
+
+#: client/settings/encryption-card.js:267
+msgid "Created"
+msgstr "Création"
+
+#: client/settings/encryption-card.js:270
+msgid "Use"
+msgstr "Usage"
+
+#: client/settings/encryption-card.js:294
+msgid "New backups"
+msgstr "Nouvelles sauvegardes"
+
+#: client/settings/encryption-card.js:298
+msgid "Older backups only"
+msgstr "Anciennes sauvegardes seulement"
+
+#. translators: %s: key identifier.
+#: client/settings/encryption-card.js:309
+#, php-format,js-format
+msgid "Show the key %s"
+msgstr "Afficher la clé %s"
+
+#: client/settings/encryption-card.js:316
+msgid "Show"
+msgstr "Afficher"
+
+#: client/settings/encryption-card.js:332
+msgid "Create a new key"
+msgstr "Créer une nouvelle clé"
+
+#: client/settings/encryption-card.js:339
+msgid "Add an existing key"
+msgstr "Ajouter une clé existante"
+
+#: client/settings/encryption-card.js:344
+msgid "A new key encrypts the next backups. The older keys stay here to decrypt the older backups."
+msgstr "Une nouvelle clé chiffre les prochaines sauvegardes. Les anciennes clés restent ici pour déchiffrer les anciennes sauvegardes."
+
+#: client/settings/encryption-card.js:355
+msgid "Key to add"
+msgstr "Clé à ajouter"
+
+#: client/settings/encryption-card.js:356
+msgid "Paste a key saved from this site or from another one, for example to decrypt its backups here."
+msgstr "Collez une clé enregistrée depuis ce site ou un autre, par exemple pour déchiffrer ici ses sauvegardes."
+
+#: client/settings/encryption-card.js:370
+msgid "Add the key"
+msgstr "Ajouter la clé"
+
+#: client/settings/settings-screen.js:59
+msgid "Loading settings…"
+msgstr "Chargement des réglages…"
+
+#: client/settings/settings-screen.js:73
+msgid "Settings saved."
+msgstr "Réglages enregistrés."
+
+#: client/settings/settings-screen.js:89
+msgid "Some settings are not valid. Check the highlighted fields."
+msgstr "Certains réglages ne sont pas valides. Vérifiez les champs signalés."
+
+#: client/settings/settings-screen.js:127
+msgid "Backup jobs"
+msgstr "Tâches de sauvegarde"
+
+#: client/settings/settings-screen.js:131
+msgid "Maximum step duration, in seconds"
+msgstr "Durée maximale d’une étape, en secondes"
+
+#: client/settings/settings-screen.js:135
+msgid "The job restarts before this limit. Keep it below the PHP time limit of your host."
+msgstr "La tâche se relance avant cette limite. Gardez-la sous la limite de temps PHP de votre hébergeur."
+
+#: client/settings/settings-screen.js:142
+msgid "Attempts per step"
+msgstr "Essais par étape"
+
+#: client/settings/settings-screen.js:143
+msgid "A step that fails is tried again up to this number of times."
+msgstr "Une étape qui échoue est retentée jusqu’à ce nombre de fois."
+
+#: client/settings/settings-screen.js:150
+msgid "Logs to keep"
+msgstr "Journaux à garder"
+
+#: client/settings/settings-screen.js:151
+msgid "The oldest logs are deleted beyond this number."
+msgstr "Au-delà de ce nombre, les journaux les plus anciens sont supprimés."
+
+#: client/settings/settings-screen.js:160
+msgid "Starting backups from outside"
+msgstr "Lancer les sauvegardes depuis l’extérieur"
+
+#: client/settings/settings-screen.js:167
+msgid "Trigger link key"
+msgstr "Clé du lien de déclenchement"
+
+#: client/settings/settings-screen.js:170
+msgid "Anyone who knows this key can start a backup. If you change it, update the services that call the trigger link."
+msgstr "Toute personne qui connaît cette clé peut lancer une sauvegarde. Si vous la changez, mettez à jour les services qui appellent le lien de déclenchement."
+
+#: client/settings/settings-screen.js:186
+msgid "Generate a new key"
+msgstr "Générer une nouvelle clé"
+
+#: client/settings/settings-screen.js:196
+msgid "A key is saved. Leave empty to keep it."
+msgstr "Une clé est enregistrée. Laissez vide pour la garder."
+
+#: client/settings/settings-screen.js:200
+msgid "Create a free account on cron-job.org, then generate a key in Settings, API."
+msgstr "Créez un compte gratuit sur cron-job.org, puis générez une clé dans Settings, API."
+
+#: client/settings/settings-screen.js:215
+msgid "Delete the saved cron-job.org key"
+msgstr "Supprimer la clé cron-job.org enregistrée"
+
+#: client/settings/settings-screen.js:225
+msgid "Display"
+msgstr "Affichage"
+
+#: client/settings/settings-screen.js:229
+msgid "Show the agency card on the dashboard"
+msgstr "Afficher l’encart de l’agence sur le tableau de bord"
+
+#: client/settings/settings-screen.js:245
+msgid "Save settings"
+msgstr "Enregistrer les réglages"
+
+#. translators: 1: minimum value, 2: maximum value.
+#: client/settings/validation.js:39
+#, php-format,js-format
+msgid "Enter a whole number between %1$d and %2$d."
+msgstr "Saisissez un nombre entier entre %1$d et %2$d."
+
+#. translators: %d: minimum number of characters.
+#: client/settings/validation.js:56
+#, php-format,js-format
+msgid "Use at least %d letters and digits, without spaces or symbols."
+msgstr "Utilisez au moins %d lettres et chiffres, sans espaces ni symboles."
+
+#: client/setup/setup-screen.js:50
+msgid "Check"
+msgstr "Vérification"
+
+#: client/setup/setup-screen.js:220
+msgid "Steps of the setup"
+msgstr "Étapes de la configuration"
+
+#: client/setup/setup-screen.js:232
+msgid "Done:"
+msgstr "Terminée :"
+
+#: client/setup/setup-screen.js:234
+msgid "Current step:"
+msgstr "Étape en cours :"
+
+#: client/setup/setup-screen.js:251
+msgid "What should be backed up?"
+msgstr "Que faut-il sauvegarder ?"
+
+#: client/setup/setup-screen.js:252
+msgid "Where should the backups go?"
+msgstr "Où envoyer les sauvegardes ?"
+
+#: client/setup/setup-screen.js:256
+msgid "How often?"
+msgstr "À quelle fréquence ?"
+
+#: client/setup/setup-screen.js:257
+msgid "Check and start"
+msgstr "Vérifier et lancer"
+
+#: client/setup/setup-screen.js:279
+msgid "The database and the content folders are enough for most sites."
+msgstr "La base de données et les dossiers de contenu suffisent à la plupart des sites."
+
+#: client/setup/setup-screen.js:291
+#: client/setup/setup-screen.js:331
+#: client/setup/setup-screen.js:392
+msgid "Next"
+msgstr "Suivant"
+
+#: client/setup/setup-screen.js:312
+msgid "A backup kept only on this server is lost with the server. Add a storage elsewhere."
+msgstr "Une sauvegarde gardée seulement sur ce serveur disparaît avec lui. Ajoutez un stockage ailleurs."
+
+#: client/setup/setup-screen.js:323
+#: client/storage/storage-form.js:258
+#: client/storage/storage-screen.js:325
+msgid "Add a storage"
+msgstr "Ajouter un stockage"
+
+#: client/setup/setup-screen.js:337
+#: client/setup/setup-screen.js:398
+msgid "Back"
+msgstr "Retour"
+
+#: client/setup/setup-screen.js:376
+msgid "Choose a quiet hour, at night for most sites."
+msgstr "Choisissez une heure calme, la nuit pour la plupart des sites."
+
+#. translators: %s: storage name.
+#: client/setup/setup-screen.js:419
+#, php-format,js-format
+msgid "Test the connection to %s, then start a first backup: it shows that everything works."
+msgstr "Testez la connexion à %s, puis lancez une première sauvegarde : elle montre que tout fonctionne."
+
+#: client/setup/setup-screen.js:433
+msgid "Test the storage"
+msgstr "Tester le stockage"
+
+#: client/setup/setup-screen.js:440
+msgid "Start the first backup"
+msgstr "Lancer la première sauvegarde"
+
+#: client/setup/setup-screen.js:450
+msgid "Finish without a backup"
+msgstr "Terminer sans sauvegarde"
+
+#: client/storage/fields.js:20
+msgid "Provider"
+msgstr "Fournisseur"
+
+#: client/storage/fields.js:22
+msgid "Region"
+msgstr "Région"
+
+#: client/storage/fields.js:23
+msgid "For another service, the region given by your provider, such as eu-west-1."
+msgstr "Pour un autre service, la région indiquée par votre fournisseur, comme eu-west-1."
+
+#: client/storage/fields.js:29
+msgid "Address of the S3 service"
+msgstr "Adresse du service S3"
+
+#: client/storage/fields.js:30
+msgid "HTTPS address given by your provider, such as https://s3.example.com."
+msgstr "Adresse HTTPS indiquée par votre fournisseur, comme https://s3.example.com."
+
+#: client/storage/fields.js:36
+msgid "Put the bucket name in the path"
+msgstr "Mettre le nom du bucket dans le chemin"
+
+#: client/storage/fields.js:37
+msgid "Turn on if your provider does not accept the bucket name in the address."
+msgstr "À activer si votre fournisseur n’accepte pas le nom du bucket dans l’adresse."
+
+#: client/storage/fields.js:43
+msgid "Bucket"
+msgstr "Bucket"
+
+#: client/storage/fields.js:44
+msgid "Create the bucket at your provider first. Lowercase letters, digits, dots and hyphens."
+msgstr "Créez d’abord le bucket chez votre fournisseur. Lettres minuscules, chiffres, points et traits d’union."
+
+#: client/storage/fields.js:50
+msgid "Folder in the bucket"
+msgstr "Dossier dans le bucket"
+
+#: client/storage/fields.js:51
+msgid "Optional. Useful when several sites share a bucket."
+msgstr "Facultatif. Utile quand plusieurs sites partagent un bucket."
+
+#: client/storage/fields.js:56
+msgid "Access key"
+msgstr "Clé d’accès"
+
+#: client/storage/fields.js:57
+msgid "Secret key"
+msgstr "Clé secrète"
+
+#: client/storage/fields.js:61
+msgid "Server"
+msgstr "Serveur"
+
+#: client/storage/fields.js:62
+msgid "Name or IP address of the server."
+msgstr "Nom ou adresse IP du serveur."
+
+#: client/storage/fields.js:64
+msgid "Port"
+msgstr "Port"
+
+#: client/storage/fields.js:65
+msgid "Username"
+msgstr "Identifiant"
+
+#: client/storage/fields.js:66
+msgid "Sign in with"
+msgstr "Se connecter avec"
+
+#: client/storage/fields.js:67
+#: client/storage/storage-form.js:199
+msgid "Password"
+msgstr "Mot de passe"
+
+#: client/storage/fields.js:69
+#: client/storage/storage-form.js:203
+msgid "Private key"
+msgstr "Clé privée"
+
+#: client/storage/fields.js:70
+msgid "Paste the whole key, from the BEGIN line to the END line. Create a key used only for backups."
+msgstr "Collez la clé entière, de la ligne BEGIN à la ligne END. Créez une clé réservée aux sauvegardes."
+
+#: client/storage/fields.js:76
+msgid "Key passphrase"
+msgstr "Phrase secrète de la clé"
+
+#: client/storage/fields.js:77
+msgid "Leave empty if the key has none."
+msgstr "Laissez vide si la clé n’en a pas."
+
+#: client/storage/fields.js:80
+msgid "Folder on the server"
+msgstr "Dossier sur le serveur"
+
+#: client/storage/fields.js:81
+msgid "Created if missing. Leave empty for the home folder."
+msgstr "Créé s’il n’existe pas. Laissez vide pour le dossier personnel."
+
+#: client/storage/fields.js:89
+msgid "kDrive ID"
+msgstr "Identifiant kDrive"
+
+#: client/storage/fields.js:90
+msgid "The number in the address of your kDrive: ksuite.infomaniak.com/kdrive/app/drive/NUMBER."
+msgstr "Le nombre dans l’adresse de votre kDrive : ksuite.infomaniak.com/kdrive/app/drive/NOMBRE."
+
+#: client/storage/fields.js:95
+msgid "Infomaniak email address"
+msgstr "Adresse email Infomaniak"
+
+#: client/storage/fields.js:97
+msgid "Application password"
+msgstr "Mot de passe d’application"
+
+#: client/storage/fields.js:98
+msgid "Create an application password in your Infomaniak account, under Security. Never use your main password: an application password can be revoked without touching your account."
+msgstr "Créez un mot de passe d’application dans votre compte Infomaniak, rubrique Sécurité. N’utilisez jamais votre mot de passe principal : un mot de passe d’application se révoque sans toucher à votre compte."
+
+#: client/storage/fields.js:104
+msgid "Folder in kDrive"
+msgstr "Dossier dans kDrive"
+
+#: client/storage/fields.js:105
+msgid "Created if missing."
+msgstr "Créé s’il n’existe pas."
+
+#: client/storage/fields.js:110
+msgid "Folder path"
+msgstr "Chemin du dossier"
+
+#: client/storage/fields.js:111
+msgid "Absolute path, preferably outside the website. A copy on the same server does not protect against a disk failure or a hack."
+msgstr "Chemin absolu, de préférence hors du site web. Une copie sur le même serveur ne protège ni d’une panne de disque ni d’un piratage."
+
+#: client/storage/fields.js:188
+msgid "Give the storage a name."
+msgstr "Donnez un nom au stockage."
+
+#: client/storage/fields.js:198
+msgid "This field is required."
+msgstr "Ce champ est obligatoire."
+
+#: client/storage/fields.js:221
+msgid "Choose a region."
+msgstr "Choisissez une région."
+
+#: client/storage/fields.js:226
+msgid "Enter a port between 1 and 65535."
+msgstr "Saisissez un port entre 1 et 65535."
+
+#: client/storage/fields.js:254
+msgid "The kDrive ID contains digits only."
+msgstr "L’identifiant kDrive ne contient que des chiffres."
+
+#: client/storage/provider-criteria.js:19
+msgid "Location"
+msgstr "Localisation"
+
+#: client/storage/provider-criteria.js:20
+msgid "Parent company"
+msgstr "Maison mère"
+
+#: client/storage/provider-criteria.js:22
+msgid "PUE (energy efficiency)"
+msgstr "PUE (efficacité énergétique)"
+
+#: client/storage/provider-criteria.js:23
+msgid "Cooling and heat reuse"
+msgstr "Refroidissement et réutilisation de la chaleur"
+
+#: client/storage/provider-criteria.js:24
+msgid "Environmental labels"
+msgstr "Labels environnementaux"
+
+#: client/storage/provider-criteria.js:25
+msgid "Security certifications"
+msgstr "Certifications de sécurité"
+
+#. translators: %s: provider name.
+#: client/storage/provider-criteria.js:44
+#, php-format,js-format
+msgid "Why %s?"
+msgstr "Pourquoi %s ?"
+
+#: client/storage/provider-criteria.js:49
+msgid "Each provider has its headquarters and data centers in the European Union or Switzerland, has no parent company outside Europe, and proves that its electricity is renewable. The other information is given for reference, with its source."
+msgstr "Chaque fournisseur a son siège et ses centres de données dans l’Union européenne ou en Suisse, n’a pas de maison mère hors d’Europe et prouve que son électricité est renouvelable. Les autres informations sont données à titre indicatif, avec leur source."
+
+#. translators: %s: date of the last check.
+#: client/storage/provider-criteria.js:55
+#, php-format,js-format
+msgid "Last checked on %s."
+msgstr "Dernière vérification le %s."
+
+#: client/storage/provider-criteria.js:66
+msgid "Not published."
+msgstr "Non publié."
+
+#: client/storage/provider-criteria.js:75
+msgid "Source"
+msgstr "Source"
+
+#. translators: %s: criterion name.
+#: client/storage/provider-criteria.js:79
+#, php-format,js-format
+msgid "for: %s (opens in a new tab)"
+msgstr "pour : %s (nouvel onglet)"
+
+#: client/storage/storage-files.js:53
+msgid "No backup in this storage."
+msgstr "Aucune sauvegarde dans ce stockage."
+
+#: client/storage/storage-files.js:62
+msgid "Backups in this storage"
+msgstr "Sauvegardes dans ce stockage"
+
+#: client/storage/storage-files.js:66
+msgid "File"
+msgstr "Fichier"
+
+#: client/storage/storage-files.js:78
+msgid "Other site"
+msgstr "Autre site"
+
+#: client/storage/storage-form.js:95
+msgid "Some fields are not valid. Check the highlighted fields."
+msgstr "Certains champs ne sont pas valides. Vérifiez les champs signalés."
+
+#: client/storage/storage-form.js:119
+msgid "Storage saved, but the connection test failed:"
+msgstr "Stockage enregistré, mais le test de connexion a échoué :"
+
+#: client/storage/storage-form.js:161
+msgid "Other S3-compatible service"
+msgstr "Autre service compatible S3"
+
+#: client/storage/storage-form.js:180
+msgid "Choose a region"
+msgstr "Choisissez une région"
+
+#: client/storage/storage-form.js:224
+msgid "Saved. Leave empty to keep it."
+msgstr "Enregistré. Laissez vide pour le garder."
+
+#: client/storage/storage-form.js:257
+msgid "Edit the storage"
+msgstr "Modifier le stockage"
+
+#: client/storage/storage-form.js:270
+msgid "Type of storage"
+msgstr "Type de stockage"
+
+#: client/storage/storage-form.js:285
+msgid "Shown in the lists, such as “Scaleway Paris”."
+msgstr "Affiché dans les listes, comme « Scaleway Paris »."
+
+#: client/storage/storage-form.js:307
+msgid "Saved server key:"
+msgstr "Clé du serveur enregistrée :"
+
+#: client/storage/storage-form.js:311
+msgid "The connection is refused if the server presents another key. If the server was reinstalled, forget the saved key: the next connection will save the new one."
+msgstr "La connexion est refusée si le serveur présente une autre clé. Si le serveur a été réinstallé, oubliez la clé enregistrée : la prochaine connexion enregistrera la nouvelle."
+
+#: client/storage/storage-form.js:328
+msgid "Server key forgotten."
+msgstr "Clé du serveur oubliée."
+
+#: client/storage/storage-form.js:343
+msgid "Forget the server key"
+msgstr "Oublier la clé du serveur"
+
+#: client/storage/storage-form.js:354
+msgid "Save and test"
+msgstr "Enregistrer et tester"
+
+#. translators: %s: storage name.
+#: client/storage/storage-screen.js:107
+#, php-format,js-format
+msgid "The main backup will also be sent to %s."
+msgstr "La sauvegarde principale sera aussi envoyée vers %s."
+
+#. translators: %s: storage name.
+#: client/storage/storage-screen.js:115
+#, php-format,js-format
+msgid "The main backup will no longer be sent to %s."
+msgstr "La sauvegarde principale ne sera plus envoyée vers %s."
+
+#. translators: %s: storage name.
+#: client/storage/storage-screen.js:152
+#, php-format,js-format
+msgid "Storage %s deleted. Its backups were not deleted."
+msgstr "Stockage %s supprimé. Ses sauvegardes n’ont pas été supprimées."
+
+#: client/storage/storage-screen.js:197
+msgid "The main backup stays on this server only. A disk failure or a hack would take the site and its backups at once. Add a storage outside this server."
+msgstr "La sauvegarde principale reste seulement sur ce serveur. Une panne de disque ou un piratage emporterait le site et ses sauvegardes d’un coup. Ajoutez un stockage hors de ce serveur."
+
+#: client/storage/storage-screen.js:209
+msgid "Storages"
+msgstr "Stockages"
+
+#: client/storage/storage-screen.js:225
+msgid "complementary copy only"
+msgstr "copie complémentaire seulement"
+
+#: client/storage/storage-screen.js:236
+msgid "Send the main backup here"
+msgstr "Envoyer ici la sauvegarde principale"
+
+#: client/storage/storage-screen.js:242
+msgid "The backup needs at least one storage."
+msgstr "La sauvegarde a besoin d’au moins un stockage."
+
+#: client/storage/storage-screen.js:261
+msgid "Test"
+msgstr "Tester"
+
+#: client/storage/storage-screen.js:276
+msgid "Hide the backups"
+msgstr "Masquer les sauvegardes"
+
+#: client/storage/storage-screen.js:280
+msgid "Show the backups"
+msgstr "Afficher les sauvegardes"
+
+#: client/storage/storage-screen.js:294
+msgid "Edit"
+msgstr "Modifier"
+
+#: client/storage/storage-screen.js:335
+msgid "Number of backups to keep saved."
+msgstr "Nombre de sauvegardes à garder enregistré."
+
+#: client/storage/storage-screen.js:343
+msgid "Rotation"
+msgstr "Rotation"
+
+#: client/storage/storage-screen.js:355
+msgid "After each backup, the oldest backups of this site beyond this number are deleted. Backups of other sites are never touched."
+msgstr "Après chaque sauvegarde, les plus anciennes sauvegardes de ce site au-delà de ce nombre sont supprimées. Les sauvegardes des autres sites restent intactes."
+
+#: client/storage/storage-screen.js:369
+msgid "Save"
+msgstr "Enregistrer"
+
+#. translators: %s: storage name.
+#: client/storage/storage-screen.js:378
+#, php-format,js-format
+msgid "Delete the storage %s?"
+msgstr "Supprimer le stockage %s ?"
+
+#: client/storage/storage-screen.js:384
+msgid "The backups it contains stay in place. You can add the storage again later to find them."
+msgstr "Les sauvegardes qu’il contient restent en place. Vous pourrez ajouter de nouveau le stockage pour les retrouver."
+
+#: client/storage/storage-screen.js:395
+msgid "Delete the storage"
+msgstr "Supprimer le stockage"
+
+#. Plugin URI of the plugin
+#: oueb-wp-backup.php
+msgid "https://github.com/lagenceoueb/forkbwpup"
+msgstr "https://github.com/lagenceoueb/forkbwpup"
+
+#. translators: 1: screen name, 2: title of the admin page.
+#: client/app.js:87
+#, js-format
+msgid "%1$s ‹ %2$s"
+msgstr "%1$s ‹ %2$s"
+
+#: client/sections.js:23
+msgctxt "section of the admin"
+msgid "Restore"
+msgstr "Restauration"
+
+#: client/schedule/schedule-screen.js:260
+msgid "Five fields: minute, hour, day of the month, month, day of the week. Example: 0 3 * * 1-5 runs at 3 am from Monday to Friday. At most four backups an hour."
+msgstr "Cinq champs : minute, heure, jour du mois, mois, jour de la semaine. Exemple : 0 3 * * 1-5 lance la sauvegarde à 3 h du lundi au vendredi. Quatre sauvegardes par heure au plus."

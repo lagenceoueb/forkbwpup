@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name:       Oueb WP Backup
- * Plugin URI:        https://github.com/lagenceoueb/oueb-wp-backup
- * Description:       Sauvegarde et restauration de WordPress vers des hébergeurs européens. Fork de BackWPup 4.1.7.
+ * Plugin URI:        https://github.com/lagenceoueb/forkbwpup
+ * Description:       Back up and restore WordPress to European hosting providers. Fork of BackWPup 4.1.7.
  * Version:           0.1.0
  * Requires at least: 6.6
  * Requires PHP:      8.1

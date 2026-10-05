@@ -236,6 +236,9 @@ $oueb-warning: #8a5300;
 }
 
 .oueb-table-wrap {
+	// Positionné : les textes masqués des actions restent dans la zone qui défile.
+	position: relative;
+	max-width: 100%;
 	overflow-x: auto;
 }
 
@@ -810,4 +813,16 @@ $oueb-warning: #8a5300;
 		margin: 4px 0 0;
 		color: $oueb-muted;
 	}
+}
+
+// Un libellé long passe à la ligne au lieu de déborder sur un petit écran.
+.oueb-app .components-button {
+	height: auto;
+	min-height: 36px;
+	white-space: normal;
+	text-align: start;
+}
+
+.oueb-upload input[type="file"] {
+	max-width: 100%;
 }

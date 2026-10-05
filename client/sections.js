@@ -5,7 +5,7 @@
 /**
  * WordPress dependencies
  */
-import { __ } from '@wordpress/i18n';
+import { __, _x } from '@wordpress/i18n';
 
 /**
  * Renvoie les sections de l'interface.
@@ -18,7 +18,10 @@ export function getSections() {
 		{ id: 'backups', label: __( 'Backups', 'oueb-wp-backup' ) },
 		{ id: 'storage', label: __( 'Storage', 'oueb-wp-backup' ) },
 		{ id: 'schedule', label: __( 'Schedule', 'oueb-wp-backup' ) },
-		{ id: 'restore', label: __( 'Restore', 'oueb-wp-backup' ) },
+		{
+			id: 'restore',
+			label: _x( 'Restore', 'section of the admin', 'oueb-wp-backup' ),
+		},
 		{ id: 'log', label: __( 'Log', 'oueb-wp-backup' ) },
 		{ id: 'settings', label: __( 'Settings', 'oueb-wp-backup' ) },
 	];

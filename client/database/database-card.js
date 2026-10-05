@@ -147,33 +147,44 @@ export default function DatabaseCard() {
 				</Notice>
 			) }
 			{ outcome && outcome.rows.length > 0 && (
-				<table className="widefat striped oueb-table">
-					<caption className="screen-reader-text">
-						{ __( 'Tables with a problem', 'oueb-wp-backup' ) }
-					</caption>
-					<thead>
-						<tr>
-							<th scope="col">
-								{ __( 'Table', 'oueb-wp-backup' ) }
-							</th>
-							<th scope="col">
-								{ __( 'Result', 'oueb-wp-backup' ) }
-							</th>
-							<th scope="col">
-								{ __( 'Message', 'oueb-wp-backup' ) }
-							</th>
-						</tr>
-					</thead>
-					<tbody>
-						{ outcome.rows.map( ( row ) => (
-							<tr key={ row.table }>
-								<th scope="row">{ row.table }</th>
-								<td>{ resultLabel( row.status ) }</td>
-								<td>{ row.message }</td>
+				<div
+					className="oueb-table-wrap"
+					role="region"
+					aria-label={ __(
+						'Tables with a problem',
+						'oueb-wp-backup'
+					) }
+					// Rien de focalisable dans ce tableau : la zone le devient pour défiler au clavier.
+					tabIndex={ 0 }
+				>
+					<table className="oueb-table">
+						<caption className="screen-reader-text">
+							{ __( 'Tables with a problem', 'oueb-wp-backup' ) }
+						</caption>
+						<thead>
+							<tr>
+								<th scope="col">
+									{ __( 'Table', 'oueb-wp-backup' ) }
+								</th>
+								<th scope="col">
+									{ __( 'Result', 'oueb-wp-backup' ) }
+								</th>
+								<th scope="col">
+									{ __( 'Message', 'oueb-wp-backup' ) }
+								</th>
 							</tr>
-						) ) }
-					</tbody>
-				</table>
+						</thead>
+						<tbody>
+							{ outcome.rows.map( ( row ) => (
+								<tr key={ row.table }>
+									<th scope="row">{ row.table }</th>
+									<td>{ resultLabel( row.status ) }</td>
+									<td>{ row.message }</td>
+								</tr>
+							) ) }
+						</tbody>
+					</table>
+				</div>
 			) }
 		</section>
 	);
