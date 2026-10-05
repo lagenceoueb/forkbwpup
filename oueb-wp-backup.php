@@ -13,6 +13,7 @@
  * Text Domain:       oueb-wp-backup
  * Domain Path:       /languages
  * Network:           true
+ * Update URI:        https://github.com/lagenceoueb/forkbwpup
  *
  * @package Oueb_WP_Backup
  */

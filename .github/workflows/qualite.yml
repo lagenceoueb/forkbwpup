@@ -103,6 +103,8 @@ jobs:
         with:
           node-version: '22'
           cache: npm
+      - name: Vérifier que la version est la même partout
+        run: bin/check-version.sh
       - name: Installer les dépendances de l'interface
         run: npm ci
       - name: Construire l'archive et vérifier son poids

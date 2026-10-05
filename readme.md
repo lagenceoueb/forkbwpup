@@ -194,6 +194,16 @@ La CI ([`.github/workflows/qualite.yml`](.github/workflows/qualite.yml)) tourne 
 
 Le fichier [`.gitattributes`](.gitattributes) liste ce qui reste hors de l'archive distribuée : outils, documentation, CI, fichiers `.po`.
 
+### Publier une version
+
+1. Changez la version dans l'en-tête de `oueb-wp-backup.php`, dans `Plugin::VERSION` et dans le `Stable tag` de `readme.txt`. `bin/check-version.sh` vérifie qu'elles concordent.
+2. Complétez le changelog de `readme.txt`.
+3. Poussez une étiquette `vX.Y.Z` sur le commit à publier.
+
+Le workflow [`release.yml`](.github/workflows/release.yml) construit l'archive et crée la release GitHub avec `oueb-wp-backup.zip`. Les sites qui ont l'extension voient la mise à jour dans l'administration : l'en-tête `Update URI` désigne GitHub, et `includes/update/class-github-updater.php` lit la dernière release toutes les 12 heures.
+
+Pour wordpress.org, retirez ce fichier et l'en-tête `Update URI` : le répertoire refuse les modules de mise à jour propres à une extension.
+
 ## Limites connues
 
 - L'interface est en anglais : la traduction française arrive au lot 7.

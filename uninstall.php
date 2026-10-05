@@ -56,6 +56,7 @@ function oueb_wp_backup_uninstall(): void {
 	}
 	$wpdb->query( $wpdb->prepare( 'DELETE FROM %i WHERE option_name LIKE %s', $wpdb->options, $like ) );
 	$wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $wpdb->base_prefix . 'oueb_wp_backup_runs' ) );
+	delete_site_transient( 'oueb_wp_backup_github_release' );
 
 	wp_cache_flush();
 }

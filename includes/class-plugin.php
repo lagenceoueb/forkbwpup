@@ -39,6 +39,7 @@ use Oueb\WpBackup\Security\Capabilities;
 use Oueb\WpBackup\Security\Key_Ring;
 use Oueb\WpBackup\Storage\Storage_Repository;
 use Oueb\WpBackup\Storage\Workspace;
+use Oueb\WpBackup\Update\Github_Updater;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -101,6 +102,10 @@ final class Plugin {
 		}
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			Command::register();
+		}
+		// Absent de la version wordpress.org, qui gère ses propres mises à jour.
+		if ( class_exists( Github_Updater::class ) ) {
+			Github_Updater::register();
 		}
 	}
 
