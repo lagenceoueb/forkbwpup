@@ -796,3 +796,18 @@ $oueb-warning: #8a5300;
 	color: $oueb-muted;
 	font-size: 13px;
 }
+
+.oueb-maintenance {
+	margin: 0 0 16px;
+	padding: 0;
+	list-style: none;
+
+	li {
+		margin: 0 0 12px;
+	}
+
+	p {
+		margin: 4px 0 0;
+		color: $oueb-muted;
+	}
+}

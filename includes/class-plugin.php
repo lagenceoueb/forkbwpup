@@ -12,6 +12,8 @@ namespace Oueb\WpBackup;
 
 use Oueb\WpBackup\Admin\Admin_Page;
 use Oueb\WpBackup\Admin\Download;
+use Oueb\WpBackup\Cli\Command;
+use Oueb\WpBackup\Database\Table_Maintenance;
 use Oueb\WpBackup\Engine\Continuation;
 use Oueb\WpBackup\Engine\Run_Repository;
 use Oueb\WpBackup\Engine\Runner;
@@ -22,6 +24,7 @@ use Oueb\WpBackup\Job\Job_Repository;
 use Oueb\WpBackup\Legacy\Legacy_Import;
 use Oueb\WpBackup\Restore\Restore_Plan;
 use Oueb\WpBackup\Restore\Upload_Repository;
+use Oueb\WpBackup\Rest\Database_Controller;
 use Oueb\WpBackup\Rest\Encryption_Controller;
 use Oueb\WpBackup\Rest\Import_Controller;
 use Oueb\WpBackup\Rest\Jobs_Controller;
@@ -95,6 +98,9 @@ final class Plugin {
 		if ( is_admin() ) {
 			Admin_Page::register();
 		}
+		if ( defined( 'WP_CLI' ) && WP_CLI ) {
+			Command::register();
+		}
 	}
 
 	/**
@@ -133,6 +139,7 @@ final class Plugin {
 		( new Storages_Controller( self::storages(), self::jobs() ) )->register_routes();
 		( new Import_Controller( new Legacy_Import( self::jobs(), self::storages(), self::scheduler() ) ) )->register_routes();
 		( new Restore_Controller( self::runs(), self::jobs(), self::runner(), self::storages(), self::workspace(), new Upload_Repository( self::workspace() ) ) )->register_routes();
+		( new Database_Controller( new Table_Maintenance(), self::runs() ) )->register_routes();
 	}
 
 	/**

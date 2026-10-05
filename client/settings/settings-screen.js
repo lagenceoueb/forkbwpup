@@ -23,6 +23,7 @@ import { speak } from '@wordpress/a11y';
 import { generateKey, toPayload, validateSettings } from './validation';
 import EncryptionCard from './encryption-card';
 import AdvancedCard from './advanced-card';
+import DatabaseCard from '../database/database-card';
 
 const SETTINGS_PATH = '/oueb-wp-backup/v1/settings';
 
@@ -246,6 +247,7 @@ export default function SettingsScreen() {
 				</div>
 			</form>
 			<EncryptionCard />
+			<DatabaseCard />
 			<AdvancedCard />
 		</>
 	);

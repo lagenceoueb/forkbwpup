@@ -361,3 +361,25 @@ export function runImport() {
 export function dismissImport() {
 	return apiFetch( { path: `${ BASE }/import/dismiss`, method: 'POST' } );
 }
+
+/**
+ * Liste les tables du site.
+ *
+ * @return {Promise<Array>} Tables : name, rows, size.
+ */
+export function fetchTables() {
+	return apiFetch( { path: `${ BASE }/database/tables` } );
+}
+
+/**
+ * Vérifie, répare ou optimise les tables du site.
+ *
+ * @param {string} operation check, repair ou optimize.
+ * @return {Promise<Array>} Résultat par table : table, status, message.
+ */
+export function maintainTables( operation ) {
+	return apiFetch( {
+		path: `${ BASE }/database/${ operation }`,
+		method: 'POST',
+	} );
+}

@@ -56,8 +56,10 @@ final class Complete implements Step {
 		Maintenance::end();
 
 		$source = (array) Restore_State::get( $context, 'source', array() );
-		if ( ! empty( $source['upload'] ) && is_file( (string) ( $source['path'] ?? '' ) ) ) {
-			wp_delete_file( (string) $source['path'] );
+		if ( ! empty( $source['upload'] ) ) {
+			// L'archive envoyée et sa description.
+			wp_delete_file( (string) ( $source['path'] ?? '' ) );
+			wp_delete_file( (string) ( $source['path'] ?? '' ) . '.json' );
 		}
 
 		wp_cache_flush();
