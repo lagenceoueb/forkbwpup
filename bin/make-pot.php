@@ -86,8 +86,8 @@ function oueb_pot_quote( $text ) {
  * @return int Code de sortie : 0 si tout est lu, 1 si un texte n'est pas littéral.
  */
 function oueb_make_pot( $root, $domain, $functions ) {
-	$files = array( $root . '/backwpup.php' );
-	foreach ( array( 'inc', 'src', 'views' ) as $dir ) {
+	$files = array( $root . '/oueb-wp-backup.php' );
+	foreach ( array( 'includes' ) as $dir ) {
 		$iterator = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $root . '/' . $dir, FilesystemIterator::SKIP_DOTS ) );
 		foreach ( $iterator as $file ) {
 			if ( 'php' === $file->getExtension() ) {

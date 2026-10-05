@@ -17,7 +17,7 @@ if ( 'cli' !== PHP_SAPI ) {
 	exit( 1 );
 }
 
-define( 'ABSPATH', __DIR__ . '/' );
+define( 'ABSPATH', __DIR__ . '/' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound -- Outil hors de WordPress : les classes de l'extension attendent cette constante.
 
 if ( ! function_exists( 'esc_html__' ) ) {
 	/**
@@ -26,7 +26,7 @@ if ( ! function_exists( 'esc_html__' ) ) {
 	 * @param string $text Texte.
 	 * @return string Texte.
 	 */
-	function esc_html__( $text ) {
+	function esc_html__( $text ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Doublure de WordPress, hors de WordPress.
 		return $text;
 	}
 	/**
@@ -35,7 +35,7 @@ if ( ! function_exists( 'esc_html__' ) ) {
 	 * @param string $text Texte.
 	 * @return string Texte.
 	 */
-	function esc_html( $text ) {
+	function esc_html( $text ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Doublure de WordPress, hors de WordPress.
 		return $text;
 	}
 	/**
@@ -44,7 +44,7 @@ if ( ! function_exists( 'esc_html__' ) ) {
 	 * @param string $text Texte.
 	 * @return string Texte.
 	 */
-	function __( $text ) {
+	function __( $text ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Doublure de WordPress, hors de WordPress.
 		return $text;
 	}
 }

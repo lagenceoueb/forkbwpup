@@ -15,4 +15,4 @@ defined( 'ABSPATH' ) || exit;
 require_once __DIR__ . '/class-autoloader.php';
 
 Oueb\WpBackup\Autoloader::register( __DIR__ );
-Oueb\WpBackup\Plugin::boot( dirname( __DIR__ ) . '/backwpup.php' );
+Oueb\WpBackup\Plugin::boot( dirname( __DIR__ ) . '/oueb-wp-backup.php' );

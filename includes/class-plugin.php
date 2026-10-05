@@ -19,9 +19,11 @@ use Oueb\WpBackup\Engine\Schema;
 use Oueb\WpBackup\Engine\Steps\Step_Factory;
 use Oueb\WpBackup\Engine\Watchdog;
 use Oueb\WpBackup\Job\Job_Repository;
+use Oueb\WpBackup\Legacy\Legacy_Import;
 use Oueb\WpBackup\Restore\Restore_Plan;
 use Oueb\WpBackup\Restore\Upload_Repository;
 use Oueb\WpBackup\Rest\Encryption_Controller;
+use Oueb\WpBackup\Rest\Import_Controller;
 use Oueb\WpBackup\Rest\Jobs_Controller;
 use Oueb\WpBackup\Rest\Restore_Controller;
 use Oueb\WpBackup\Rest\Runs_Controller;
@@ -39,10 +41,6 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Branche les services de l'extension sur WordPress et les fournit.
  *
- * Pendant la refonte, l'interface React ne s'affiche que si la constante
- * OUEB_WP_BACKUP_NEXT vaut true dans wp-config.php. L'ancienne interface
- * reste la seule active par défaut, jusqu'à la bascule du lot 6.
- *
  * @since 0.1.0
  */
 final class Plugin {
@@ -53,7 +51,7 @@ final class Plugin {
 	 * @since 0.1.0
 	 * @var string
 	 */
-	const VERSION = '0.0.1';
+	const VERSION = '0.1.0';
 
 	/**
 	 * Chemin du fichier principal de l'extension.
@@ -90,11 +88,35 @@ final class Plugin {
 		add_action( Watchdog::HOOK, array( self::class, 'run_watchdog' ) );
 		add_action( Scheduler::HOOK, array( self::class, 'run_scheduled' ) );
 		add_action( 'init', array( self::class, 'ensure_schedules' ), 20 );
+		add_action( 'init', array( self::class, 'load_textdomain' ), 1 );
 		Download::register();
+		Legacy_Import::register();
 
-		if ( self::is_next_enabled() && is_admin() ) {
+		if ( is_admin() ) {
 			Admin_Page::register();
 		}
+	}
+
+	/**
+	 * Charge les traductions de l'extension.
+	 *
+	 * @since 0.1.0
+	 */
+	public static function load_textdomain(): void {
+		load_plugin_textdomain( 'oueb-wp-backup', false, dirname( plugin_basename( self::$file ) ) . '/languages' );
+	}
+
+	/**
+	 * Désactive l'extension : plus aucun événement WP-Cron de l'extension.
+	 *
+	 * Les réglages, les clés et les sauvegardes restent en place pour une
+	 * réactivation. La désinstallation, elle, efface les réglages.
+	 *
+	 * @since 0.1.0
+	 */
+	public static function deactivate(): void {
+		wp_unschedule_hook( Scheduler::HOOK );
+		wp_unschedule_hook( Watchdog::HOOK );
 	}
 
 	/**
@@ -109,6 +131,7 @@ final class Plugin {
 		( new Encryption_Controller( self::keys() ) )->register_routes();
 		( new Runs_Controller( self::runs(), self::jobs(), self::runner(), self::continuation(), self::workspace(), self::storages() ) )->register_routes();
 		( new Storages_Controller( self::storages(), self::jobs() ) )->register_routes();
+		( new Import_Controller( new Legacy_Import( self::jobs(), self::storages(), self::scheduler() ) ) )->register_routes();
 		( new Restore_Controller( self::runs(), self::jobs(), self::runner(), self::storages(), self::workspace(), new Upload_Repository( self::workspace() ) ) )->register_routes();
 	}
 
@@ -256,17 +279,6 @@ final class Plugin {
 		}
 
 		return self::$services[ $name ];
-	}
-
-	/**
-	 * Indique si la nouvelle interface est activée.
-	 *
-	 * @since 0.1.0
-	 *
-	 * @return bool Vrai si OUEB_WP_BACKUP_NEXT vaut true.
-	 */
-	public static function is_next_enabled(): bool {
-		return defined( 'OUEB_WP_BACKUP_NEXT' ) && true === OUEB_WP_BACKUP_NEXT;
 	}
 
 	/**

@@ -8,6 +8,7 @@
 /phpcs.xml.dist export-ignore
 /readme.md export-ignore
 /composer.json export-ignore
+/composer.lock export-ignore
 /languages/*.po export-ignore
 /languages/*.pot export-ignore
 /client export-ignore

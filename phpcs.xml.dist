@@ -30,37 +30,15 @@
 			<property name="prefixes" type="array">
 				<element value="oueb"/>
 				<element value="Oueb\WpBackup"/>
-				<!-- Préfixe du code hérité de BackWPup, jusqu'au rebranding. -->
-				<element value="backwpup"/>
 			</property>
 		</properties>
 	</rule>
 
-	<!-- Les secrets sont nettoyés sans perte de caractères, puis chiffrés. -->
-	<rule ref="WordPress.Security.ValidatedSanitizedInput">
-		<properties>
-			<property name="customSanitizingFunctions" type="array">
-				<element value="oueb_sanitize_secret"/>
-			</property>
-		</properties>
-	</rule>
-
-	<!-- Capacités déclarées par BackWPup_Install::activate(). -->
+	<!-- Capacité de l'extension, rattachée à manage_options par map_meta_cap. -->
 	<rule ref="WordPress.WP.Capabilities">
 		<properties>
 			<property name="custom_capabilities" type="array">
 				<element value="oueb_wp_backup_manage"/>
-				<element value="backwpup"/>
-				<element value="backwpup_jobs"/>
-				<element value="backwpup_jobs_edit"/>
-				<element value="backwpup_jobs_start"/>
-				<element value="backwpup_backups"/>
-				<element value="backwpup_backups_download"/>
-				<element value="backwpup_backups_delete"/>
-				<element value="backwpup_logs"/>
-				<element value="backwpup_logs_delete"/>
-				<element value="backwpup_settings"/>
-				<element value="backwpup_restore"/>
 			</property>
 		</properties>
 	</rule>
