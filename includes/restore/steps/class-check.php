@@ -86,7 +86,8 @@ final class Check implements Step {
 				return null;
 			},
 			// Les fichiers de la sauvegarde ouvrent l'archive : la suite n'est pas lue ici.
-			static fn( array $entry ): bool => 0 !== strpos( $entry['name'], $prefix )
+			// Une archive refaite à la main peut porter l'entrée du dossier, sans barre finale.
+			static fn( array $entry ): bool => 0 !== strpos( rtrim( $entry['name'], '/' ) . '/', $prefix )
 		);
 		if ( ! $done ) {
 			return false;
@@ -118,12 +119,21 @@ final class Check implements Step {
 		if ( (int) $manifest['format'] > Manifest::FORMAT ) {
 			throw new Step_Failure( esc_html__( 'This archive was made by a newer version of Oueb WP Backup. Update the extension, then start again. Nothing was changed.', 'oueb-wp-backup' ) );
 		}
-		if ( is_multisite() || ! empty( $manifest['site']['multisite'] ) ) {
-			throw new Step_Failure( esc_html__( 'Restoring a multisite network is not supported yet. Nothing was changed.', 'oueb-wp-backup' ) );
-		}
-
 		$database = (bool) Restore_State::get( $context, 'database' );
 		$files    = (bool) Restore_State::get( $context, 'files' );
+
+		$refusal = self::network_error(
+			$manifest,
+			$database,
+			is_multisite(),
+			is_multisite() ? Manifest::network() : array(
+				'domain' => '',
+				'path'   => '',
+			)
+		);
+		if ( '' !== $refusal ) {
+			throw new Step_Failure( esc_html( $refusal ) );
+		}
 
 		if ( $database && ( empty( $manifest['database'] ) || ! is_file( $dir . '/' . Database_Dump::FILE ) ) ) {
 			$database = false;
@@ -210,6 +220,47 @@ final class Check implements Step {
 					)
 				)
 			)
+		);
+	}
+
+	/**
+	 * Dit pourquoi la base d'une sauvegarde ne convient pas à ce réseau, ou à ce site seul.
+	 *
+	 * Les adresses des sites d'un réseau vivent dans ses tables : sa base ne
+	 * peut pas changer d'adresse comme celle d'un site seul. Les fichiers seuls
+	 * passent d'un site à un autre.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param array<string, mixed>                $manifest  Manifeste.
+	 * @param bool                                $database  La base sera restaurée.
+	 * @param bool                                $multisite Ce site est un réseau.
+	 * @param array{domain: string, path: string} $here    Adresse de ce réseau.
+	 * @return string Raison du refus, vide si la base convient.
+	 */
+	public static function network_error( array $manifest, bool $database, bool $multisite, array $here ): string {
+		$from_network = ! empty( $manifest['site']['multisite'] );
+		if ( ! $database || ( ! $from_network && ! $multisite ) ) {
+			return '';
+		}
+		if ( ! $multisite ) {
+			return __( 'This backup comes from a multisite network, and this site is a single site. Restore the files only, or restore it onto its network. Nothing was changed.', 'oueb-wp-backup' );
+		}
+		if ( ! $from_network ) {
+			return __( 'This backup comes from a single site, and this site is a multisite network. Restore the files only. Nothing was changed.', 'oueb-wp-backup' );
+		}
+
+		$network = (array) ( $manifest['site']['network'] ?? array() );
+		$address = static fn( array $n ): string => (string) ( $n['domain'] ?? '' ) . (string) ( $n['path'] ?? '' );
+		if ( $address( $network ) === $address( $here ) ) {
+			return '';
+		}
+
+		return sprintf(
+			/* translators: 1: address of the backed up network, 2: address of this network. */
+			__( 'This backup comes from the network %1$s, and this network is %2$s. A network database restores only onto the same address. Restore the files only. Nothing was changed.', 'oueb-wp-backup' ),
+			$address( $network ),
+			$address( $here )
 		);
 	}
 }

@@ -128,7 +128,7 @@ function StoragePicker( { storages, value, onChange } ) {
 function runLabel( run ) {
 	return sprintf(
 		/* translators: 1: backup date, 2: content, such as Full site, 3: size. */
-		__( '%1$s – %2$s – %3$s', 'oueb-wp-backup' ),
+		__( '%1$s, %2$s, %3$s', 'oueb-wp-backup' ),
 		formatDate( run.started_at ),
 		run.job_id === 'pre-restore'
 			? __( 'Before a restore', 'oueb-wp-backup' )
@@ -157,6 +157,7 @@ export default function RestoreScreen( { runId } ) {
 	const [ files, setFiles ] = useState( true );
 	const [ safety, setSafety ] = useState( true );
 	const [ confirming, setConfirming ] = useState( false );
+	const [ understood, setUnderstood ] = useState( false );
 	const [ starting, setStarting ] = useState( false );
 	const [ startError, setStartError ] = useState( null );
 	const [ version, setVersion ] = useState( 0 );
@@ -378,7 +379,10 @@ export default function RestoreScreen( { runId } ) {
 					variant="primary"
 					className="oueb-button-large"
 					disabled={ ! ready }
-					onClick={ () => setConfirming( true ) }
+					onClick={ () => {
+						setUnderstood( false );
+						setConfirming( true );
+					} }
 				>
 					{ __( 'Restore…', 'oueb-wp-backup' ) }
 				</Button>
@@ -419,6 +423,26 @@ export default function RestoreScreen( { runId } ) {
 								  ) }
 						</li>
 					</ul>
+					<CheckboxControl
+						__nextHasNoMarginBottom
+						label={
+							origin === 'history' && runChoice
+								? sprintf(
+										/* translators: %s: backup date. */
+										__(
+											'I understand that the changes made after %s will be replaced.',
+											'oueb-wp-backup'
+										),
+										formatDate( runChoice.started_at )
+								  )
+								: __(
+										'I understand that the changes made since this backup will be replaced.',
+										'oueb-wp-backup'
+								  )
+						}
+						checked={ understood }
+						onChange={ setUnderstood }
+					/>
 					{ startError && (
 						<Notice status="error" isDismissible={ false }>
 							{ startError }
@@ -430,7 +454,7 @@ export default function RestoreScreen( { runId } ) {
 							isDestructive
 							onClick={ start }
 							isBusy={ starting }
-							disabled={ starting }
+							disabled={ starting || ! understood }
 						>
 							{ __( 'Restore now', 'oueb-wp-backup' ) }
 						</Button>

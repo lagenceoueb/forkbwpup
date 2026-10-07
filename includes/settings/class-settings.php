@@ -80,6 +80,11 @@ final class Settings {
 				'default'     => true,
 				'description' => __( 'Show the agency card on the dashboard.', 'oueb-wp-backup' ),
 			),
+			'setup_done'         => array(
+				'type'        => 'boolean',
+				'default'     => false,
+				'description' => __( 'The setup assistant was completed or skipped.', 'oueb-wp-backup' ),
+			),
 			'trigger_key'        => array(
 				'type'        => 'string',
 				'default'     => '',

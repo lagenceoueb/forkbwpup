@@ -1,68 +1,90 @@
 <?php
+/**
+ * Désinstallation d'Oueb WP Backup.
+ *
+ * Efface les réglages, les clés de chiffrement, l'historique et les journaux.
+ * Les archives du dossier local restent sur le serveur : ce sont des
+ * sauvegardes, et leur suppression doit rester un choix de l'administrateur.
+ * Les données de BackWPup ne sont jamais touchées.
+ *
+ * @package Oueb_WP_Backup
+ * @since 0.1.0
+ */
 
-//if uninstall not called from WordPress exit
-if (!defined('WP_UNINSTALL_PLUGIN')) {
-    exit();
-}
+defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
 
-/** @var wpdb $wpdb */
-global $wpdb;
+/**
+ * Efface les données de l'extension.
+ *
+ * @since 0.1.0
+ */
+function oueb_wp_backup_uninstall(): void {
+	global $wpdb;
 
-// only uninstall if no BackWPup Version active.
-if ( ! class_exists( \BackWPup::class ) ) {
+	wp_unschedule_hook( 'oueb_wp_backup_scheduled' );
+	wp_unschedule_hook( 'oueb_wp_backup_watchdog' );
 
-    //delete plugin options
-    if (is_multisite()) {
-        $wpdb->query('DELETE FROM ' . $wpdb->sitemeta . " WHERE meta_key LIKE '%backwpup_%' ");
-    } else {
-        $wpdb->query('DELETE FROM ' . $wpdb->options . " WHERE option_name LIKE '%backwpup_%' ");
-    }
+	// Les tâches créées chez cron-job.org appelleraient le site pour rien.
+	require_once __DIR__ . '/includes/bootstrap.php';
+	$key = (string) Oueb\WpBackup\Settings\Settings::get( 'cronjob_org_key' );
+	if ( '' !== $key ) {
+		foreach ( ( new Oueb\WpBackup\Job\Job_Repository() )->all() as $job ) {
+			if ( $job->cronjob_org_id > 0 ) {
+				try {
+					( new Oueb\WpBackup\Remote\Cronjob_Org_Client( $key ) )->delete_job( $job->cronjob_org_id );
+				} catch ( Throwable $error ) {
+					// Le service est injoignable : la tâche distante reste, sans effet.
+					unset( $error );
+				}
+			}
+		}
+	}
 
-    // The cron-job.org jobs were removed on deactivation; the API key stays
-    // outside the backwpup_ prefix.
-    delete_site_option('oueb_cronjob_org_key');
+	// Dossier de travail : journaux, fichiers temporaires et envois, pas les archives.
+	$suffix = (string) get_site_option( 'oueb_wp_backup_workspace', '' );
+	if ( preg_match( '/^[a-z0-9]{16}$/', $suffix ) ) {
+		$uploads = wp_upload_dir( null, false );
+		$root    = $uploads['basedir'] . '/oueb-wp-backup-' . $suffix;
+		foreach ( array( 'logs', 'tmp', 'uploads' ) as $dir ) {
+			oueb_wp_backup_remove_tree( $root . '/' . $dir );
+		}
+	}
 
-    //delete Backwpup user roles
-    // Special handling for multisite when network-activated.
-    if (is_multisite()) {
-        $sites = get_sites([
-            'fields' => 'ids',
-        ]);
-        $current_site = get_current_blog_id();
+	$like = $wpdb->esc_like( 'oueb_wp_backup_' ) . '%';
+	if ( is_multisite() ) {
+		$wpdb->query( $wpdb->prepare( 'DELETE FROM %i WHERE meta_key LIKE %s', $wpdb->sitemeta, $like ) );
+	}
+	$wpdb->query( $wpdb->prepare( 'DELETE FROM %i WHERE option_name LIKE %s', $wpdb->options, $like ) );
+	$wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $wpdb->base_prefix . 'oueb_wp_backup_runs' ) );
+	delete_site_transient( 'oueb_wp_backup_github_release' );
 
-        foreach ($sites as $site) {
-            switch_to_blog($site);
-            backwpup_remove_roles();
-        }
-
-        switch_to_blog($current_site);
-    } else {
-        backwpup_remove_roles();
-    }
+	wp_cache_flush();
 }
 
 /**
- * Removes BackWPup roles and capabilities.
+ * Supprime un dossier et son contenu, sans suivre les liens symboliques.
+ *
+ * @since 0.1.0
+ *
+ * @param string $dir Dossier.
  */
-function backwpup_remove_roles()
-{
-    remove_role('backwpup_admin');
-    remove_role('backwpup_helper');
-    remove_role('backwpup_check');
+function oueb_wp_backup_remove_tree( string $dir ): void {
+	if ( ! is_dir( $dir ) || is_link( $dir ) ) {
+		return;
+	}
 
-    //remove capabilities to administrator role
-    $role = get_role('administrator');
-    if (is_object($role) && method_exists($role, 'remove_cap')) {
-        $role->remove_cap('backwpup');
-        $role->remove_cap('backwpup_jobs');
-        $role->remove_cap('backwpup_jobs_edit');
-        $role->remove_cap('backwpup_jobs_start');
-        $role->remove_cap('backwpup_backups');
-        $role->remove_cap('backwpup_backups_download');
-        $role->remove_cap('backwpup_backups_delete');
-        $role->remove_cap('backwpup_logs');
-        $role->remove_cap('backwpup_logs_delete');
-        $role->remove_cap('backwpup_settings');
-        $role->remove_cap('backwpup_restore');
-    }
+	$items = new RecursiveIteratorIterator(
+		new RecursiveDirectoryIterator( $dir, FilesystemIterator::SKIP_DOTS ),
+		RecursiveIteratorIterator::CHILD_FIRST
+	);
+	foreach ( $items as $item ) {
+		if ( $item->isDir() && ! $item->isLink() ) {
+			rmdir( $item->getPathname() ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_rmdir -- Désinstallation, sans WP_Filesystem.
+		} else {
+			wp_delete_file( $item->getPathname() );
+		}
+	}
+	rmdir( $dir ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_rmdir -- Désinstallation, sans WP_Filesystem.
 }
+
+oueb_wp_backup_uninstall();

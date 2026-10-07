@@ -153,6 +153,9 @@ final class Maintenance {
 			. '} elseif ( preg_match( \'#oueb-wp-backup/v1/runs/\\d+/continue#\', $oueb_wp_backup_uri ) ) {' . "\n"
 			. "\t" . '// La relance porte son propre jeton, vérifié par l\'extension.' . "\n"
 			. "\t" . '$upgrading = 0;' . "\n"
+			. '} elseif ( defined( \'WP_CLI\' ) && WP_CLI ) {' . "\n"
+			. "\t" . '// WP-CLI suit ou mène la restauration depuis le serveur.' . "\n"
+			. "\t" . '$upgrading = 0;' . "\n"
 			. "}\n"
 			. 'unset( $oueb_wp_backup_uri );' . "\n";
 	}

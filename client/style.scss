@@ -236,6 +236,9 @@ $oueb-warning: #8a5300;
 }
 
 .oueb-table-wrap {
+	// Positionné : les textes masqués des actions restent dans la zone qui défile.
+	position: relative;
+	max-width: 100%;
 	overflow-x: auto;
 }
 
@@ -513,4 +516,313 @@ $oueb-warning: #8a5300;
 	.oueb-log__entry {
 		grid-template-columns: 8ch 1fr;
 	}
+}
+
+// Tableau de bord, d'après la maquette.
+.oueb-hero {
+	flex-flow: row wrap;
+	gap: 24px;
+	align-items: center;
+	padding: 32px;
+}
+
+.oueb-status-icon {
+	display: flex;
+	flex: 0 0 64px;
+	align-items: center;
+	justify-content: center;
+	height: 64px;
+	border-radius: 50%;
+	background: #f0fdfa;
+	color: $oueb-accent;
+}
+
+.oueb-status-icon--warning {
+	background: #fff8e6;
+	color: $oueb-text;
+}
+
+.oueb-status-icon--error {
+	background: #fcf0f1;
+	color: $oueb-error;
+}
+
+.oueb-hero__text {
+	display: flex;
+	flex: 1 1 360px;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.oueb-hero__title {
+	margin: 0;
+	font-size: 26px;
+	font-weight: 600;
+	line-height: 1.25;
+}
+
+.oueb-hero__lead {
+	margin: 0;
+	font-size: 16px;
+}
+
+.oueb-hero__next {
+	margin: 0;
+	color: $oueb-muted;
+}
+
+.oueb-hero__actions {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	align-items: flex-start;
+
+	.oueb-backup-now {
+		margin: 0;
+	}
+}
+
+.oueb-card__label {
+	margin: 0;
+	color: $oueb-muted;
+	font-size: 13px;
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+}
+
+.oueb-card__value {
+	margin: 0;
+	font-size: 18px;
+	font-weight: 600;
+}
+
+.oueb-card__muted {
+	margin: 0;
+	color: $oueb-muted;
+}
+
+.oueb-card__link {
+	margin-top: auto;
+}
+
+.oueb-card__head {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	align-items: baseline;
+	justify-content: space-between;
+}
+
+.oueb-card__subtitle {
+	margin: 8px 0 0;
+	font-size: 15px;
+	font-weight: 600;
+}
+
+.oueb-facts {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	margin: 0;
+	padding: 0;
+	font-size: 15px;
+	list-style: none;
+
+	li::before {
+		display: inline-block;
+		width: 1.25em;
+		font-weight: 700;
+	}
+}
+
+.oueb-facts__yes::before {
+	content: "✓";
+	color: $oueb-accent;
+}
+
+.oueb-facts__no {
+	color: $oueb-muted;
+
+	&::before {
+		content: "–";
+	}
+}
+
+.oueb-tags {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+
+	.oueb-tag {
+		margin: 0;
+		padding: 2px 10px;
+		border-radius: 999px;
+		background: #f0fdfa;
+		color: $oueb-accent;
+		font-size: 13px;
+		font-weight: 600;
+	}
+}
+
+.oueb-status__why {
+	margin-inline-start: 6px;
+}
+
+.oueb-agency {
+	position: relative;
+	padding-right: 140px;
+}
+
+.oueb-agency__text {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+
+	p {
+		margin: 0;
+		font-size: 15px;
+	}
+}
+
+.oueb-agency__link {
+	font-weight: 600;
+}
+
+.oueb-agency__hide.components-button {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	min-height: 44px;
+	color: $oueb-muted;
+}
+
+.oueb-import__list {
+	margin: 0 0 0 20px;
+	list-style: disc;
+
+	ul {
+		margin: 4px 0 8px 20px;
+		color: $oueb-muted;
+		list-style: circle;
+	}
+}
+
+.oueb-import__links {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 24px;
+	align-items: center;
+}
+
+// Assistant de première configuration.
+.oueb-steps {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 8px;
+	margin: 0 0 24px;
+	padding: 0;
+	list-style: none;
+}
+
+.oueb-steps__item {
+	padding-top: 8px;
+	border-top: 4px solid $oueb-border;
+	color: $oueb-muted;
+
+	&.is-reached {
+		border-top-color: $oueb-accent;
+		color: $oueb-accent;
+		font-weight: 600;
+	}
+
+	&[aria-current="step"] {
+		color: $oueb-text;
+		font-weight: 700;
+	}
+}
+
+.oueb-summary {
+	display: grid;
+	grid-template-columns: max-content 1fr;
+	gap: 8px 24px;
+	margin: 0;
+	font-size: 15px;
+
+	dt {
+		color: $oueb-muted;
+	}
+
+	dd {
+		margin: 0;
+		font-weight: 600;
+	}
+}
+
+.oueb-fieldset {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+.oueb-fieldset__legend {
+	margin-bottom: 8px;
+	padding: 0;
+	font-weight: 600;
+}
+
+@media (max-width: 600px) {
+
+	.oueb-agency {
+		padding-right: 24px;
+		padding-top: 56px;
+	}
+
+	.oueb-steps {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+.oueb-import__settings {
+	margin: 4px 0 8px;
+	color: $oueb-muted;
+}
+
+.oueb-table__job {
+	display: block;
+	color: $oueb-muted;
+	font-size: 13px;
+}
+
+.oueb-maintenance {
+	margin: 0 0 16px;
+	padding: 0;
+	list-style: none;
+
+	li {
+		margin: 0 0 12px;
+	}
+
+	p {
+		margin: 4px 0 0;
+		color: $oueb-muted;
+	}
+}
+
+// Un libellé long passe à la ligne au lieu de déborder sur un petit écran.
+.oueb-app .components-button {
+	height: auto;
+	min-height: 36px;
+	white-space: normal;
+	text-align: start;
+}
+
+.oueb-upload input[type="file"] {
+	max-width: 100%;
 }

@@ -78,13 +78,17 @@ class Scheduler {
 	 * @return string Message d'erreur de cron-job.org, vide si tout va bien.
 	 */
 	public function sync( Job $job ): string {
-		wp_clear_scheduled_hook( self::HOOK, array( $job->id ) );
-		if ( 'wpcron' === $job->trigger ) {
-			$next = $this->next_run( $job );
-			if ( null !== $next ) {
-				wp_schedule_single_event( $next, self::HOOK, array( $job->id ) );
+		Main_Site::run(
+			function () use ( $job ): void {
+				wp_clear_scheduled_hook( self::HOOK, array( $job->id ) );
+				if ( 'wpcron' === $job->trigger ) {
+					$next = $this->next_run( $job );
+					if ( null !== $next ) {
+						wp_schedule_single_event( $next, self::HOOK, array( $job->id ) );
+					}
+				}
 			}
-		}
+		);
 
 		return $this->sync_cronjob_org( $job );
 	}
@@ -98,6 +102,9 @@ class Scheduler {
 	 * @since 0.1.0
 	 */
 	public function ensure(): void {
+		if ( ! Main_Site::is_current() ) {
+			return;
+		}
 		foreach ( $this->jobs->all() as $job ) {
 			if ( 'wpcron' === $job->trigger && false === wp_next_scheduled( self::HOOK, array( $job->id ) ) ) {
 				$next = $this->next_run( $job );
@@ -120,7 +127,7 @@ class Scheduler {
 	 */
 	public function run( string $job_id ): void {
 		$job = $this->jobs->get( $job_id );
-		if ( null === $job || 'wpcron' !== $job->trigger ) {
+		if ( null === $job || 'wpcron' !== $job->trigger || ! Main_Site::is_current() ) {
 			return;
 		}
 
@@ -146,7 +153,7 @@ class Scheduler {
 			return null;
 		}
 		if ( 'wpcron' === $job->trigger && null === $after ) {
-			$scheduled = wp_next_scheduled( self::HOOK, array( $job->id ) );
+			$scheduled = Main_Site::run( static fn() => wp_next_scheduled( self::HOOK, array( $job->id ) ) );
 			if ( false !== $scheduled ) {
 				return (int) $scheduled;
 			}

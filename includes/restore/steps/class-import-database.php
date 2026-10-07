@@ -33,6 +33,9 @@ defined( 'ABSPATH' ) || exit;
  * - la session de l'administrateur qui restaure, pour qu'il reste connecté ;
  * - l'activation de l'extension elle-même.
  *
+ * En multisite, les réglages de l'extension sont ceux du réseau : ses lignes
+ * de la table sitemeta survivent, et l'extension reste activée sur le réseau.
+ *
  * Reprise : la position est notée après chaque instruction, que la base a
  * déjà validée. Après une coupure brutale entre l'instruction et cette note,
  * un INSERT est rejoué en INSERT IGNORE ; une instruction de structure fait
@@ -182,7 +185,7 @@ final class Import_Database implements Step {
 				$context->checkpoint( true );
 				Maintenance::keep();
 
-				if ( $context->should_pause() ) {
+				if ( $context->should_pause() && ! $this->in_core_table( $context ) ) {
 					$context->set( 'clean', true );
 					return false;
 				}
@@ -254,6 +257,29 @@ final class Import_Database implements Step {
 	}
 
 	/**
+	 * Indique si l'import est au milieu d'une table sans laquelle WordPress ne démarre pas.
+	 *
+	 * Le passage suivant charge WordPress : il lui faut l'adresse du site,
+	 * l'extension activée et, en multisite, le réseau et ses sites. L'import
+	 * ne s'arrête donc pas entre la suppression de ces tables et la fin de
+	 * leur remplissage ; elles sont petites.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param Run_Context $context Contexte.
+	 * @return bool Vrai pendant l'import d'une de ces tables.
+	 */
+	private function in_core_table( Run_Context $context ): bool {
+		global $wpdb;
+
+		$core = is_multisite()
+			? array( $wpdb->options, $wpdb->sitemeta, $wpdb->site, $wpdb->blogs )
+			: array( $wpdb->options );
+
+		return in_array( (string) $context->get( 'table' ), $core, true );
+	}
+
+	/**
 	 * Termine la table en cours : la table des options reprend aussitôt les valeurs gardées.
 	 *
 	 * @since 0.1.0
@@ -263,7 +289,8 @@ final class Import_Database implements Step {
 	private function leave_table( Run_Context $context ): void {
 		global $wpdb;
 
-		if ( $wpdb->options === (string) $context->get( 'table' ) ) {
+		$table = (string) $context->get( 'table' );
+		if ( $wpdb->options === $table || ( is_multisite() && $wpdb->sitemeta === $table ) ) {
 			$this->reapply( $context );
 		}
 	}
@@ -295,6 +322,23 @@ final class Import_Database implements Step {
 			$preserved[] = array( (string) $row['option_name'], base64_encode( (string) $row['option_value'] ), (string) $row['autoload'] );
 		}
 		$context->set( 'preserved', $preserved );
+
+		$network = array();
+		if ( is_multisite() ) {
+			$rows = (array) $wpdb->get_results(
+				$wpdb->prepare(
+					'SELECT meta_key, meta_value FROM %i WHERE site_id = %d AND meta_key LIKE %s',
+					$wpdb->sitemeta,
+					get_current_network_id(),
+					$wpdb->esc_like( 'oueb_wp_backup_' ) . '%'
+				),
+				ARRAY_A
+			);
+			foreach ( $rows as $row ) {
+				$network[] = array( (string) $row['meta_key'], base64_encode( (string) $row['meta_value'] ) );
+			}
+		}
+		$context->set( 'preserved_network', $network );
 
 		$user    = (int) Restore_State::get( $context, 'user_id', 0 );
 		$session = $user > 0
@@ -328,6 +372,12 @@ final class Import_Database implements Step {
 			);
 		}
 
+		if ( is_multisite() ) {
+			$this->reapply_network( $context );
+			wp_cache_flush();
+			return;
+		}
+
 		$raw    = $wpdb->get_var( $wpdb->prepare( 'SELECT option_value FROM %i WHERE option_name = %s', $wpdb->options, 'active_plugins' ) );
 		$active = null === $raw ? array() : maybe_unserialize( (string) $raw );
 		$active = is_array( $active ) ? $active : array();
@@ -346,6 +396,47 @@ final class Import_Database implements Step {
 		}
 
 		wp_cache_flush();
+	}
+
+	/**
+	 * Remet les réglages du réseau et l'activation de l'extension sur le réseau.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param Run_Context $context Contexte.
+	 */
+	private function reapply_network( Run_Context $context ): void {
+		global $wpdb;
+
+		$site = get_current_network_id();
+		$wpdb->query( $wpdb->prepare( 'DELETE FROM %i WHERE site_id = %d AND meta_key LIKE %s', $wpdb->sitemeta, $site, $wpdb->esc_like( 'oueb_wp_backup_' ) . '%' ) );
+		foreach ( (array) $context->get( 'preserved_network', array() ) as $row ) {
+			list( $key, $value ) = $row;
+			$wpdb->insert(
+				$wpdb->sitemeta,
+				array(
+					'site_id'    => $site,
+					'meta_key'   => $key, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Réglage du réseau gardé avant l'import.
+					'meta_value' => (string) base64_decode( (string) $value, true ), // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- Idem.
+				)
+			);
+		}
+
+		$raw    = $wpdb->get_var( $wpdb->prepare( 'SELECT meta_value FROM %i WHERE site_id = %d AND meta_key = %s LIMIT 1', $wpdb->sitemeta, $site, 'active_sitewide_plugins' ) );
+		$active = null === $raw ? array() : maybe_unserialize( (string) $raw );
+		$active = is_array( $active ) ? $active : array();
+		if ( ! isset( $active[ Plugin::basename() ] ) ) {
+			$active[ Plugin::basename() ] = time();
+			$wpdb->query( $wpdb->prepare( 'DELETE FROM %i WHERE site_id = %d AND meta_key = %s', $wpdb->sitemeta, $site, 'active_sitewide_plugins' ) );
+			$wpdb->insert(
+				$wpdb->sitemeta,
+				array(
+					'site_id'    => $site,
+					'meta_key'   => 'active_sitewide_plugins', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Une seule ligne par réseau.
+					'meta_value' => maybe_serialize( $active ), // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- Idem.
+				)
+			);
+		}
 	}
 
 	/**

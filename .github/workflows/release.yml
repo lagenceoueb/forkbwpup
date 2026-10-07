@@ -1,0 +1,43 @@
+name: Release
+
+# Une étiquette vX.Y.Z publie une release GitHub avec le zip de l'extension.
+# Les sites qui ont l'extension la voient comme mise à jour (Update URI).
+
+on:
+  push:
+    tags: [ 'v*' ]
+
+permissions: {}
+
+jobs:
+  release:
+    name: Publier la release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Vérifier que l'étiquette suit la version de l'extension
+        env:
+          TAG: ${{ github.ref_name }}
+        run: bin/check-version.sh "${TAG#v}"
+      - name: Installer les dépendances de l'interface
+        run: npm ci
+      - name: Construire l'archive et vérifier son poids
+        run: bin/build.sh
+      - name: Créer la release et y joindre l'archive
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$TAG" build/oueb-wp-backup.zip --clobber --repo "$GITHUB_REPOSITORY"
+          else
+            gh release create "$TAG" build/oueb-wp-backup.zip --title "Oueb WP Backup ${TAG#v}" --generate-notes --verify-tag --repo "$GITHUB_REPOSITORY"
+          fi

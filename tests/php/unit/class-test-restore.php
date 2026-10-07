@@ -19,6 +19,7 @@ use Oueb\WpBackup\Engine\Run_Context;
 use Oueb\WpBackup\Job\Job;
 use Oueb\WpBackup\Restore\Extractor;
 use Oueb\WpBackup\Restore\Maintenance;
+use Oueb\WpBackup\Restore\Steps\Check;
 use Oueb\WpBackup\Restore\Steps\Restore_Files;
 use Oueb\WpBackup\Restore\Upload_Repository;
 use Oueb\WpBackup\Storage\Workspace;
@@ -212,6 +213,42 @@ final class Test_Restore extends Test_Case {
 		$this->assertStringContainsString( Maintenance::MARK, (string) file_get_contents( $file ) );
 
 		unset( $_COOKIE, $_SERVER['REQUEST_URI'] );
+	}
+
+	/**
+	 * La base d'un réseau ne se restaure que sur ce réseau ; les fichiers seuls passent partout.
+	 */
+	public function test_network_database_restores_onto_its_network_only(): void {
+		$here    = array(
+			'domain' => 'exemple.fr',
+			'path'   => '/',
+		);
+		$network = array(
+			'site' => array(
+				'multisite' => true,
+				'network'   => $here,
+			),
+		);
+		$single  = array( 'site' => array( 'multisite' => false ) );
+
+		$this->assertSame( '', Check::network_error( $single, true, false, $here ) );
+		$this->assertSame( '', Check::network_error( $network, true, true, $here ) );
+		$this->assertSame( '', Check::network_error( $network, false, false, $here ) );
+		$this->assertSame( '', Check::network_error( $single, false, true, $here ) );
+		$this->assertStringContainsString( 'this site is a single site', Check::network_error( $network, true, false, $here ) );
+		$this->assertStringContainsString( 'this site is a multisite network', Check::network_error( $single, true, true, $here ) );
+		$this->assertStringContainsString(
+			'the network exemple.fr/, and this network is exemple.fr/blog/',
+			Check::network_error(
+				$network,
+				true,
+				true,
+				array(
+					'domain' => 'exemple.fr',
+					'path'   => '/blog/',
+				)
+			)
+		);
 	}
 
 	/**

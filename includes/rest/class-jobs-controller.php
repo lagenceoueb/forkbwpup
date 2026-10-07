@@ -80,9 +80,16 @@ final class Jobs_Controller extends WP_REST_Controller {
 			$this->namespace,
 			'/' . $this->rest_base,
 			array(
-				'methods'             => WP_REST_Server::READABLE,
-				'callback'            => array( $this, 'get_items' ),
-				'permission_callback' => array( Settings_Controller::class, 'check_permission' ),
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_items' ),
+					'permission_callback' => array( Settings_Controller::class, 'check_permission' ),
+				),
+				array(
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, 'create_item' ),
+					'permission_callback' => array( Settings_Controller::class, 'check_permission' ),
+				),
 			)
 		);
 
@@ -98,6 +105,11 @@ final class Jobs_Controller extends WP_REST_Controller {
 				array(
 					'methods'             => WP_REST_Server::EDITABLE,
 					'callback'            => array( $this, 'update_item' ),
+					'permission_callback' => array( Settings_Controller::class, 'check_permission' ),
+				),
+				array(
+					'methods'             => WP_REST_Server::DELETABLE,
+					'callback'            => array( $this, 'delete_item' ),
 					'permission_callback' => array( Settings_Controller::class, 'check_permission' ),
 				),
 			)
@@ -149,17 +161,9 @@ final class Jobs_Controller extends WP_REST_Controller {
 			return new WP_Error( 'oueb_wp_backup_invalid_body', __( 'The request body must be a JSON object.', 'oueb-wp-backup' ), array( 'status' => 400 ) );
 		}
 
-		foreach ( (array) ( $changes['storages'] ?? array() ) as $id ) {
-			if ( ! is_string( $id ) || null === $this->storages->get( $id ) ) {
-				return new WP_Error(
-					'oueb_wp_backup_storage_not_found',
-					__( 'This storage does not exist.', 'oueb-wp-backup' ),
-					array(
-						'status' => 400,
-						'field'  => 'storages',
-					)
-				);
-			}
+		$missing = $this->missing_storage( $changes );
+		if ( null !== $missing ) {
+			return $missing;
 		}
 
 		$result = $job->apply( $changes );
@@ -174,6 +178,101 @@ final class Jobs_Controller extends WP_REST_Controller {
 		$data['sync_error'] = $sync_error;
 
 		return rest_ensure_response( $data );
+	}
+
+	/**
+	 * Crée une tâche supplémentaire.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param WP_REST_Request $request Requête, corps JSON : nom et réglages.
+	 * @return WP_REST_Response|WP_Error Tâche créée (201), ou erreur.
+	 */
+	public function create_item( $request ) {
+		$data = $request->get_json_params();
+		if ( ! is_array( $data ) ) {
+			return new WP_Error( 'oueb_wp_backup_invalid_body', __( 'The request body must be a JSON object.', 'oueb-wp-backup' ), array( 'status' => 400 ) );
+		}
+
+		$missing = $this->missing_storage( $data );
+		if ( null !== $missing ) {
+			return $missing;
+		}
+
+		$job = $this->jobs->create( $data );
+		if ( is_wp_error( $job ) ) {
+			return $job;
+		}
+
+		$sync_error             = $this->scheduler->sync( $job );
+		$response               = $this->prepare_job( $job );
+		$response['sync_error'] = $sync_error;
+
+		$response = rest_ensure_response( $response );
+		$response->set_status( 201 );
+
+		return $response;
+	}
+
+	/**
+	 * Supprime une tâche supplémentaire, avec sa planification.
+	 *
+	 * Les archives déjà faites restent dans leurs stockages et dans la liste.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param WP_REST_Request $request Requête.
+	 * @return WP_REST_Response|WP_Error Confirmation, ou erreur.
+	 */
+	public function delete_item( $request ) {
+		$job = $this->jobs->get( (string) $request['id'] );
+		if ( null === $job ) {
+			return self::not_found();
+		}
+		if ( Job::MAIN === $job->id ) {
+			return $this->jobs->delete( $job->id );
+		}
+
+		// Une tâche en déclenchement manuel n'a plus d'événement WP-Cron ni de tâche chez cron-job.org.
+		$job->trigger = 'manual';
+		$sync_error   = $this->scheduler->sync( $job );
+
+		$result = $this->jobs->delete( $job->id );
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+
+		return rest_ensure_response(
+			array(
+				'deleted'    => true,
+				'sync_error' => $sync_error,
+			)
+		);
+	}
+
+	/**
+	 * Vérifie que les stockages demandés existent.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param array<string, mixed> $data Réglages de la tâche.
+	 * @return WP_Error|null Erreur 400, ou null.
+	 */
+	private function missing_storage( array $data ): ?WP_Error {
+		foreach ( (array) ( $data['storages'] ?? array() ) as $id ) {
+			if ( ! is_string( $id ) || null === $this->storages->get( $id ) ) {
+				return new WP_Error(
+					'oueb_wp_backup_storage_not_found',
+					__( 'This storage does not exist.', 'oueb-wp-backup' ),
+					array(
+						'status' => 400,
+						'field'  => 'storages',
+					)
+				);
+			}
+		}
+
+		return null;
 	}
 
 	/**

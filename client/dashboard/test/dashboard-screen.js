@@ -63,3 +63,19 @@ describe( 'protectionSummary', () => {
 		expect( summary.text ).toContain( 'b' );
 	} );
 } );
+
+describe( 'protectionSummary with storages', () => {
+	it( 'names the storages of the last good backup', () => {
+		const summary = protectionSummary( [
+			{
+				status: 'success',
+				started_at: 'b',
+				storage_names: [ 'Scaleway', 'Ce serveur' ],
+			},
+		] );
+		expect( summary.text ).toBe(
+			'Last backup: b, sent to Scaleway and Ce serveur.'
+		);
+		expect( summary.last.started_at ).toBe( 'b' );
+	} );
+} );

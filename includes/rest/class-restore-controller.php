@@ -208,10 +208,6 @@ final class Restore_Controller extends WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error Exécution créée (202), ou erreur.
 	 */
 	public function create_item( $request ) {
-		if ( is_multisite() ) {
-			return new WP_Error( 'oueb_wp_backup_restore_multisite', __( 'Restoring a multisite network is not supported yet.', 'oueb-wp-backup' ), array( 'status' => 400 ) );
-		}
-
 		$database = (bool) $request['database'];
 		$files    = (bool) $request['files'];
 		if ( ! $database && ! $files ) {

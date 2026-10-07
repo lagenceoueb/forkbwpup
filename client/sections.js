@@ -5,7 +5,7 @@
 /**
  * WordPress dependencies
  */
-import { __ } from '@wordpress/i18n';
+import { __, _x } from '@wordpress/i18n';
 
 /**
  * Renvoie les sections de l'interface.
@@ -18,10 +18,50 @@ export function getSections() {
 		{ id: 'backups', label: __( 'Backups', 'oueb-wp-backup' ) },
 		{ id: 'storage', label: __( 'Storage', 'oueb-wp-backup' ) },
 		{ id: 'schedule', label: __( 'Schedule', 'oueb-wp-backup' ) },
-		{ id: 'restore', label: __( 'Restore', 'oueb-wp-backup' ) },
+		{
+			id: 'restore',
+			label: _x( 'Restore', 'section of the admin', 'oueb-wp-backup' ),
+		},
 		{ id: 'log', label: __( 'Log', 'oueb-wp-backup' ) },
 		{ id: 'settings', label: __( 'Settings', 'oueb-wp-backup' ) },
 	];
+}
+
+/**
+ * Renvoie les pages hors du menu, rattachées à une section du menu.
+ *
+ * @return {Array<{id: string, label: string, parent: string}>} Pages : identifiant, titre, section du menu.
+ */
+export function getPages() {
+	return [
+		{
+			id: 'content',
+			label: __( 'Content of the backup', 'oueb-wp-backup' ),
+			parent: 'dashboard',
+		},
+		{
+			id: 'setup',
+			label: __( 'Setup', 'oueb-wp-backup' ),
+			parent: 'dashboard',
+		},
+		{
+			id: 'jobs',
+			label: __( 'Additional backups', 'oueb-wp-backup' ),
+			parent: 'settings',
+		},
+	];
+}
+
+/**
+ * Renvoie une section ou une page par son identifiant.
+ *
+ * @param {string} id Identifiant.
+ * @return {{id: string, label: string, parent?: string}|undefined} Section ou page.
+ */
+export function findRoute( id ) {
+	return [ ...getSections(), ...getPages() ].find(
+		( item ) => item.id === id
+	);
 }
 
 /**
@@ -37,9 +77,7 @@ export function sectionFromHash( hash ) {
 	const id = String( hash || '' )
 		.replace( /^#\/?/, '' )
 		.split( '/' )[ 0 ];
-	return getSections().some( ( section ) => section.id === id )
-		? id
-		: 'dashboard';
+	return findRoute( id ) ? id : 'dashboard';
 }
 
 /**

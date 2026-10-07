@@ -291,3 +291,95 @@ export function deleteUpload( id ) {
 		method: 'DELETE',
 	} );
 }
+
+/**
+ * Enregistre des réglages.
+ *
+ * @param {Object} changes Réglages modifiés.
+ * @return {Promise<Object>} Réglages, sans secret.
+ */
+export function saveSettings( changes ) {
+	return apiFetch( {
+		path: `${ BASE }/settings`,
+		method: 'POST',
+		data: changes,
+	} );
+}
+
+/**
+ * Renvoie toutes les tâches.
+ *
+ * @return {Promise<Array>} Tâches, la principale en premier.
+ */
+export function fetchJobs() {
+	return apiFetch( { path: `${ BASE }/jobs` } );
+}
+
+/**
+ * Crée une tâche supplémentaire.
+ *
+ * @param {Object} data Nom et réglages.
+ * @return {Promise<Object>} Tâche créée.
+ */
+export function createJob( data ) {
+	return apiFetch( { path: `${ BASE }/jobs`, method: 'POST', data } );
+}
+
+/**
+ * Supprime une tâche supplémentaire.
+ *
+ * @param {string} id Tâche.
+ * @return {Promise<Object>} Accusé.
+ */
+export function deleteJob( id ) {
+	return apiFetch( { path: `${ BASE }/jobs/${ id }`, method: 'DELETE' } );
+}
+
+/**
+ * Décrit ce qui peut être importé de BackWPup.
+ *
+ * @return {Promise<Object>} Résumé : available, status, jobs, report.
+ */
+export function fetchImport() {
+	return apiFetch( { path: `${ BASE }/import` } );
+}
+
+/**
+ * Importe les tâches et réglages de BackWPup.
+ *
+ * @return {Promise<Object>} Résumé, avec le rapport.
+ */
+export function runImport() {
+	return apiFetch( { path: `${ BASE }/import`, method: 'POST' } );
+}
+
+/**
+ * Écarte l'import de BackWPup.
+ *
+ * @return {Promise<Object>} Résumé.
+ */
+export function dismissImport() {
+	return apiFetch( { path: `${ BASE }/import/dismiss`, method: 'POST' } );
+}
+
+/**
+ * Liste les tables du site.
+ *
+ * @return {Promise<Array>} Tables : name, rows, size.
+ */
+export function fetchTables() {
+	return apiFetch( { path: `${ BASE }/database/tables` } );
+}
+
+/**
+ * Vérifie, répare ou optimise les tables du site.
+ *
+ * @param {string} operation check, repair ou optimize.
+ * @return {Promise<Array>} Résultat par table : table, status, message.
+ */
+export function maintainTables( operation ) {
+	return apiFetch( {
+		path: `${ BASE }/database/${ operation }`,
+		method: 'POST',
+	} );
+}

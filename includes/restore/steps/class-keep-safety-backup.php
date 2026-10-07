@@ -115,7 +115,7 @@ final class Keep_Safety_Backup implements Step {
 		}
 
 		if ( 0 === (int) $context->get( 'run_id', 0 ) ) {
-			$run                  = $this->runs->create(
+			$run               = $this->runs->create(
 				self::JOB_ID,
 				'restore',
 				array(
@@ -131,12 +131,12 @@ final class Keep_Safety_Backup implements Step {
 					'stored'   => array( Storage_Repository::LOCAL ),
 				)
 			);
-			$run->status          = Run::SUCCESS;
-			$run->started_at      = $context->run->started_at;
-			$run->finished_at     = time();
-			$run->progress        = 100;
-			$run->archive_file    = $name;
-			$run->archive_size    = (int) filesize( $target );
+			$run->status       = Run::SUCCESS;
+			$run->started_at   = $context->run->started_at;
+			$run->finished_at  = time();
+			$run->progress     = 100;
+			$run->archive_file = $name;
+			$run->archive_size = (int) filesize( $target );
 			$this->runs->save( $run );
 			( new Logger( $run, $context->workspace->logs() ) )->info(
 				/* translators: %d: restore number. */
